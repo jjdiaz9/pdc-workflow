@@ -1,0 +1,12 @@
+{
+  "name": "pdc-workflow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pet Dental Clinic visit workflow app (single-file, iPad-first)",
+  "scripts": {
+    "test": "node tests/app.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  }
+}

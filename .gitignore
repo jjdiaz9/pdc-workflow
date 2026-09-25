@@ -1,0 +1,22 @@
+# Patient data never goes in this public repo. Backups and sync files are JSON.
+*.json
+!package.json
+
+# Clinic source forms stay on this computer only
+reference/
+*.xlsx
+*.xls
+*.csv
+*.docx
+*.pdf
+
+# Local config (names private repos and personal strings)
+.github-publish.conf
+
+# Local noise
+.DS_Store
+._*
+node_modules/
+*.log
+.vscode/
+.idea/

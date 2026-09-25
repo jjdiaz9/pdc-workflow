@@ -1,0 +1,1209 @@
+<title>Pet Dental Clinic Visits</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="PDC Visits">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAEe0lEQVR42u3d3W3bQBBFYXvhkuKS4jaiOtySm8qDAUNxBIkm92dm+J2nJIgocvfsnREpUs+/fv95Am7RDAHIAXKAHCAHyAFygBwgB8gBcgDkADlADpAD5AA5QA6QA+QAOQBygBwgB8gBcoAcIAfIAXKAHAA5QA6QA+TADF4MwQg+3i9ff359u0gO3DDj/78m4tnTBIeacU26CJEcIMfq2MhYX8gBcqyOjYzhQQ6QI0BspAsPcoAcMWKDHCgiEznEBjkoRQ5zTA6Qo3RsxE8dcozi9e2S92s+n7xUXcqjJ6bLuv94Dy1QK2nG8tDOnhn1y8o4P7Zv+aElkTuPVtuDJUNfIzY0pDMCybfP487W5PDYoULYytKs9QmbShoe7SQTP2d17pYgZng0kVAg/8kRfWrvx0bGytJONdlH/BjtVsBYOt1H2UFzsCUY3A65fo5HzMGcZR0tPGomx30/us/Bdh1zhUdKObbERkc/Zi7oUOHRKpmxJD/KXEkpXlZSdBuJZEr28Jb7U3Vz3He8ZIccd7bzbQuvb5eH2wwiUB05tk9Prxc+3NTu1AkiRytvxsyxvt7DyCfcqskx/2td+97x81U1rsJUaEiPn50MOJcRdimHHF1G6kd+FCgKkqPyaQZyDOxDd4dHkKW/fDdOd1U2XfOxkOjnOQZdfU0kwcK62ZKaUWM6gzdMWcvKwWGNMyvulY0YG4Nm5XOz20+9PDzMhfGZMjl6zWt3P643+PCM/sf7JXjdDNqQTvsW4I7pubnif3RV9inJPZUR5Th4kX2aH4ne8RRlZcQYpTjHuqQANaMw2Q/PPj/dp76SxJKj0g+kFYgcPx36z2fL3QF287WeJnjq2Nj43Jhe+z/56YMtxSjH6Wmu/8++H+BJFCcJGtKZo7n9i8o/tbmX/TNXUQg5Qn26u/nk4W//eOS7x4nCI8QZ0lzdxkGVv44o/l0t6+U4lRkPy9PGKy9zRmaxHJMvo8Qpfwdvw5wzMnEbUme9lndprfwRolpyVO02tm8twgi0gGOtoATJ3Vb1wAqwfJE0IyI8AskhNjSkYmPGgAxdabPl0IdKDu1ht62d5V5ZsZGrh2sFjkFoVS4rWWIj7G2YgxbeJDnKxMbxefU1wcofX4/s8O7Xlr0dsl4fum+3hx7siGxuC804VX3JWI9auvWX0Y85R9p9Hb7k2t2wfsy54237bXkJ5CgcGzEPp+8tcW3ojp7EjKq4tiKipsshNhZWltByuIxSIzxa1QMTHhHlEBsaUrERurJ0WaKd5dCHSg4F5RRtaStzJOi+VlucXUG0JdcKHAMGrdg2eieYoSFFwcrSQQ6xUbWytIXvjeDh0TLuNOYs4LbkXXHqhlRshKos+5bxfjn0oeU5+pDakr8zUqy32D0dR8vKzWfIm6c45ebIdHR7vHW6nwSoHR5dZqF1lJQZBdJiSHLAR1mQAyAHyAFygBwgB8gBcoAcIAfIAXIA5AA5QA6QA+QAOUAOkAPkADkAcoAcIAfIAXKAHCAHyAFygBwAOUAOkAN9+Qt0uR4Be4Bm7gAAAABJRU5ErkJggg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#F3F6F7; --surface:#FFFFFF; --surface-2:#E9EFF2; --ink:#17252E; --muted:#5B6E7A; --line:#D3DDE2; --line-strong:#B4C3CB;
+  --accent:#34657F; --accent-ink:#FFFFFF; --accent-soft:#DCE8EF;
+  --ok:#2E7A57; --ok-soft:#DCEFE5; --warn:#9A620F; --warn-soft:#F7EBD5; --crit:#B03636; --crit-soft:#F6DEDE;
+  --tooth:#FBFCFC; --tooth-edge:#A9B9C2;
+  --f-display:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:8px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0F161B; --surface:#162129; --surface-2:#1D2A33; --ink:#E2EAEE; --muted:#93A6B2; --line:#2B3B46; --line-strong:#3D515E;
+    --accent:#7EB0CC; --accent-ink:#0F161B; --accent-soft:#1F3442;
+    --ok:#6CC39A; --ok-soft:#173327; --warn:#E0A850; --warn-soft:#3A2E17; --crit:#EE7F7F; --crit-soft:#3D2020;
+    --tooth:#22313B; --tooth-edge:#50677A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0F161B; --surface:#162129; --surface-2:#1D2A33; --ink:#E2EAEE; --muted:#93A6B2; --line:#2B3B46; --line-strong:#3D515E;
+  --accent:#7EB0CC; --accent-ink:#0F161B; --accent-soft:#1F3442;
+  --ok:#6CC39A; --ok-soft:#173327; --warn:#E0A850; --warn-soft:#3A2E17; --crit:#EE7F7F; --crit-soft:#3D2020;
+  --tooth:#22313B; --tooth-edge:#50677A;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);overscroll-behavior-y:none}
+button,label,[role=button],select,input{touch-action:manipulation}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:.005em}
+h1{font-size:30px} h2{font-size:22px} h3{font-size:18px}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding-block:10px;padding-inline:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.brand svg{flex:none}
+.brand b{font-family:var(--f-display);font-size:19px;font-weight:700;letter-spacing:.01em}
+.brand small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);line-height:1}
+.nav{display:flex;gap:4px}
+.nav button{border:0;background:none;padding:0 14px;min-height:40px;border-radius:6px;cursor:pointer;color:var(--muted);font-weight:500}
+.nav button[aria-current="page"]{background:var(--accent-soft);color:var(--ink)}
+.chip-sync{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:0 14px;min-height:36px;font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.crit{background:var(--crit)}
+
+main{max-width:1180px;margin:0 auto;padding-block:20px 80px;padding-inline:16px;display:grid;gap:18px}
+
+/* generic */
+.btn{border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:0 16px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-weight:500;white-space:nowrap}
+@media (hover:hover){.btn:hover{border-color:var(--accent)}}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--crit);border-color:var(--crit)}
+.btn.small{padding:0 12px;min-height:40px;font-size:14px}
+.btn.ghost{border-color:transparent;background:none;color:var(--muted)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pagehead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.sub{color:var(--muted)}
+.eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:16px}
+.panel>h2{font-size:19px}
+.note{font-size:13px;color:var(--muted)}
+.banner{border-radius:var(--r);padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--warn-soft);color:var(--ink);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent)}
+.banner.info{background:var(--accent-soft);border-color:var(--line)}
+.tag{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:var(--surface-2);color:var(--muted)}
+.tag.sample{background:var(--warn-soft);color:var(--warn)}
+.alert{font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
+.alert.crit{background:var(--crit-soft);color:var(--crit)}
+.alert.ok{background:var(--ok-soft);color:var(--ok)}
+
+/* fields */
+.grid{display:grid;gap:12px 14px;grid-template-columns:repeat(12,minmax(0,1fr))}
+.grid>*{grid-column:span 12}
+@media (min-width:720px){
+  .s2{grid-column:span 2!important}.s3{grid-column:span 3!important}.s4{grid-column:span 4!important}.s5{grid-column:span 5!important}.s6{grid-column:span 6!important}.s8{grid-column:span 8!important}.s9{grid-column:span 9!important}
+}
+@media (max-width:719px){ .m6{grid-column:span 6!important} .m4{grid-column:span 4!important} }
+.f{display:grid;gap:4px;min-width:0}
+.lbl{font-size:12.5px;font-weight:600;color:var(--muted);letter-spacing:.01em}
+.inw{position:relative;display:flex;align-items:center}
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=time],input[type=number],input:not([type]),select,textarea{
+  width:100%;border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:9px 11px;min-width:0;min-height:44px;font-size:16px}
+input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;text-align:left}
+select{-webkit-appearance:none;appearance:none;padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+input[type=number]{-moz-appearance:textfield}
+textarea{resize:vertical;min-height:64px;line-height:1.45}
+.unit{position:absolute;right:11px;color:var(--muted);font-size:14px;pointer-events:none}
+.inw input{padding-right:52px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{border:1px solid var(--line-strong);border-radius:8px;padding:8px 16px;min-height:44px;display:inline-flex;align-items:center;cursor:pointer;background:var(--surface);font-weight:500;font-size:15px;line-height:1.3}
+.seg input:checked+label{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg input:focus-visible+label{outline:2px solid var(--accent);outline-offset:2px}
+.seg.crit input:checked+label.neg{background:var(--crit);border-color:var(--crit);color:#fff}
+.chk{display:flex;gap:12px;align-items:flex-start;cursor:pointer;padding-block:8px}
+.chk input{width:24px;height:24px;margin:0;accent-color:var(--accent);flex:none}
+.chk span{padding-top:1px}
+.timef{display:flex;gap:6px}
+.timef input{flex:1}
+
+/* visits board */
+.datebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.datebar input{width:auto}
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:10px;cursor:pointer;text-align:left}
+@media (hover:hover){.vcard:hover{border-color:var(--accent)}}
+.vcard:active{border-color:var(--accent)}
+.vc-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.vname{font-family:var(--f-display);font-size:22px;font-weight:600}
+.vc-owner{color:var(--muted);font-size:13.5px}
+.pips{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.pip{height:6px;border-radius:3px;background:var(--surface-2)}
+.pip.done{background:var(--ok)} .pip.cur{background:var(--accent)}
+.vc-next{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.vc-next b{color:var(--ink);font-weight:600}
+.alerts{display:flex;gap:6px;flex-wrap:wrap}
+.empty{border:1px dashed var(--line-strong);border-radius:var(--r);padding:28px;text-align:center;color:var(--muted);display:grid;gap:10px;justify-items:center}
+
+/* visit */
+.crumbs{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.summary{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:860px){.summary{grid-template-columns:1fr 320px}}
+.summary h1{font-size:32px}
+.facts{display:flex;flex-wrap:wrap;gap:4px 16px;color:var(--muted);font-size:14px}
+.facts b{color:var(--ink);font-weight:600}
+.staff{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.stepper{display:flex;gap:6px;overflow-x:auto;position:sticky;top:calc(var(--hh,60px) + env(safe-area-inset-top,0px));z-index:20;background:var(--bg);padding-block:8px;margin-block:-8px;scrollbar-width:none}
+.stepper::-webkit-scrollbar{display:none}
+.stepper button{flex:1 0 auto;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:0 14px;min-height:48px;cursor:pointer;font-weight:500;white-space:nowrap}
+.stepper .n{font-family:var(--f-mono);font-size:12px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line-strong);flex:none}
+.stepper button.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.stepper button[aria-current="step"]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+.stepper .sm{display:none}
+@media(max-width:900px){.stepper .lg{display:none}.stepper .sm{display:inline}.stepper{gap:5px}.stepper button{padding:0 10px;gap:6px}}
+.stepper .miss{font-size:11px;color:var(--warn);font-weight:600}
+.stepfoot{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
+.missing{background:var(--warn-soft);border-radius:6px;padding:10px 14px;font-size:13.5px}
+.missing ul{margin:4px 0 0;padding-left:18px}
+.done-note{color:var(--ok);font-weight:600;font-size:14px}
+
+/* consent */
+.consent{display:grid;gap:12px;max-width:72ch}
+.consent p{line-height:1.65;font-size:17px}
+.consent .decision .lbl{font-size:15px;color:var(--ink);font-weight:600}
+.decision{border:1px solid var(--line-strong);border-radius:var(--r);padding:12px 14px;display:grid;gap:10px;background:var(--surface-2)}
+.decision.req{border-left:4px solid var(--accent)}
+.sigwrap{display:grid;gap:6px}
+.sigpad{width:100%;height:220px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;touch-action:none;display:block}
+.sigline{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+
+/* anesthesia */
+.tl{display:grid;gap:0}
+.tl-row{display:grid;grid-template-columns:1fr;gap:10px;padding:14px 0;border-top:1px solid var(--line)}
+.tl-row:first-child{border-top:0}
+@media(min-width:760px){.tl-row{grid-template-columns:170px 1fr;gap:18px}}
+.tl-when{display:grid;gap:6px;align-content:start}
+.tl-when .eyebrow{color:var(--accent)}
+.drugs{display:grid;gap:8px}
+.drug{display:grid;gap:8px;grid-template-columns:1fr 1fr;align-items:end;background:var(--surface-2);border-radius:6px;padding:10px}
+@media(min-width:760px){.drug{grid-template-columns:1.4fr .8fr 1.2fr .8fr .9fr auto}}
+.drug.ind{}
+@media(min-width:760px){.drug.ind{grid-template-columns:1.4fr .8fr 1.2fr .8fr auto}}
+.calc{font-family:var(--f-mono);font-size:13px;padding:7px 0;color:var(--ink)}
+.calc em{font-style:normal;color:var(--muted)}
+.wtline{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.gridwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table.mon{border-collapse:separate;border-spacing:0;font-size:13px;min-width:100%}
+table.mon th,table.mon td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:0}
+table.mon th{background:var(--surface-2);font-weight:600;padding:6px 6px;text-align:left;white-space:nowrap}
+table.mon thead th{text-align:center;font-family:var(--f-mono);font-weight:500;font-size:12px;vertical-align:top}
+table.mon thead th input{width:96px;min-height:36px;margin-top:4px;padding:3px 4px;font-size:16px;text-align:center}
+table.mon thead th input::-webkit-calendar-picker-indicator{display:none}
+table.mon .rh{position:sticky;left:0;z-index:1;min-width:156px;background:var(--surface-2)}
+table.mon td input{border:0;border-radius:0;width:96px;min-height:44px;padding:6px;text-align:center;font-family:var(--f-mono);font-size:16px;background:transparent}
+table.mon td.c-bp input{width:118px}
+table.mon td.warn{background:var(--warn-soft)} table.mon td.crit{background:var(--crit-soft)}
+table.mon td.warn input{color:var(--warn);font-weight:600} table.mon td.crit input{color:var(--crit);font-weight:600}
+.trends{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.trend{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--surface)}
+.trend .th{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+.trend .th b{color:var(--ink);font-family:var(--f-mono);font-weight:500}
+.trend svg{display:block;width:100%;height:54px}
+.trend .ln{fill:none;stroke:var(--accent);stroke-width:1.6}
+.trend .ar{fill:var(--accent-soft);stroke:none}
+.trend .gl{stroke:var(--line);stroke-width:1}
+.trend .ep{fill:var(--accent)}
+.trend .band{fill:var(--ok-soft);stroke:none}
+
+/* dental */
+.arches{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:14px 10px}
+.arch{display:flex;justify-content:center;gap:1px;min-width:max-content}
+.arch .mid{width:14px;border-left:1px dashed var(--line-strong);margin:0 5px}
+.arch-lbl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;min-width:max-content;padding:0 4px}
+.archgap{height:14px;border-bottom:1px solid var(--line);margin:0 0 14px}
+.tooth{border:0;background:none;padding:4px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;width:32px;min-height:64px;position:relative}
+.tooth.lo{flex-direction:column-reverse}
+.tooth .crown{display:block;background:var(--tooth);border:1.5px solid var(--tooth-edge);width:20px;height:26px;border-radius:9px 9px 5px 5px}
+.tooth.lo .crown{border-radius:5px 5px 9px 9px}
+.tooth.t-i .crown{width:12px;height:20px}
+.tooth.t-c .crown{width:16px;height:38px;border-radius:12px 12px 3px 3px}
+.tooth.lo.t-c .crown{border-radius:3px 3px 12px 12px}
+.tooth.t-m .crown{width:24px;height:24px}
+.tooth .num{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.tooth .mk{font-family:var(--f-mono);font-size:9.5px;line-height:1.1;color:var(--warn);min-height:11px;max-width:31px;overflow:hidden;white-space:nowrap;text-overflow:clip}
+.tooth.find .crown{background:var(--warn-soft);border-color:var(--warn)}
+.tooth.ext .crown{background:var(--crit-soft);border-color:var(--crit);position:relative}
+.tooth.ext .crown::after{content:"";position:absolute;inset:3px;background:linear-gradient(45deg,transparent 45%,var(--crit) 45% 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,var(--crit) 45% 55%,transparent 55%)}
+.tooth.ext .mk{color:var(--crit)}
+.tooth.missing .crown{background:transparent;border-style:dashed;opacity:.55}
+.tooth[aria-pressed="true"] .num{color:var(--accent-ink);background:var(--accent);border-radius:3px;padding:0 3px}
+.dlayout{display:grid;gap:16px}
+@media(min-width:1100px){.dlayout{grid-template-columns:1fr 330px;align-items:start}.teditor{position:sticky;top:calc(var(--hh,60px) + 80px)}.sheet-x{display:none}}
+@media(max-width:1099px){
+  .teditor{position:fixed;left:0;right:0;bottom:0;z-index:40;max-height:50vh;overflow:auto;padding-inline:16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 70%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(10,20,26,.18)}
+  .teditor:empty,.teditor.idle{display:none}
+  .teditor .panel{max-width:760px;margin:12px auto 0}
+  body.sheet-open main{padding-bottom:60vh}
+}
+.codes{display:flex;flex-wrap:wrap;gap:6px}
+.code{border:1px solid var(--line-strong);background:var(--surface);border-radius:6px;padding:0 11px;min-height:40px;min-width:44px;font-family:var(--f-mono);font-size:14px;cursor:pointer}
+.code[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:#fff}
+.code.x[aria-pressed="true"]{background:var(--crit);border-color:var(--crit)}
+.mmrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.mmrow input{font-family:var(--f-mono)}
+.ftable{display:grid;gap:0;grid-template-columns:1fr}
+@media(min-width:700px){.ftable{grid-template-columns:1fr 1fr;column-gap:24px}}
+.frow{display:grid;grid-template-columns:48px 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;cursor:pointer}
+.frow .mono{color:var(--accent);font-weight:500}
+.legend{font-size:12px;color:var(--muted);columns:3 220px;column-gap:24px}
+.legend div{break-inside:avoid;padding:1px 0}
+.legend b{font-family:var(--f-mono);color:var(--ink);font-weight:500}
+
+/* discharge preview */
+.doc{max-width:72ch;display:grid;gap:10px;line-height:1.6}
+.doc h3{margin-top:8px}
+.doc ul{margin:0;padding-left:20px}
+
+/* patients */
+.plist{display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.prow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:12px 16px;border-top:1px solid var(--line);cursor:pointer}
+.prow:first-child{border-top:0}
+@media (hover:hover){.prow:hover{background:var(--surface-2)}}
+.prow .pn{font-weight:600}
+.prow .po{color:var(--muted);font-size:13.5px}
+
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(10,20,26,.45);z-index:50;display:grid;place-items:center;padding:16px}
+.modal{background:var(--surface);border-radius:12px;border:1px solid var(--line);width:min(560px,100%);max-height:88vh;-webkit-overflow-scrolling:touch;overflow:auto;padding:20px;display:grid;gap:14px}
+.modal .acts{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.pick{display:grid;gap:0;border:1px solid var(--line);border-radius:6px;max-height:300px;overflow:auto}
+.pick button{border:0;border-top:1px solid var(--line);background:none;text-align:left;padding:12px 14px;min-height:56px;cursor:pointer}
+.pick button:first-child{border-top:0}
+.pick button:hover{background:var(--surface-2)}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cmp>div{border:1px solid var(--line);border-radius:6px;padding:10px;font-size:13.5px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:6px;z-index:60;font-size:14px;max-width:calc(100% - 32px)}
+
+.modal.wide{width:min(760px,100%)}
+.vitals{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:640px){.vitals{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.vitals input{font-family:var(--f-mono);font-size:20px;min-height:52px}
+.vitals .f.warn input{border-color:var(--warn);background:var(--warn-soft)}
+.vitals .f.crit input{border-color:var(--crit);background:var(--crit-soft)}
+.prev{font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+#print{display:none}
+@media print{
+  @page{margin:12mm}
+  body{background:#fff;color:#000;font-size:11pt}
+  #app,.scrim,.toast{display:none!important}
+  #print{display:block}
+  .pp{page-break-after:always}
+  .pp:last-child{page-break-after:auto}
+  .pp h1{font-size:18pt;margin-bottom:4pt}
+  .pp h2{font-size:13pt;margin:10pt 0 4pt;border-bottom:1px solid #000}
+  .pp .hd{display:flex;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:4pt;margin-bottom:8pt}
+  .pp table{border-collapse:collapse;width:100%;font-size:9pt}
+  .pp td,.pp th{border:1px solid #777;padding:2pt 4pt;vertical-align:top;text-align:left}
+  .pp .kv{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2pt 12pt;font-size:10pt}
+  .pp p{margin:0 0 5pt}
+  .pp .sig{height:60pt}
+  .pp ul{margin:0 0 4pt}
+}
+</style>
+
+<div id="app">
+  <header class="top"><div class="top-in">
+    <div class="brand">
+      <svg width="34" height="26" viewBox="0 0 34 26" aria-hidden="true"><path d="M1 24 L12 7 L17 13 L22 4 L33 24 Z" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="21.5" cy="16" r="2.2" fill="var(--accent)"/><circle cx="18.2" cy="13.4" r="1.1" fill="var(--accent)"/><circle cx="20.4" cy="11.6" r="1.1" fill="var(--accent)"/><circle cx="23" cy="11.8" r="1.1" fill="var(--accent)"/><circle cx="24.8" cy="13.8" r="1.1" fill="var(--accent)"/></svg>
+      <div><b>Pet Dental Clinic</b><small>Visit workflow</small></div>
+    </div>
+    <nav class="nav" aria-label="Main">
+      <button data-act="nav" data-view="visits">Visits</button>
+      <button data-act="nav" data-view="patients">Patients</button>
+      <button data-act="nav" data-view="settings">Settings</button>
+    </nav>
+    <button class="chip-sync" id="syncChip" data-act="nav" data-view="settings"><span class="dot"></span><span>Saved</span></button>
+  </div></header>
+  <main id="main"></main>
+</div>
+<div id="modalRoot"></div>
+<div id="print"></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<script>
+(function(){
+'use strict';
+/* ---------- constants ---------- */
+const APP='pdc-visit-workflow';
+const KEY='pdc-data-v1', SKEY='pdc-sync-v1', TKEY='pdc-token-v1', UKEY='pdc-ui-v1';
+const STEPS=[['checkin','Check-in'],['auth','Authorization'],['exam','Exam'],['anes','Anesthesia'],['dental','Dental chart'],['discharge','Discharge']];
+const FORM_TITLES=Object.fromEntries([['checkin','New Patient Form'],['auth','Same-Day Dental Cleaning Authorization'],['exam','Patient Exam Sheet'],['anes','Anesthesia Record'],['discharge','Discharge Instructions']]);
+const SHORT={checkin:'Check-in',auth:'Consent',exam:'Exam',anes:'Anesthesia',dental:'Dental',discharge:'Discharge'};
+const DRUGS={Butorphanol:{c:10,u:'mg/kg'},Dexmedetomidine:{c:0.5,u:'mcg/kg'},Buprenorphine:{c:0.3,u:'mg/kg'},Midazolam:{c:5,u:'mg/kg'},Ketamine:{c:100,u:'mg/kg'},Alfaxalone:{c:10,u:'mg/kg'},Acepromazine:{c:1,u:'mg/kg'},Hydromorphone:{c:2,u:'mg/kg'},Propofol:{c:10,u:'mg/kg'}};
+const PREMEDS=['Butorphanol','Dexmedetomidine','Buprenorphine','Midazolam','Ketamine','Alfaxalone','Acepromazine','Hydromorphone'];
+const INDUCTION=['Propofol','Midazolam','Alfaxalone'];
+const GRID_ROWS=[['iso','Iso %'],['o2','O₂ flow (L/min)'],['fluid','Fluid rate (mL/hr)'],['hr','Heart rate'],['spo2','SpO₂ %'],['rr','Resp. rate'],['etco2','EtCO₂ (mmHg)'],['crt','CRT / MM'],['pulse','Pulse quality'],['ecg','ECG rhythm'],['bp','BP sys/dia/MAP'],['temp','Temp (°F)']];
+const RNG=(a,b)=>{const o=[];if(a<=b)for(let i=a;i<=b;i++)o.push(i);else for(let i=a;i>=b;i--)o.push(i);return o};
+const CHARTS={
+  dog:{ur:RNG(110,101),ul:RNG(201,210),lr:RNG(411,401),ll:RNG(301,311)},
+  cat:{ur:[109,108,107,106,104,103,102,101],ul:[201,202,203,204,206,207,208,209],lr:[409,408,407,404,403,402,401],ll:[301,302,303,304,307,308,309]},
+  ferret:{ur:[109,108,107,106,104,103,102,101],ul:[201,202,203,204,206,207,208,209],lr:[410,409,408,407,406,404,403,402,401],ll:[301,302,303,304,306,307,308,309,310]}
+};
+const CODE_GROUPS=[
+  ['Periodontal',['F1','F2','F3','M1','M2','M3','HBL','GH']],
+  ['Fracture & wear',['T/FX/UCF','T/FX/CCF','FX/UCRF','FX/CCRF','AT','CR/A']],
+  ['Resorption',['TR1','TR2','TR3','TR4']],
+  ['Other',['PA/A','ONF','OM','CU','E/D','E/H','T/SN','T/SR','T/E','T/U','RTR']]
+];
+const EXCL=[['F1','F2','F3'],['M1','M2','M3'],['TR1','TR2','TR3','TR4']];
+const MM_CODES=[['P','Pocket'],['GR','Recession'],['RE','Root exp.'],['AL','Attach. loss']];
+const LEGEND=[['P','Pocketing (mm)'],['F1/F2/F3','Furcation partial / half / entire'],['M1/M2/M3','Mobility slight / moderate / severe'],['TR1–TR4','Tooth resorption stage'],['GR','Gingival recession (mm)'],['RE','Root exposure (mm)'],['AL','Attachment loss (mm)'],['HBL','Horizontal bone loss'],['GH','Gingival hyperplasia'],['T/FX/UCF','Uncomplicated crown fracture'],['T/FX/CCF','Complicated crown fracture'],['FX/UCRF','Uncomp. crown-root fracture'],['FX/CCRF','Comp. crown-root fracture'],['AT','Attrition'],['CR/A','Crown amputation'],['PA/A','Periapical abscess'],['ONF','Oronasal fistula'],['OM','Oral mass'],['CU','Contact mucositis / ulceration'],['E/D','Enamel defect'],['E/H','Enamel hypoplasia'],['T/SN','Supernumerary tooth'],['T/SR','Supernumerary root'],['T/E','Embedded tooth'],['T/U','Unerupted tooth'],['RTR','Retained root'],['/','Missing tooth'],['X','Extracted']];
+
+/* ---------- storage ---------- */
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const parseJSON=s=>{try{return s?JSON.parse(s):null}catch(e){return null}};
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const pad=n=>String(n).padStart(2,'0');
+const isoDate=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayISO=()=>isoDate(new Date());
+const nowHM=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())};
+const num=v=>{const n=parseFloat(String(v??'').replace(',','.'));return isFinite(n)?n:null};
+const fmt=(n,d=2)=>n==null?'':(+n.toFixed(d)).toString();
+function prettyDate(iso){if(!iso)return '';const [y,m,d]=iso.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'})}
+const IS_IPAD=/iPad/.test(navigator.userAgent||'')||(/Macintosh/.test(navigator.userAgent||'')&&navigator.maxTouchPoints>1);
+const IS_IOS=IS_IPAD||/iPhone|iPod/.test(navigator.userAgent||'');
+const STANDALONE=!!(navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches));
+function deviceName(){const u=navigator.userAgent||'';return IS_IPAD?'iPad':/iPhone/.test(u)?'iPhone':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Win/.test(u)?'Windows':'Browser'}
+
+let cfg=Object.assign({backend:'none',owner:'',repo:'',branch:'main',path:'pdc/visits.json',baseRev:0,device:'',lastSync:''},parseJSON(LS.get(SKEY))||{});
+function saveCfg(){LS.set(SKEY,JSON.stringify(cfg))}
+if(!cfg.device){cfg.device=deviceName()+' · '+uid().slice(0,3);saveCfg()}
+
+function blank(){return {version:1,app:APP,patients:[],visits:[],settings:{dvms:'',techs:''},sync:{rev:0,modified:'',device:''}}}
+const bodyOf=d=>JSON.stringify(Object.assign({},d,{sync:null}));
+let data=parseJSON(LS.get(KEY));
+let storageOK=LS.set('pdc-probe','1');
+if(!data||data.app!==APP){data=blank();seed(data);LS.set(KEY,JSON.stringify(data));}
+data.settings=data.settings||{dvms:'',techs:''};
+data.sync=data.sync||{rev:0,modified:'',device:''};
+let lastBody=bodyOf(data);
+
+let saveTimer=null;
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,300)}
+function saveNow(){
+  clearTimeout(saveTimer);saveTimer=null;
+  const b=bodyOf(data);
+  if(b!==lastBody){data.sync.rev=(data.sync.rev||0)+1;data.sync.modified=new Date().toISOString();data.sync.device=cfg.device;lastBody=b;}
+  storageOK=LS.set(KEY,JSON.stringify(data));
+  updateSyncChip();
+}
+function flushSave(){if(saveTimer)saveNow()}
+window.addEventListener('beforeunload',flushSave);
+window.addEventListener('pagehide',flushSave);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSave()});
+
+/* ---------- sample data ---------- */
+function seed(d){
+  const t=todayISO();
+  const p1={id:uid(),sample:true,species:'Dog',name:'Biscuit',dob:'',age:'7 y',breed:'Beagle mix',color:'Tricolor',weightLbs:'26',sex:'Male',neutered:'Yes',allergies:'None known',conditions:'Grade II/VI murmur (rDVM notes)',meds:'None',rdvm:'Example Animal Hospital',vaccinesUTD:'Yes',insurance:'No',
+    owner:{last:'Sample',first:'Owner',coowner:'',street:'100 Example St',city:'Longmont',state:'CO',zip:'80501',cell:'(555) 010-0101',home:'',work:'',email:'owner@example.com',employer:'',occupation:''}};
+  const p2={id:uid(),sample:true,species:'Cat',name:'Miso',dob:'',age:'11 y',breed:'DSH',color:'Grey tabby',weightLbs:'9.5',sex:'Female',neutered:'Yes',allergies:'',conditions:'',meds:'',rdvm:'',vaccinesUTD:'Yes',insurance:'Yes',
+    owner:{last:'Example',first:'Client',coowner:'',street:'',city:'Loveland',state:'CO',zip:'',cell:'(555) 010-0202',home:'',work:'',email:'',employer:'',occupation:''}};
+  const v1=ensureShape({id:uid(),sample:true,patientId:p1.id,date:t,created:new Date().toISOString(),dvm:'',tech:'',step:'anes'});
+  v1.done={checkin:'x',auth:'x',exam:'x'};
+  Object.assign(v1.auth,{photos:'DO',cpr:'CPR',estimate:'500',extraOk:'DO',rootCanal:'WOULD NOT',lastMeal:'19:30',nails:true,printedName:'Owner Sample'});
+  Object.assign(v1.exam,{T:'100.8',P:'96',R:'24',wtKg:'11.8',mentation:'BAR',bcs:'6',mm:'Pink, moist',crt:'<2 sec',oral:'Grade 2 calculus, fractured 108 suspected',hl:'II/VI left systolic murmur, lungs clear',assessment:'Periodontal disease, suspect T/FX 108. Murmur previously documented.',procedure:'Oral exam / diagnostics',clientComm:'Discussed murmur and anesthetic plan.'});
+  Object.assign(v1.anes,{presentsFor:'SDD',behaviorWarnings:'Nervous with restraint of head',premedEffect:'Adequate',ivcSize:'22g',ivcSite:'R Ceph',etSize:'7.0',nails:'Yes'});
+  v1.anes.premed=[{drug:'Butorphanol',dose:'0.3',route:'IM',given:''},{drug:'Dexmedetomidine',dose:'3',route:'IM',given:''}];
+  v1.anes.induction=[{drug:'Propofol',dose:'4',given:'3.2'}];
+  Object.assign(v1.anes.times,{premed:'08:05',ivc:'08:25',induction:'08:31',intub:'08:32',isoOn:'08:33'});
+  const g=v1.anes.grid.vals;
+  g.iso=['2','2','1.75','1.75'];g.o2=['1','1','1','1'];g.fluid=['60','60','60','60'];g.hr=['92','88','84','86'];g.spo2=['98','97','98','98'];g.rr=['12','10','10','12'];g.etco2=['38','41','44','47'];g.crt=['<2/P','<2/P','<2/P','<2/P'];g.pulse=['Strong','Strong','Good','Good'];g.ecg=['NSR','NSR','NSR','NSR'];g.bp=['112/64/80','104/58/72','98/52/66','96/50/64'];g.temp=['99.9','99.4','99.0','98.6'];
+  v1.anes.grid.cols.slice(0,4).forEach((c,i)=>c.time=['08:38','08:43','08:48','08:53'][i]);
+  v1.dental.teeth={'108':{codes:{'T/FX/CCF':true},note:'Pulp exposure',ext:true},'204':{codes:{P:'4'},note:'',ext:false},'309':{codes:{F2:true,M1:true,P:'6'},note:'',ext:false}};
+  v1.dental.gi='2';v1.dental.ci='2';
+  const v2=ensureShape({id:uid(),sample:true,patientId:p2.id,date:t,created:new Date().toISOString(),dvm:'',tech:'',step:'checkin'});
+  d.patients.push(p1,p2);d.visits.push(v1,v2);
+}
+
+/* ---------- model helpers ---------- */
+function ensureShape(v){
+  v.done=v.done||{};v.checkin=v.checkin||{};v.auth=v.auth||{};v.exam=v.exam||{};
+  const a=v.anes=v.anes||{};a.times=a.times||{};a.premed=a.premed||[];a.induction=a.induction||[];a.intub=a.intub||{};
+  a.grid=a.grid||{cols:[],vals:{}};a.grid.cols=a.grid.cols||[];a.grid.vals=a.grid.vals||{};
+  while(a.grid.cols.length<12)a.grid.cols.push({time:''});
+  GRID_ROWS.forEach(([k])=>{if(!Array.isArray(a.grid.vals[k]))a.grid.vals[k]=[]});
+  const d=v.dental=v.dental||{};if(!d.teeth||Array.isArray(d.teeth))d.teeth={};
+  const x=v.discharge=v.discharge||{};x.check=x.check||{};
+  return v;
+}
+function newPatient(){return {id:uid(),species:'',name:'',dob:'',age:'',breed:'',color:'',weightLbs:'',sex:'',neutered:'',allergies:'',conditions:'',meds:'',rdvm:'',vaccinesUTD:'',insurance:'',owner:{last:'',first:'',coowner:'',street:'',city:'',state:'CO',zip:'',cell:'',home:'',work:'',email:'',employer:'',occupation:''}}}
+const patient=id=>data.patients.find(p=>p.id===id);
+const visit=id=>data.visits.find(v=>v.id===id);
+let ui=Object.assign({view:'visits',id:null,step:'checkin',date:todayISO(),q:'',tooth:null,openOnly:false},parseJSON(LS.get(UKEY))||{});
+ui.date=todayISO();
+function saveUI(){LS.set(UKEY,JSON.stringify({view:ui.view,id:ui.id,step:ui.step}))}
+const curV=()=>ui.view==='visit'?visit(ui.id):null;
+const curP=()=>{if(ui.view==='visit'){const v=curV();return v&&patient(v.patientId)}if(ui.view==='patient')return patient(ui.id);return null};
+function root(n){return n==='p'?curP():n==='v'?curV():n==='s'?data.settings:null}
+function getK(k){const parts=k.split('.');let o=root(parts[0]);for(let i=1;i<parts.length;i++){if(o==null)return '';o=o[parts[i]]}return o??''}
+function setK(k,val){const parts=k.split('.');let o=root(parts[0]);if(!o)return;for(let i=1;i<parts.length-1;i++){const key=parts[i];if(o[key]==null||typeof o[key]!=='object')o[key]=/^\d+$/.test(parts[i+1])?[]:{};o=o[key]}o[parts[parts.length-1]]=val}
+function weightKg(v,p){const e=num(v&&v.exam.wtKg);if(e)return {kg:e,src:'exam'};const l=num(p&&p.weightLbs);if(l)return {kg:l/2.20462,src:'check-in (lbs)'};return null}
+function ageStr(p){if(p.dob){const [y,m,d]=p.dob.split('-').map(Number);const b=new Date(y,m-1,d),n=new Date();let mo=(n.getFullYear()-b.getFullYear())*12+n.getMonth()-b.getMonth();if(n.getDate()<b.getDate())mo--;if(mo<0)return '';return mo>=24?Math.floor(mo/12)+' y':mo>=12?Math.floor(mo/12)+' y '+(mo%12)+' m':mo+' m'}return p.age||''}
+function chartFor(p){const s=(p&&p.species||'').toLowerCase();return s==='dog'?'dog':s==='cat'?'cat':s==='ferret'?'ferret':null}
+function ttype(n){const d=n%100;return d<=3?'i':d===4?'c':d>=9?'m':'pm'}
+function toothName(n){const q=Math.floor(n/100),d=n%100;const side=['','Right maxillary','Left maxillary','Left mandibular','Right mandibular'][q];const ord=['','1st','2nd','3rd','4th'];let t;if(d<=3)t=ord[d]+' incisor';else if(d===4)t='canine';else if(d>=9)t=ord[d-8]+' molar';else t=ord[d-4]+' premolar';return side+' '+t}
+function toothStr(t){if(!t)return '';const c=t.codes||{};const o=[];MM_CODES.forEach(([k])=>{if(c[k]!==undefined&&c[k]!=='')o.push(k+c[k])});Object.keys(c).forEach(k=>{if(c[k]===true)o.push(k)});return o.join(' ')}
+function toothHas(t){return t&&(t.ext||t.note||toothStr(t))}
+function extractions(v){return Object.keys(v.dental.teeth).filter(k=>v.dental.teeth[k].ext).map(Number).sort((a,b)=>a-b)}
+function dischargeType(v){const s=v.discharge.type||'auto';if(s!=='auto')return s;return extractions(v).length?'extractions':'routine'}
+function nextStep(v){const s=STEPS.find(([k])=>!v.done[k]);return s?s[0]:null}
+function ownerName(p){const o=p.owner||{};return [o.last,o.first].filter(Boolean).join(', ')}
+function missing(v,p,step){
+  const m=[],a=v.auth,e=v.exam,an=v.anes,o=p.owner||{};
+  if(step==='checkin'){if(!p.name)m.push('Pet name');if(!p.species)m.push('Species');if(!o.last)m.push('Owner last name');if(!o.cell&&!o.home)m.push('Owner phone');}
+  if(step==='auth'){if(!a.estimate)m.push('Payment estimate');if(!a.extraOk)m.push('Additional $500 extraction permission');if(!a.cpr)m.push('CPR / DNR choice');if(!a.photos)m.push('Photo consent');if(!a.lastMeal)m.push('Time of last meal');if(!a.printedName)m.push('Printed name');if(!a.signature)m.push('Owner signature');}
+  if(step==='exam'){['T','P','R'].forEach(k=>{if(!e[k])m.push(k==='T'?'Temperature':k==='P'?'Pulse':'Respiration')});if(!e.wtKg)m.push('Weight (kg)');if(!e.bcs)m.push('BCS');if(!e.assessment)m.push('Assessment');}
+  if(step==='anes'){if(!an.premed.some(r=>r.drug))m.push('Premedication');if(!an.times.induction)m.push('Induction time');if(!an.times.isoOff)m.push('Iso off time');if(!an.times.extubated)m.push('Extubation time');if(!(an.grid.vals.hr||[]).some(x=>x))m.push('Monitoring values');}
+  if(step==='dental'){if(!chartFor(p)&&!v.dental.notes)m.push('Dental notes');if(v.dental.gi===undefined||v.dental.gi==='')m.push('Gingivitis index');if(v.dental.ci===undefined||v.dental.ci==='')m.push('Calculus index');}
+  if(step==='discharge'){const c=v.discharge.check;DIS_CHECK.forEach(([k,l])=>{if(!c[k])m.push(l)});if(!v.dvm)m.push('Veterinarian');if(!v.tech)m.push('Technician');}
+  return m;
+}
+const DIS_CHECK=[['sheet','Discharge sheet provided'],['vohc','VOHC sheet provided'],['chew','Dental chew / treat given'],['photos','Pre/post photos reviewed'],['meds','Take-home medications reviewed'],['recheck','Recommended yearly dentals']];
+
+/* ---------- field builders ---------- */
+const fid=k=>'f_'+k.replace(/[^\w]/g,'_');
+function F(k,label,o={}){const v=getK(k);const t=o.type||'text';
+  const inp=`<input id="${fid(k)}" type="${t}" data-k="${k}" value="${esc(v)}"${o.ph?` placeholder="${esc(o.ph)}"`:''}${o.im?` inputmode="${o.im}"`:''}${o.rr?' data-rr':''}${o.list?` list="${o.list}"`:''}${o.live?` data-live="${o.live}"`:''} autocomplete="off">`;
+  return `<label class="f ${o.cls||''}" for="${fid(k)}"><span class="lbl">${label}</span>${o.unit?`<span class="inw">${inp}<span class="unit">${o.unit}</span></span>`:inp}</label>`}
+function A(k,label,o={}){return `<label class="f ${o.cls||''}" for="${fid(k)}"><span class="lbl">${label}</span><textarea id="${fid(k)}" data-k="${k}" rows="${o.rows||3}"${o.ph?` placeholder="${esc(o.ph)}"`:''}>${esc(getK(k))}</textarea></label>`}
+function S(k,label,opts,o={}){const v=String(getK(k));return `<label class="f ${o.cls||''}" for="${fid(k)}"><span class="lbl">${label}</span><select id="${fid(k)}" data-k="${k}"${o.rr?' data-rr':''}${o.live?` data-live="${o.live}"`:''}><option value="">—</option>${opts.map(x=>{const [val,l]=Array.isArray(x)?x:[x,x];return `<option value="${esc(val)}"${String(val)===v?' selected':''}>${esc(l)}</option>`}).join('')}</select></label>`}
+function R(k,label,opts,o={}){const v=String(getK(k));const n=fid(k);return `<div class="f ${o.cls||''}" role="radiogroup" aria-label="${esc(label)}">${label?`<span class="lbl">${label}</span>`:''}<div class="seg ${o.tone||''}">${opts.map((x,i)=>{const [val,l,cl]=Array.isArray(x)?x:[x,x,''];return `<input type="radio" id="${n}_${i}" name="${n}" value="${esc(val)}" data-k="${k}"${o.rr?' data-rr':''}${String(val)===v?' checked':''}><label for="${n}_${i}" class="${cl||''}">${esc(l)}</label>`}).join('')}</div></div>`}
+function C(k,label,o={}){return `<label class="chk ${o.cls||''}" for="${fid(k)}"><input type="checkbox" id="${fid(k)}" data-k="${k}"${getK(k)?' checked':''}${o.rr?' data-rr':''}><span>${label}</span></label>`}
+function T(k,label,o={}){return `<div class="f ${o.cls||''}"><label class="lbl" for="${fid(k)}">${label}</label><div class="timef"><input id="${fid(k)}" type="time" data-k="${k}" value="${esc(getK(k))}"${o.rr?' data-rr':''}><button class="btn small" data-act="stamp" data-k="${k}" type="button">Now</button></div></div>`}
+
+/* ---------- render ---------- */
+const main=$('#main');
+function render(keepScroll){
+  flushSave();
+  $$('.nav button').forEach(b=>b.setAttribute('aria-current',(b.dataset.view===ui.view||(ui.view==='visit'&&b.dataset.view==='visits')||(ui.view==='patient'&&b.dataset.view==='patients'))?'page':'false'));
+  const y=window.scrollY;
+  let h='';
+  if(ui.view==='visit'&&curV())h=vVisit();
+  else if(ui.view==='patient'&&curP())h=vPatient();
+  else if(ui.view==='patients')h=vPatients();
+  else if(ui.view==='settings')h=vSettings();
+  else{ui.view='visits';h=vVisits();}
+  main.innerHTML=h;
+  saveUI();updateSyncChip();afterRender();
+  if(keepScroll)window.scrollTo(0,y);
+}
+function go(view,id,step){ui.view=view;if(id!==undefined)ui.id=id;if(step)ui.step=step;ui.tooth=null;render();window.scrollTo(0,0)}
+
+/* visits board */
+function vVisits(){
+  const samples=data.visits.some(v=>v.sample);
+  let list=ui.openOnly?data.visits.filter(v=>!v.done.discharge):data.visits.filter(v=>v.date===ui.date);
+  list=list.slice().sort((a,b)=>(a.date+a.created).localeCompare(b.date+b.created));
+  const isToday=ui.date===todayISO();
+  return `
+  <section class="pagehead">
+    <div><div class="eyebrow">${ui.openOnly?'All open visits':isToday?'Today':'Schedule'}</div><h1>${ui.openOnly?'Open visits':esc(prettyDate(ui.date))}</h1></div>
+    <button class="btn primary" data-act="new-visit">New visit</button>
+  </section>
+  <div class="datebar">
+    <button class="btn small" data-act="day" data-d="-1" aria-label="Previous day">‹</button>
+    <input type="date" id="dayPick" value="${ui.date}" aria-label="Visit date">
+    <button class="btn small" data-act="day" data-d="1" aria-label="Next day">›</button>
+    ${isToday?'':'<button class="btn small" data-act="day" data-d="0">Today</button>'}
+    <label class="chk" style="margin-left:8px"><input type="checkbox" id="openOnly"${ui.openOnly?' checked':''}><span>Show every visit not yet discharged</span></label>
+  </div>
+  ${samples?`<div class="banner"><span><b>Example visits.</b> Biscuit and Miso are sample records so you can try the workflow. Remove them before seeing real patients.</span><button class="btn small" data-act="remove-samples">Remove examples</button></div>`:''}
+  ${!storageOK?`<div class="banner" style="background:var(--crit-soft)"><span><b>This browser is blocking storage.</b> Nothing you enter will be kept after the page closes. Open the app from its own address (GitHub Pages or the saved file) to save visits.</span></div>`:''}
+  ${list.length?`<div class="cards">${list.map(vCard).join('')}</div>`:`<div class="empty"><b>No visits ${ui.openOnly?'open':'on this day'}.</b><span>Start one when a patient checks in.</span><button class="btn primary" data-act="new-visit">New visit</button></div>`}`;
+}
+function vCard(v){
+  ensureShape(v);const p=patient(v.patientId)||newPatient();
+  const nx=nextStep(v);const al=alertsFor(v,p);
+  return `<article class="vcard" role="button" tabindex="0" data-act="open-visit" data-id="${v.id}">
+    <div class="vc-top"><span class="vname">${esc(p.name||'Unnamed patient')}</span><span class="tag">${esc(p.species||'—')}</span>${v.sample?'<span class="tag sample">Example</span>':''}</div>
+    <div class="vc-owner">${esc(ownerName(p)||'Owner not entered')}${p.owner&&p.owner.cell?' · '+esc(p.owner.cell):''}${ui.openOnly?' · '+esc(prettyDate(v.date)):''}</div>
+    <div class="pips" aria-label="Progress">${STEPS.map(([k,l])=>`<span class="pip ${v.done[k]?'done':k===nx?'cur':''}" title="${l}"></span>`).join('')}</div>
+    <div class="vc-next">${nx?`<span>Next: <b>${STEPS.find(s=>s[0]===nx)[1]}</b></span>`:'<span><b style="color:var(--ok)">Discharged</b></span>'}<span>${esc(v.dvm||'')}${v.tech?' / '+esc(v.tech):''}</span></div>
+    ${al.length?`<div class="alerts">${al.join('')}</div>`:''}
+  </article>`;
+}
+function alertsFor(v,p){
+  const o=[];
+  if(v.auth.cpr==='DNR')o.push('<span class="alert crit">DNR</span>');
+  if(p.allergies&&!/^(none|nka|no|n\/a|none known)$/i.test(p.allergies.trim()))o.push(`<span class="alert crit">Allergy: ${esc(p.allergies)}</span>`);
+  if(v.anes.behaviorWarnings)o.push(`<span class="alert">Behavior: ${esc(v.anes.behaviorWarnings)}</span>`);
+  if(v.auth.extraOk==='DO NOT')o.push('<span class="alert">No extra extractions without a call</span>');
+  if(p.conditions)o.push(`<span class="alert">${esc(p.conditions)}</span>`);
+  return o;
+}
+
+/* visit page */
+function vVisit(){
+  const v=ensureShape(curV()),p=patient(v.patientId);
+  if(!p)return '<p>Patient record missing.</p>';
+  if(!STEPS.some(s=>s[0]===ui.step))ui.step='checkin';
+  const w=weightKg(v,p);const al=alertsFor(v,p);
+  const staffList=(s)=>(data.settings[s]||'').split('\n').map(x=>x.trim()).filter(Boolean);
+  const idx=STEPS.findIndex(s=>s[0]===ui.step);
+  const miss=missing(v,p,ui.step);
+  const body={checkin:stCheckin,auth:stAuth,exam:stExam,anes:stAnes,dental:stDental,discharge:stDischarge}[ui.step](v,p);
+  return `
+  <div class="crumbs"><button class="btn ghost" data-act="nav" data-view="visits">‹ Visits</button>
+    <div class="row"><span class="note">${esc(prettyDate(v.date))}</span><button class="btn small" data-act="print" data-sec="all">Print full visit</button><button class="btn small danger" data-act="del-visit">Delete</button></div></div>
+  <section class="summary">
+    <div style="display:grid;gap:8px">
+      <div class="row"><h1>${esc(p.name||'New patient')}</h1>${v.sample?'<span class="tag sample">Example</span>':''}</div>
+      <div class="facts">
+        <span><b>${esc(p.species||'Species ?')}</b>${p.breed?' · '+esc(p.breed):''}</span>
+        <span>${esc([p.sex,p.neutered==='Yes'?(p.sex==='Female'?'spayed':'neutered'):p.neutered==='No'?'intact':''].filter(Boolean).join(' ')||'Sex ?')}</span>
+        <span>Age <b>${esc(ageStr(p)||'?')}</b></span>
+        <span>Weight <b class="mono">${w?fmt(w.kg,1)+' kg':'?'}</b>${w&&w.src!=='exam'?' <em class="note">(check-in estimate)</em>':''}</span>
+        <span>${esc(ownerName(p))}${p.owner.cell?' · <span class="mono">'+esc(p.owner.cell)+'</span>':''}</span>
+      </div>
+      ${al.length?`<div class="alerts">${al.join('')}</div>`:''}
+    </div>
+    <div class="staff">
+      ${F('v.dvm','DVM',{list:'dl-dvm'})}${F('v.tech','Tech',{list:'dl-tech'})}
+      <datalist id="dl-dvm">${staffList('dvms').map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+      <datalist id="dl-tech">${staffList('techs').map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+    </div>
+  </section>
+  <nav class="stepper" aria-label="Visit steps">${STEPS.map(([k,l],i)=>{const mm=v.done[k]?0:missing(v,p,k).length;return `<button data-act="step" data-step="${k}" class="${v.done[k]?'done':''}"${k===ui.step?' aria-current="step"':''}><span class="n">${v.done[k]?'✓':i+1}</span><span class="lg">${l}</span><span class="sm">${SHORT[k]}</span></button>`}).join('')}</nav>
+  <section class="panel" id="stepPanel">
+    ${body}
+    <div class="stepfoot">
+      <div class="stepstatus" style="display:grid;gap:8px;flex:1;min-width:240px">
+        ${v.done[ui.step]?`<span class="done-note">✓ Completed${typeof v.done[ui.step]==='string'&&v.done[ui.step].length>4?' at '+new Date(v.done[ui.step]).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):''}</span>`:miss.length?`<div class="missing"><b>Still missing</b><ul>${miss.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'<span class="note">Everything on this form is filled in.</span>'}
+      </div>
+      <div class="row">
+        <button class="btn" data-act="print" data-sec="${ui.step}">Print this form</button>
+        ${v.done[ui.step]?'<button class="btn" data-act="reopen">Reopen</button>':`<button class="btn primary" data-act="complete" id="completeBtn">${miss.length?'Complete anyway':'Mark complete'}${idx<STEPS.length-1?' & continue':''}</button>`}
+        ${v.done[ui.step]&&idx<STEPS.length-1?`<button class="btn primary" data-act="step" data-step="${STEPS[idx+1][0]}">Next: ${STEPS[idx+1][1]} ›</button>`:''}
+      </div>
+    </div>
+  </section>`;
+}
+
+/* step 1 */
+function stCheckin(v,p){
+  return `<div><div class="eyebrow">New patient form</div><h2>Owner &amp; patient information</h2></div>
+  <div class="grid">
+    ${F('v.date','Visit date',{type:'date',cls:'s3 m6'})}
+    <div class="s9"></div>
+  </div>
+  <h3>Owner</h3>
+  <div class="grid">
+    ${F('p.owner.last','Last name',{cls:'s4 m6'})}${F('p.owner.first','First name',{cls:'s4 m6'})}${F('p.owner.coowner','Co-owner',{cls:'s4'})}
+    ${F('p.owner.street','Street',{cls:'s5'})}${F('p.owner.city','City',{cls:'s3 m6'})}${F('p.owner.state','State',{cls:'s2 m6'})}${F('p.owner.zip','Zip',{cls:'s2 m6',im:'numeric'})}
+    ${F('p.owner.cell','Cell',{type:'tel',cls:'s4 m6'})}${F('p.owner.home','Home',{type:'tel',cls:'s4 m6'})}${F('p.owner.work','Work',{type:'tel',cls:'s4'})}
+    ${F('p.owner.email','Email',{type:'email',cls:'s6'})}${F('p.owner.employer','Employer',{cls:'s3 m6'})}${F('p.owner.occupation','Occupation',{cls:'s3 m6'})}
+  </div>
+  <h3>Patient</h3>
+  <div class="grid">
+    ${R('p.species','Species',['Dog','Cat','Ferret','Other'],{cls:'s6',rr:1})}
+    ${p.species==='Other'?F('p.speciesOther','Other species',{cls:'s6'}):'<div class="s6"></div>'}
+    ${F('p.name','Pet name',{cls:'s4'})}${F('p.dob','Date of birth',{type:'date',cls:'s4 m6'})}${F('p.age','or age',{cls:'s4 m6',ph:'e.g. 7 y'})}
+    ${F('p.breed','Breed',{cls:'s4'})}${F('p.color','Color',{cls:'s4 m6'})}${F('p.weightLbs','Approx. weight',{cls:'s4 m6',unit:'lbs',im:'decimal'})}
+    ${R('p.sex','Sex',['Male','Female'],{cls:'s4'})}${R('p.neutered','Neutered / spayed?',['Yes','No'],{cls:'s4'})}${R('p.vaccinesUTD','Up to date on vaccines?',['Yes','No'],{cls:'s4'})}
+    ${F('p.allergies','Known allergies',{cls:'s6'})}${F('p.conditions','Previous or current conditions',{cls:'s6'})}
+    ${A('p.meds','Current medications, dosage and frequency',{cls:'s8',rows:2})}${F('p.rdvm','Primary veterinarian',{cls:'s4'})}
+    ${R('v.checkin.insurance','Pet insurance claim planned for this visit?',['Yes','No'],{cls:'s12'})}
+  </div>`;
+}
+
+/* step 2 */
+function stAuth(v,p){
+  const a=v.auth;
+  return `<div><div class="eyebrow">Same-day dental cleaning authorization</div><h2>Authorization for ${esc(p.name||'this pet')}</h2><p class="note" style="margin-top:4px">Hand the device to the owner. Each shaded box needs their choice.</p></div>
+  <div class="consent">
+    <p>I am the owner (or authorized agent of the owner) of the above pet(s). I hereby authorize and direct Pet Dental Clinic, under the direction of Cowgill Veterinary Services LLC, its veterinarian, and veterinary staff to perform services, procedures, diagnostics, treatments, and/or administration of medications as deemed necessary or advisable based on my pet’s recommended treatment plan.</p>
+    <p>I authorize Pet Dental Clinic to obtain vaccination and/or medical records regarding my pet from other veterinary care facilities if requested, and I authorize my pet’s records to be forwarded to other veterinary facilities upon their request. I have the right to request my pet’s medical records at any time.</p>
+    <p>I understand that there may be a risk of my pet biting or scratching either the veterinarian or myself during veterinary procedures and understand that I am not required to restrain my pet at any time. If I am uncomfortable restraining my pet, I will voice this to the veterinary staff. If I elect to restrain my pet and he/she does bite or injure the veterinarian or myself, I will not hold Pet Dental Clinic responsible for such event and will not pursue reimbursement or legal action against Pet Dental Clinic for injuries.</p>
+    <div class="decision req">${R('v.auth.photos','Photos of my pet on the clinic’s website and/or Facebook page for promotional purposes (my pet’s name may or may not be used)',[['DO','I DO consent'],['DO NOT','I DO NOT consent']])}</div>
+    <p>I authorize Pet Dental Clinic, under the direction of Cowgill Veterinary Services, LLC, its veterinarian, and veterinary staff to anesthetize my pet for the purpose of performing a dental cleaning, dental radiography, and tooth extractions if indicated. My pet’s dental plan will be established based on clinical/radiographic findings and the recommendation of the veterinarian.</p>
+    <p>I understand full-mouth dental radiography will be performed. If I elect to decline this, I understand that there is the possibility that unforeseen dental conditions may exist that would only be visible through the aid of dental radiography. I understand that post-extraction radiography is not routinely done. Post-extraction radiographs are utilized in cases where extractions are not routine or abnormal roots are present.</p>
+    <p>I understand that there is the possibility that tooth root fragments may be present or retained post-extraction. I understand that Pet Dental Clinic will make every effort to prevent and remedy this within their ability to do so. I agree to not hold Pet Dental Clinic liable for these events as they have been explained to me.</p>
+    <p>I understand that there is a <b>risk of complications</b> with every anesthetic or dental procedure, such as excessive sedation, inappetence, nausea, ataxia, liver/kidney damage, pawing at the mouth, progression of heart disease, non-healing oronasal fistula, aspiration pneumonia, subcutaneous emphysema, jaw fracture, or progression of previously unapparent disease, any of which may require additional follow-up at a specialty center, and very rarely, the possibility of death as a severe complication. I agree to not hold Pet Dental Clinic liable for any unforeseen adverse event not resulting from negligence by the veterinarian.</p>
+    <div class="decision req"><p><b>CPR Directive.</b> If an adverse event occurs during my pet’s anesthesia, Pet Dental Clinic’s policy is to perform life-saving efforts. If CPR is elected, I understand that my pet will need to be transferred to a specialty center for further care and monitoring.</p>
+      ${R('v.auth.cpr','',[['CPR','CPR: life-saving medications, chest compressions, assisted ventilation'],['DNR','DNR: Do Not Resuscitate','neg']],{tone:'crit'})}</div>
+    <p>I agree to be available by telephone. In the unlikely event that my pet needs to be transferred to a veterinary emergency or specialty referral center, Pet Dental Clinic will discuss my options thoroughly. If I elect to transfer my pet to a referral center or have my pet evaluated at a later time, I understand that I will be responsible for the costs associated with that visit.</p>
+    <p>I understand that payment is due in full at the time services are rendered. If for any reason payment is not made at the time services are rendered or when invoices are received, I understand that my account will be referred to a collection agency. Whether or not a legal action is commenced, I agree to pay and reimburse Pet Dental Clinic for all fees and costs of any collection agency which may include reasonable attorney fees incurred by Pet Dental Clinic in collection efforts.</p>
+    <div class="decision req">
+      <div class="grid">${F('v.auth.estimate','Payment due today (± $0–500)',{cls:'s6',unit:'USD',im:'decimal',ph:'500'})}</div>
+      ${R('v.auth.extraOk','Permission for the veterinarian to remove severely diseased teeth, up to an additional $500 including medications (pain relievers and/or antibiotics if indicated)',[['DO','I DO give permission'],['DO NOT','I DO NOT give permission']])}
+      <p class="note"><b>Any dental work beyond what can be completed within the 1-hour allotted time frame will be completed at a follow-up visit for oral surgery.</b></p>
+    </div>
+    <div class="decision">${R('v.auth.rootCanal','If root canal therapy is an option for a fractured tooth, I would like to pursue it instead of extraction (referral to a specialty dentistry clinic; not done today)',[['WOULD','I WOULD'],['WOULD NOT','I WOULD NOT']])}</div>
+    <p>I understand that if I fail to follow discharge instructions, this may have an adverse effect on my pet’s health and outcome. I understand that I will be responsible for the cost of additional follow-up care if needed.</p>
+    <div class="decision req"><div class="grid">${T('v.auth.lastMeal','I confirm my pet has been fasted. Time of last meal',{cls:'s6'})}<div class="s6" style="align-self:end">${C('v.auth.nails','I would like my pet’s nails trimmed today (complimentary)')}</div></div></div>
+    <p><b>By signing below, I certify that I have read and understand the above.</b></p>
+    <div class="grid">${F('v.auth.printedName','Printed name of owner / agent',{cls:'s6'})}</div>
+    <div class="sigwrap">
+      <canvas class="sigpad" id="sigpad" aria-label="Signature pad"></canvas>
+      <div class="sigline"><span>Owner / agent signature${a.signedAt?' · signed '+esc(new Date(a.signedAt).toLocaleString()):''}</span><button class="btn small" data-act="sig-clear" type="button">Clear signature</button></div>
+    </div>
+  </div>`;
+}
+
+/* step 3 */
+function stExam(v,p){
+  const w=num(v.exam.wtKg);
+  return `<div><div class="eyebrow">Patient exam sheet</div><h2>Pre-anesthetic exam</h2></div>
+  <div class="grid">
+    ${F('v.exam.wtKg','Weight',{cls:'s3 m6',unit:'kg',im:'decimal',live:'wt'})}
+    <div class="f s3 m6"><span class="lbl">Equivalent</span><span class="calc" id="wtConv">${w?fmt(w*2.20462,1)+' lbs':p.weightLbs?'Check-in: '+esc(p.weightLbs)+' lbs':'—'}</span></div>
+    ${A('v.exam.history','Patient history',{cls:'s12',rows:3,ph:'Presenting concern, diet, chewing habits, home care, prior dentals, medications'})}
+  </div>
+  <h3>Physical exam</h3>
+  <div class="grid">
+    ${F('v.exam.T','T',{cls:'s2 m4',unit:'°F',im:'decimal'})}${F('v.exam.P','P',{cls:'s2 m4',unit:'bpm',im:'numeric'})}${F('v.exam.R','R',{cls:'s2 m4',unit:'/min',im:'numeric'})}
+    ${F('v.exam.mentation','Behavior / mentation',{cls:'s3 m6',ph:'BAR, QAR…'})}${S('v.exam.bcs','BCS (/9)',['1','2','3','4','5','6','7','8','9'],{cls:'s3 m6'})}
+    ${F('v.exam.mm','Mucous membranes',{cls:'s4 m6',ph:'Pink, moist'})}${F('v.exam.crt','CRT',{cls:'s2 m6',ph:'<2 sec'})}
+    <div class="s6" style="align-self:end"><button class="btn small" data-act="exam-wnl" type="button">Fill empty systems with “WNL”</button></div>
+    ${[['eent','EENT'],['oral','Oral'],['pln','PLN'],['hl','H/L'],['abd','Abd'],['ms','M/S'],['ug','U/G'],['neuro','Neuro'],['rectal','Rectal'],['cs','C/S']].map(([k,l])=>F('v.exam.'+k,l,{cls:k==='oral'||k==='hl'?'s6':'s3 m6'})).join('')}
+  </div>
+  <h3>Assessment &amp; plan</h3>
+  <div class="grid">
+    ${A('v.exam.assessment','Assessment',{cls:'s12',rows:3})}
+    ${F('v.exam.procedure','Procedure',{cls:'s6',ph:'Oral exam / diagnostics'})}${F('v.exam.laboratory','Laboratory',{cls:'s6'})}
+    ${A('v.exam.clientComm','Client communication',{cls:'s12',rows:2})}
+  </div>`;
+}
+
+/* step 4 */
+function drugRow(v,p,list,idx,kind){
+  const r=v.anes[kind][idx];const base=`v.anes.${kind}.${idx}`;const d=DRUGS[r.drug];
+  return `<div class="drug ${kind==='induction'?'ind':''}">
+    ${S(base+'.drug','Drug',(kind==='premed'?PREMEDS:INDUCTION).map(n=>[n,`${n} ${DRUGS[n].c} mg/mL`]),{live:'dose:'+kind+':'+idx})}
+    ${F(base+'.dose','Dose',{unit:d?d.u:'mg/kg',im:'decimal',live:'dose:'+kind+':'+idx})}
+    <div class="f"><span class="lbl">Calculated</span><span class="calc" id="calc-${kind}-${idx}">${calcHTML(v,p,r)}</span></div>
+    ${F(base+'.given','Given',{unit:'mL',im:'decimal'})}
+    ${kind==='premed'?S(base+'.route','Route',['SQ','IM','IV']):''}
+    <button class="btn small ghost" data-act="del-drug" data-kind="${kind}" data-i="${idx}" aria-label="Remove drug" style="align-self:end">Remove</button>
+  </div>`;
+}
+function calcHTML(v,p,r){const d=DRUGS[r.drug];const w=weightKg(v,p);const dose=num(r.dose);if(!d)return '<em>choose drug</em>';if(!w)return '<em>needs weight</em>';if(!dose)return `<em>${d.c} mg/mL</em>`;
+  const mg=d.u==='mcg/kg'?dose*w.kg/1000:dose*w.kg;const ml=mg/d.c;
+  return `<b>${fmt(ml,ml<1?3:2)} mL</b> <em>(${d.u==='mcg/kg'?fmt(mg*1000,1)+' mcg':fmt(mg,mg<1?3:2)+' mg'})</em>`}
+function stAnes(v,p){
+  const a=v.anes,w=weightKg(v,p);
+  return `<div><div class="eyebrow">Treatment sheet &amp; anesthesia monitoring</div><h2>Anesthesia record</h2></div>
+  <div class="wtline">${w?`<span class="alert ok">Dosing weight ${fmt(w.kg,2)} kg · from ${w.src}</span>`:'<span class="alert crit">No weight yet. Enter it on the Exam step to calculate volumes.</span>'}<span class="note">Calculated volumes use the concentrations on the treatment sheet. Verify before drawing up.</span></div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Arrival</span></div><div class="grid">
+      ${R('v.anes.presentsFor','Presents for',['SDD','Oral surgery','Other'],{cls:'s6',rr:1})}${a.presentsFor==='Other'?F('v.anes.presentsOther','Other reason',{cls:'s6'}):'<div class="s6"></div>'}
+      ${F('v.anes.behaviorWarnings','Behavior warnings',{cls:'s12',ph:'Shown on every screen for this visit'})}
+    </div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Blood draw</span>${T('v.anes.times.bw','Time')}</div><div class="grid">
+      ${F('v.anes.bwLoc','Location',{cls:'s6'})}${F('v.anes.bwBehavior','Behavior for blood work',{cls:'s6'})}${F('v.anes.examBehavior','Behavior for exam',{cls:'s12'})}
+    </div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Premedication</span>${T('v.anes.times.premed','Time given')}</div><div style="display:grid;gap:10px">
+      <div class="drugs">${a.premed.map((r,i)=>drugRow(v,p,PREMEDS,i,'premed')).join('')}</div>
+      <div><button class="btn small" data-act="add-drug" data-kind="premed">+ Add premed drug</button></div>
+      <div class="grid">${R('v.anes.premedEffect','Premed was',['Mild','Adequate','Excessive'],{cls:'s6'})}${F('v.anes.premedBehavior','Behavior',{cls:'s6'})}</div>
+    </div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">IV catheter</span>${T('v.anes.times.ivc','Time placed')}</div><div class="grid">
+      ${R('v.anes.ivcSize','Gauge',['24g','22g','20g','18g'],{cls:'s6'})}${R('v.anes.ivcSite','Site',['R Ceph','L Ceph','L Saph','R Saph'],{cls:'s6'})}
+    </div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Induction</span>${T('v.anes.times.induction','Time')}</div><div style="display:grid;gap:10px">
+      <div class="drugs">${a.induction.map((r,i)=>drugRow(v,p,INDUCTION,i,'induction')).join('')}</div>
+      <div><button class="btn small" data-act="add-drug" data-kind="induction">+ Add induction drug</button></div>
+      <p class="note">Induced slowly, to effect. Record the volume actually given.</p>
+    </div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Intubation</span>${T('v.anes.times.intub','Time')}</div><div class="grid">
+      ${F('v.anes.etSize','ET tube size',{cls:'s3 m6',im:'decimal'})}
+      <div class="s9" style="display:grid;gap:6px">${C('v.anes.intub.lateral','Placed in lateral recumbency')}${C('v.anes.intub.o2','O₂ on')}${C('v.anes.intub.cuff','Cuff pressure checked, no leaks, holding pressure')}</div>
+    </div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Iso on</span>${T('v.anes.times.isoOn','Time',{rr:1})}</div><div class="grid">
+      ${R('v.anes.nails','Nails trimmed',['Yes','No'],{cls:'s6'})}<p class="note s6" style="align-self:end">${v.auth.nails?'Owner requested a nail trim.':'Owner did not request a nail trim.'}</p>
+    </div></div>
+  </div>
+  <div style="display:grid;gap:10px">
+    <div class="row" style="justify-content:space-between"><h3>Monitoring, every 5 minutes</h3><div class="row"><button class="btn primary" data-act="vitals">Record vitals</button><button class="btn small" data-act="fill-times">Fill times from Iso on</button><button class="btn small" data-act="add-cols">+ 15 min</button></div></div>
+    <div class="gridwrap">${monGrid(v,p)}</div>
+    <p class="note">Tinted cells fall outside common target ranges (SpO₂ ≥ 95, EtCO₂ 35–45, MAP ≥ 60–70, temp ≥ 98 °F). They are a cue to look, not a decision.</p>
+    <div class="trends" id="trends">${trends(v,p)}</div>
+  </div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Iso off · fluids d/c</span>${T('v.anes.times.isoOff','Time')}</div><div class="grid">${F('v.anes.totalFluids','Total fluids',{cls:'s4',unit:'mL',im:'decimal'})}</div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">O₂ off</span>${T('v.anes.times.o2Off','Time')}</div><div class="grid">${F('v.anes.finalSpo2','Final SpO₂',{cls:'s4 m4',unit:'%'})}${F('v.anes.finalTemp','Final temp',{cls:'s4 m4',unit:'°F'})}${F('v.anes.finalBp','Final BP',{cls:'s4 m4'})}</div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Extubated</span>${T('v.anes.times.extubated','Time')}</div><div></div></div>
+    <div class="tl-row"><div class="tl-when"><span class="eyebrow">Recovery TPR · IVC removed</span>${T('v.anes.times.tpr','Time')}</div><div class="grid">${F('v.anes.recT','T',{cls:'s4 m4',unit:'°F'})}${F('v.anes.recP','P',{cls:'s4 m4',unit:'bpm'})}${F('v.anes.recR','R',{cls:'s4 m4',unit:'/min'})}</div></div>
+  </div>
+  ${A('v.anes.notes','Treatment notes',{rows:4})}`;
+}
+function monGrid(v,p){
+  const g=v.anes.grid;const auto=autoTimes(v);
+  return `<table class="mon"><thead><tr><th class="rh">Parameter</th>${g.cols.map((c,i)=>`<th>${(i+1)*5} min<br><input type="time" data-k="v.anes.grid.cols.${i}.time" value="${esc(c.time)}" aria-label="Time at ${(i+1)*5} min"${auto[i]&&!c.time?` placeholder="${auto[i]}"`:''}></th>`).join('')}</tr></thead>
+  <tbody>${GRID_ROWS.map(([k,l])=>`<tr><th class="rh">${l}</th>${g.cols.map((c,i)=>{const val=g.vals[k][i]??'';return `<td class="${flag(k,val,p)}${k==='bp'?' c-bp':''}"><input data-k="v.anes.grid.vals.${k}.${i}" data-flag="${k}" value="${esc(val)}" aria-label="${esc(l)} at ${(i+1)*5} min"${['hr','spo2','rr','etco2','temp','iso','o2','fluid'].includes(k)?' inputmode="decimal"':''}></td>`}).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function autoTimes(v){const s=v.anes.times.isoOn;if(!s)return [];const [h,m]=s.split(':').map(Number);return v.anes.grid.cols.map((c,i)=>{const t=h*60+m+(i+1)*5;return pad(Math.floor(t/60)%24)+':'+pad(t%60)})}
+function mapOf(bp){const s=String(bp||'').split('/').map(num);if(s.length>=3&&s[2]!=null)return s[2];if(s.length===2&&s[0]!=null&&s[1]!=null)return Math.round((s[0]+2*s[1])/3);return null}
+function flag(k,val,p){
+  const n=num(val);if(val===''||val==null)return '';
+  const sp=(p&&p.species||'').toLowerCase();
+  if(k==='spo2'&&n!=null)return n<90?'crit':n<95?'warn':'';
+  if(k==='etco2'&&n!=null)return n>55||n<25?'crit':(n>45||n<35)?'warn':'';
+  if(k==='temp'&&n!=null)return n<96?'crit':(n<98||n>103)?'warn':'';
+  if(k==='bp'){const m=mapOf(val);if(m!=null)return m<60?'crit':m<70?'warn':'';const s=num(String(val).split('/')[0]);if(s!=null&&String(val).split('/').length===1)return s<80?'crit':s<90?'warn':'';}
+  if(k==='hr'&&n!=null){const lo=sp==='cat'?100:sp==='ferret'?150:60;const hi=sp==='cat'?220:sp==='ferret'?300:160;return n<lo*0.8?'crit':(n<lo||n>hi)?'warn':''}
+  return '';
+}
+function trends(v,p){
+  const g=v.anes.grid;const series=[['hr','Heart rate','bpm',null],['spo2','SpO₂','%',[95,100]],['etco2','EtCO₂','mmHg',[35,45]],['bp','MAP','mmHg',[70,110]],['temp','Temp','°F',[98,102.5]]];
+  return series.map(([k,l,u,band])=>{
+    const pts=g.cols.map((c,i)=>k==='bp'?mapOf(g.vals.bp[i]):num(g.vals[k][i]));
+    const idx=pts.map((y,i)=>y==null?null:i).filter(x=>x!=null);
+    if(idx.length<1)return `<div class="trend"><div class="th"><span>${l}</span><b>—</b></div><svg viewBox="0 0 240 54" aria-hidden="true"><line class="gl" x1="0" x2="240" y1="27" y2="27"/></svg></div>`;
+    const ys=idx.map(i=>pts[i]);let lo=Math.min(...ys),hi=Math.max(...ys);if(band){lo=Math.min(lo,band[0]);hi=Math.max(hi,band[1])}if(hi-lo<1){hi+=1;lo-=1}const padv=(hi-lo)*0.12;lo-=padv;hi+=padv;
+    const n=g.cols.length;const X=i=>6+i*(228/Math.max(1,n-1));const Y=y=>50-((y-lo)/(hi-lo))*46;
+    const path=idx.map((i,j)=>(j?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i]).toFixed(1)).join(' ');
+    const area=idx.length>1?path+` L${X(idx[idx.length-1]).toFixed(1)} 52 L${X(idx[0]).toFixed(1)} 52 Z`:'';
+    const last=idx[idx.length-1];
+    return `<div class="trend"><div class="th"><span>${l}${band?` <span class="note">target ${band[0]}–${band[1]}</span>`:''}</span><b>${fmt(pts[last],1)} ${u}</b></div>
+    <svg viewBox="0 0 240 54" preserveAspectRatio="none" aria-label="${esc(l)} trend">${band?`<rect class="band" x="0" width="240" y="${Y(band[1]).toFixed(1)}" height="${(Y(band[0])-Y(band[1])).toFixed(1)}"/>`:''}
+    <line class="gl" x1="0" x2="240" y1="52" y2="52"/>${area?`<path class="ar" d="${area}" opacity=".5"/>`:''}<path class="ln" d="${path}" vector-effect="non-scaling-stroke"/><circle class="ep" cx="${X(last).toFixed(1)}" cy="${Y(pts[last]).toFixed(1)}" r="2.6"/></svg></div>`;
+  }).join('');
+}
+
+/* step 5 */
+function stDental(v,p){
+  const ch=chartFor(p);const d=v.dental;const ex=extractions(v);
+  const header=`<div><div class="eyebrow">${ch?{dog:'Canine',cat:'Feline',ferret:'Ferret'}[ch]:'Dental'} dental chart</div><h2>Dental chart</h2></div>`;
+  const indices=`<div class="grid">${R('v.dental.gi','Gingivitis index',['0','1','2','3'],{cls:'s6'})}${R('v.dental.ci','Calculus index',['0','1','2','3'],{cls:'s6'})}</div>
+    <p class="note">GI0 none · GI1 mild, no bleeding · GI2 moderate, bleeding on probing · GI3 severe, spontaneous bleeding</p>`;
+  const tail=`<div class="grid">
+      <div class="f s12"><span class="lbl">Extractions (from chart)</span><span class="calc">${ex.length?`<b>${ex.join(', ')}</b> <em>(${ex.length} ${ex.length===1?'tooth':'teeth'})</em>`:'<em>None marked</em>'}</span></div>
+      ${A('v.dental.extNotes','Extraction notes',{cls:'s6',rows:2,ph:'Technique, flaps, sutures, nerve blocks'})}${A('v.dental.notes','Notes',{cls:'s6',rows:2})}
+    </div>
+    <details><summary class="lbl" style="cursor:pointer">Abbreviations</summary><div class="legend" style="margin-top:8px">${LEGEND.map(([k,l])=>`<div><b>${esc(k)}</b> ${esc(l)}</div>`).join('')}</div></details>`;
+  if(!ch)return `${header}<div class="banner info"><span>${p.species?`No tooth chart is set up for ${esc(p.speciesOther||p.species)}. Record findings in the notes.`:'Choose a species on the Check-in step to load the right tooth chart.'}</span></div>${indices}${tail}`;
+  const C=CHARTS[ch];
+  const tb=(n,lo)=>{const t=d.teeth[n];const cls=['tooth','t-'+ttype(n),lo?'lo':'up'];if(t&&t.ext)cls.push('ext');else if(t&&t.codes&&t.codes['/'])cls.push('missing');else if(toothHas(t))cls.push('find');
+    const mk=t?(t.ext?'X':t.codes&&t.codes['/']?'/':toothStr(t).split(' ')[0]||(t.note?'•':'')):'';
+    return `<button class="${cls.join(' ')}" data-act="tooth" data-t="${n}" aria-pressed="${ui.tooth===n}" title="${n} · ${esc(toothName(n))}${t?' · '+esc(toothStr(t)):''}"><span class="num">${n}</span><span class="crown"></span><span class="mk">${esc(mk)}</span></button>`};
+  const findings=Object.keys(d.teeth).map(Number).filter(n=>toothHas(d.teeth[n])).sort((a,b)=>a-b);
+  return `${header}
+  <div class="dlayout">
+    <div style="display:grid;gap:14px;min-width:0">
+      <div class="arches">
+        <div class="arch-lbl"><span>Right maxillary</span><span>Left maxillary</span></div>
+        <div class="arch">${C.ur.map(n=>tb(n,false)).join('')}<span class="mid"></span>${C.ul.map(n=>tb(n,false)).join('')}</div>
+        <div class="archgap"></div>
+        <div class="arch">${C.lr.map(n=>tb(n,true)).join('')}<span class="mid"></span>${C.ll.map(n=>tb(n,true)).join('')}</div>
+        <div class="arch-lbl"><span>Right mandibular</span><span>Left mandibular</span></div>
+      </div>
+      <p class="note">Tap a tooth to chart it. Amber = findings, red cross = extracted, dashed = missing.</p>
+      ${indices}
+      <div><h3 style="margin-bottom:6px">Charted teeth</h3>${findings.length?`<div class="ftable">${findings.map(n=>{const t=d.teeth[n];return `<div class="frow" data-act="tooth" data-t="${n}" role="button" tabindex="0"><span class="mono">${n}</span><span>${esc([toothStr(t),t.ext?'Extracted':'',t.note].filter(Boolean).join(' · '))}</span></div>`}).join('')}</div>`:'<p class="note">No findings charted yet.</p>'}</div>
+      ${tail}
+    </div>
+    <div class="teditor${ui.tooth?'':' idle'}" id="teditor">${toothEditor(v,p)}</div>
+  </div>`;
+}
+function toothEditor(v,p){
+  const ch=chartFor(p);if(!ch)return '';
+  if(!ui.tooth)return `<div class="panel" style="background:var(--surface-2)"><h3>No tooth selected</h3><p class="note">Pick a tooth on the chart to record pocketing, mobility, fractures, resorption or an extraction.</p></div>`;
+  const n=ui.tooth;const t=v.dental.teeth[n]||{codes:{},note:'',ext:false};const c=t.codes||{};
+  const all=[].concat(...['ur','ul','ll','lr'].map(k=>CHARTS[ch][k]));
+  const order=[...CHARTS[ch].ur.slice().reverse(),...CHARTS[ch].ul,...CHARTS[ch].ll,...CHARTS[ch].lr.slice().reverse()];
+  const i=order.indexOf(n);
+  return `<div class="panel">
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">${esc(toothName(n))}</div><h2 class="mono" style="font-family:var(--f-mono)">${n}</h2></div>
+      <div class="row"><button class="btn small" data-act="tooth" data-t="${order[(i-1+order.length)%order.length]}" aria-label="Previous tooth">‹</button><button class="btn small" data-act="tooth" data-t="${order[(i+1)%order.length]}" aria-label="Next tooth">›</button><button class="btn small primary sheet-x" data-act="tooth-close">Done</button></div></div>
+    <div class="row"><button class="code x" data-act="t-ext" aria-pressed="${!!t.ext}">X Extracted</button><button class="code" data-act="code" data-code="/" aria-pressed="${!!c['/']}">/ Missing</button></div>
+    <div class="mmrow">${MM_CODES.map(([k,l])=>`<label class="f"><span class="lbl">${k} · ${l}</span><input type="text" inputmode="decimal" data-k="v.dental.teeth.${n}.codes.${k}" data-tooth="${n}" value="${esc(c[k]??'')}" placeholder="mm"></label>`).join('')}</div>
+    ${CODE_GROUPS.map(([g,codes])=>`<div style="display:grid;gap:5px"><span class="lbl">${g}</span><div class="codes">${codes.map(k=>`<button class="code" data-act="code" data-code="${esc(k)}" aria-pressed="${c[k]===true}">${esc(k)}</button>`).join('')}</div></div>`).join('')}
+    <label class="f"><span class="lbl">Note</span><input type="text" data-k="v.dental.teeth.${n}.note" data-tooth="${n}" value="${esc(t.note||'')}"></label>
+    <button class="btn small ghost" data-act="t-clear">Clear this tooth</button>
+  </div>`;
+}
+
+/* step 6 */
+function stDischarge(v,p){
+  const ty=dischargeType(v);const ex=extractions(v);
+  return `<div><div class="eyebrow">Discharge</div><h2>Discharge &amp; go-home</h2></div>
+  <div class="grid">
+    ${R('v.discharge.type','Instruction sheet',[['auto',`Automatic (${ex.length?'with':'no'} extractions charted)`],['routine','Routine dental'],['extractions','Dental with extractions']],{cls:'s8',rr:1})}
+    ${T('v.discharge.time','Discharged at',{cls:'s4'})}
+    ${A('v.discharge.meds','Take-home medications',{cls:'s6',rows:3,ph:'Drug, strength, dose, frequency, duration'})}
+    ${A('v.discharge.comments','Additional comments for the owner',{cls:'s6',rows:3})}
+  </div>
+  <div style="display:grid;gap:8px"><h3>Go-home checklist</h3>${DIS_CHECK.map(([k,l])=>C('v.discharge.check.'+k,l+(k==='sheet'?` (${ty==='extractions'?'with':'without'} extractions)`:''),{rr:1})).join('')}</div>
+  <details><summary class="lbl" style="cursor:pointer">Preview the owner’s instruction sheet</summary><div class="doc" style="margin-top:10px">${dischargeDoc(v,p)}</div></details>`;
+}
+function dischargeDoc(v,p){
+  const ext=dischargeType(v)==='extractions';
+  return `<h3>Post-Anesthesia Discharge Instructions (${ext?'Dental with Extractions':'Routine Dental'})</h3>
+  <p><b>${esc(p.name||'Your pet')}</b> · ${esc(prettyDate(v.date))}</p>
+  <p>Your pet underwent a dental cleaning procedure today. As such, they may feel more tired than usual and may be less alert or playful. Depending on the degree of dental work performed, your pet may also be less willing to eat, and you may note a small amount of blood-tinged saliva. Additionally, their eyes may appear to have more discharge than usual. This is partly due to an eye lubricant that was applied to prevent your pet from having dry-eye during the procedure.</p>
+  <p>If your pet has a bandage on his or her leg at the time of discharge, please remove it when you get home.</p>
+  ${ext?`<p><b>Teeth extracted today:</b> ${extractions(v).join(', ')}</p>`:''}
+  <p><b>Feeding instructions:</b></p><ul><li>Please feed your pet half of his or her normal volume of food when you are settled at home. If your pet does not appear nauseous, you may feed the rest of the volume of food approximately 30 minutes later.</li><li>Give full access to fresh drinking water.</li>
+  ${ext?'<li>Soft food diet x 7–10 days. Feed either a commercial high-quality canned food or you can moisten your pet’s regular dry food w/warm water or broth.</li><li>Avoid allowing your pet to chew on any stuffed animals or toys until the extraction site has healed.</li>':''}</ul>
+  <p><b>Things that are normal, and do not require attention:</b></p><ul><li>Sleepiness</li><li>Inappetence</li><li>Blood-tinged saliva</li><li>Mild soft stool</li><li>A mild cough or raspy voice that resolves within 3 days</li></ul>
+  <p><b>Please call us the next day if you note any of the following:</b></p><ul><li>Vomiting or excessive drooling</li><li>Whining, pacing, or pawing at the mouth.${ext?' These could be signs of uncontrolled pain.':''}</li><li>Excessive squinting. This may be a sign of a corneal ulcer.</li>
+  ${ext?'<li>Unequal pupil sizes. This may be due to the dental nerve blocks administered. The term for this condition is anisocoria and it should resolve once the nerve block wears off. If it persists, please call us for a follow-up appointment.</li>':''}</ul>
+  <p><b>Things that are not normal which will require you to seek medical attention immediately:</b></p><ul><li>Excessive sedation/inability to wake your pet when sleeping.</li><li>Excessive bleeding from the mouth. ${ext?'Blood-tinged saliva is normal. There should not be any dripping of blood from the mouth.':'Blood-tinged saliva is normal if your pet had gingivitis.'}</li></ul>
+  <p>Please email, text, or fill out a ‘contact us’ form on our website if you have any concerns about how your pet is recovering. Even if we are not in the clinic, we will return your message as soon as we can. Otherwise, we will call the next business day to check in.</p>
+  ${ext?'<p>In 2 weeks, please take a look at the extraction sites to ensure that the gingiva is healthy and there is no evidence that the gingival flaps have failed to heal. Some suture material may still be present, but you should not see any defect in the gum tissue. If there is any question regarding this, please email a photo to us at info@petdentalcliniclongmont.com so that we can evaluate the extraction site(s) and provide guidance.</p>':''}
+  ${v.discharge.meds?`<p><b>Medications:</b><br>${esc(v.discharge.meds).replace(/\n/g,'<br>')}</p>`:''}
+  <p><b>Additional comments:</b> ${esc(v.discharge.comments||'')}</p>
+  <p>Your veterinarian today was: <b>${esc(v.dvm||'')}</b><br>Your technician today was: <b>${esc(v.tech||'')}</b></p>`;
+}
+
+/* patients */
+function vPatients(){
+  const q=ui.q.trim().toLowerCase();
+  const list=data.patients.filter(p=>!q||[p.name,p.owner&&p.owner.last,p.owner&&p.owner.first,p.owner&&p.owner.cell,p.breed].join(' ').toLowerCase().includes(q)).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  return `<section class="pagehead"><div><div class="eyebrow">${data.patients.length} on file</div><h1>Patients</h1></div><button class="btn primary" data-act="new-visit">New visit</button></section>
+  <input type="text" id="pq" placeholder="Search by pet, owner, or phone" value="${esc(ui.q)}" aria-label="Search patients">
+  ${list.length?`<div class="plist">${list.map(p=>{const vs=data.visits.filter(v=>v.patientId===p.id);const last=vs.map(v=>v.date).sort().pop();return `<div class="prow" role="button" tabindex="0" data-act="open-patient" data-id="${p.id}"><span class="pn">${esc(p.name||'Unnamed')} <span class="tag">${esc(p.species||'—')}</span>${p.sample?' <span class="tag sample">Example</span>':''}</span><span class="note">${vs.length} visit${vs.length===1?'':'s'}</span><span class="po">${esc(ownerName(p))}${p.owner&&p.owner.cell?' · '+esc(p.owner.cell):''}</span><span class="note">${last?'Last '+esc(prettyDate(last)):''}</span></div>`}).join('')}</div>`:'<div class="empty">No patients match.</div>'}`;
+}
+function vPatient(){
+  const p=curP();const vs=data.visits.filter(v=>v.patientId===p.id).sort((a,b)=>b.date.localeCompare(a.date));
+  return `<div class="crumbs"><button class="btn ghost" data-act="nav" data-view="patients">‹ Patients</button><button class="btn primary" data-act="visit-for" data-id="${p.id}">New visit for ${esc(p.name||'this patient')}</button></div>
+  <section class="panel"><div><div class="eyebrow">${esc(p.species||'')} · ${esc(p.breed||'')}</div><h1>${esc(p.name||'Unnamed')}</h1></div>
+  <div class="grid">${F('p.name','Pet name',{cls:'s4'})}${F('p.breed','Breed',{cls:'s4'})}${F('p.weightLbs','Approx. weight',{cls:'s4',unit:'lbs'})}${F('p.allergies','Known allergies',{cls:'s6'})}${F('p.conditions','Conditions',{cls:'s6'})}${F('p.owner.cell','Owner cell',{cls:'s4',type:'tel'})}${F('p.owner.email','Owner email',{cls:'s4',type:'email'})}${F('p.rdvm','Primary veterinarian',{cls:'s4'})}</div>
+  <p class="note">Everything else on the new patient form is editable from any visit’s Check-in step.</p></section>
+  <section class="panel"><h2>Visits</h2>${vs.length?`<div class="cards">${vs.map(vCard).join('')}</div>`:'<p class="note">No visits yet.</p>'}</section>`;
+}
+
+/* settings */
+function vSettings(){
+  const onPages=/\.github\.io$/i.test(location.hostname);
+  const hasTok=!!LS.get(TKEY);
+  return `<section class="pagehead"><div><div class="eyebrow">This device</div><h1>Settings</h1></div></section>
+  ${IS_IOS&&!STANDALONE?`<section class="panel" style="background:var(--accent-soft)"><h2>Use it as an iPad app</h2><p>In Safari, tap Share, then <b>Add to Home Screen</b>. The app then opens full screen, and Safari will not clear its data after a week away from the site.</p><p class="note">The Home Screen app keeps its own storage, separate from Safari. Export a backup or push to GitHub here first, then import or pull inside the Home Screen app.</p></section>`:''}
+  <section class="panel"><h2>Staff</h2><p class="note">One name per line. These appear as suggestions for DVM and Tech on each visit.</p>
+    <div class="grid">${A('s.dvms','Veterinarians',{cls:'s6',rows:4,ph:'Dr. Diaz Torres\nDr. Cowgill'})}${A('s.techs','Technicians',{cls:'s6',rows:4})}</div></section>
+  <section class="panel"><h2>Backups</h2>
+    <p class="note">Visits are saved in this browser on this device. Export a backup regularly, or set up GitHub sync below.</p>
+    <div class="row"><button class="btn" data-act="export">Export backup (.json)</button><button class="btn" data-act="import">Import backup…</button></div>
+    <p class="note">${data.visits.length} visits · ${data.patients.length} patients · revision ${data.sync.rev||0}${data.sync.modified?' · last change '+esc(new Date(data.sync.modified).toLocaleString()):''}</p>
+  </section>
+  <section class="panel"><h2>Sync with a private GitHub repository</h2>
+    <p class="note">Keeps one JSON file in a private repo so several devices can share visits. Pull before you start a day, push when you finish. Nothing syncs automatically.</p>
+    ${onPages?'<div class="banner"><span>This app is hosted on a github.io address. Any other app you publish under the same username can read a token saved here. Use a fine-grained token limited to this one repository with Contents read/write only.</span></div>':''}
+    <div class="grid">
+      <label class="f s3 m6"><span class="lbl">Owner</span><input id="cOwner" value="${esc(cfg.owner)}" placeholder="github-username"></label>
+      <label class="f s3 m6"><span class="lbl">Private repo</span><input id="cRepo" value="${esc(cfg.repo)}" placeholder="private-data-repo"></label>
+      <label class="f s2 m6"><span class="lbl">Branch</span><input id="cBranch" value="${esc(cfg.branch)}"></label>
+      <label class="f s4 m6"><span class="lbl">File path</span><input id="cPath" value="${esc(cfg.path)}"></label>
+      <label class="f s8"><span class="lbl">Access token ${hasTok?'(saved on this device)':''}</span><input id="cTok" type="password" placeholder="${hasTok?'•••••••• leave blank to keep':'github_pat_…'}" autocomplete="off"></label>
+      <div class="s4 row" style="align-self:end"><button class="btn" data-act="save-sync">Save settings</button>${hasTok?'<button class="btn ghost" data-act="forget-token">Forget token</button>':''}</div>
+    </div>
+    <div class="row"><button class="btn primary" data-act="pull">Pull from GitHub</button><button class="btn primary" data-act="push">Push to GitHub</button><span class="note" id="syncMsg">${cfg.lastSync?'Last synced '+esc(new Date(cfg.lastSync).toLocaleString()):'Not synced yet.'}</span></div>
+    <p class="note">This device: ${esc(cfg.device)} · synced revision ${cfg.baseRev||0}</p>
+  </section>
+  <section class="panel"><h2>Erase</h2><div class="row"><button class="btn danger" data-act="wipe">Erase all visits on this device</button></div></section>`;
+}
+
+/* ---------- after render hooks ---------- */
+function setHH(){const h=$('.top');if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px')}
+window.addEventListener('resize',setHH);window.addEventListener('orientationchange',()=>setTimeout(setHH,200));
+function afterRender(){
+  setHH();
+  document.body.classList.toggle('sheet-open',ui.view==='visit'&&ui.step==='dental'&&!!ui.tooth);
+  const pad=$('#sigpad');if(pad)setupSig(pad);
+}
+function chartAboveSheet(){const a=$('.arches'),st=$('.stepper');if(!a)return;const top=(($('.top')||{}).offsetHeight||60)+((st||{}).offsetHeight||56)+8;window.scrollTo(0,Math.max(0,a.getBoundingClientRect().top+window.scrollY-top))}
+function scrollToPanel(){const el=$('#stepPanel');if(!el)return;const hh=($('.top')||{}).offsetHeight||60;const y=el.getBoundingClientRect().top+window.scrollY-hh-72;if(window.scrollY>y)window.scrollTo(0,Math.max(0,y))}
+function setupSig(cv){
+  const v=curV();const ratio=window.devicePixelRatio||1;const w=cv.clientWidth,h=cv.clientHeight;cv.width=w*ratio;cv.height=h*ratio;
+  const ctx=cv.getContext('2d');ctx.scale(ratio,ratio);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#10202a';
+  ctx.strokeStyle='#c9d3d9';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(16,h-28);ctx.lineTo(w-16,h-28);ctx.stroke();ctx.lineWidth=2.2;ctx.strokeStyle='#10202a';
+  if(v.auth.signature){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,w,h);img.src=v.auth.signature}
+  let drawing=false,last=null,dirty=false;
+  const pt=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]};
+  cv.addEventListener('pointerdown',e=>{drawing=true;last=pt(e);cv.setPointerCapture(e.pointerId);e.preventDefault()});
+  cv.addEventListener('pointermove',e=>{if(!drawing)return;const p=pt(e);ctx.beginPath();ctx.moveTo(last[0],last[1]);ctx.lineTo(p[0],p[1]);ctx.stroke();last=p;dirty=true});
+  const end=()=>{if(!drawing)return;drawing=false;if(dirty){v.auth.signature=cv.toDataURL('image/png');v.auth.signedAt=new Date().toISOString();scheduleSave();const s=$('.sigline span');if(s)s.textContent='Owner / agent signature · signed '+new Date().toLocaleString()}};
+  cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+}
+
+/* ---------- events ---------- */
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset&&t.dataset.vflag){t.closest('.f').className='f '+flag(t.dataset.vflag,t.value,curP());return}
+  if(t.id==='pq'){ui.q=t.value;const pos=t.selectionStart;render();const n=$('#pq');n.focus();n.setSelectionRange(pos,pos);return}
+  if(!t.dataset||!t.dataset.k||t.type==='radio'||t.type==='checkbox')return;
+  if(t.dataset.tooth)ensureTooth(+t.dataset.tooth);
+  setK(t.dataset.k,t.value);scheduleSave();
+  if(t.dataset.flag){const td=t.parentElement;td.className=flag(t.dataset.flag,t.value,curP())+(t.dataset.flag==='bp'?' c-bp':'');const tr=$('#trends');if(tr)tr.innerHTML=trends(curV(),curP())}
+  if(t.dataset.live)live(t.dataset.live);
+  if(t.dataset.tooth)refreshTooth(+t.dataset.tooth);
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='dayPick'){ui.date=t.value||todayISO();render();return}
+  if(t.id==='openOnly'){ui.openOnly=t.checked;render();return}
+  if(t.id==='importFile'){doImport(t.files[0]);t.value='';return}
+  if(!t.dataset||!t.dataset.k)return;
+  if(t.type==='radio'){if(t.checked)setK(t.dataset.k,t.value)}
+  else if(t.type==='checkbox')setK(t.dataset.k,t.checked);
+  else setK(t.dataset.k,t.value);
+  scheduleSave();
+  if(t.dataset.live)live(t.dataset.live);
+  if(t.dataset.rr!==undefined)render(true);
+  else if(ui.view==='visit'&&(t.type==='radio'||t.type==='checkbox'||t.tagName==='SELECT'))refreshChrome();
+});
+function live(tag){
+  const v=curV(),p=curP();if(!v)return;
+  if(tag==='wt'){const w=num(v.exam.wtKg);const el=$('#wtConv');if(el)el.textContent=w?fmt(w*2.20462,1)+' lbs':'—';}
+  if(tag.startsWith('dose:')){const [,kind,i]=tag.split(':');const el=$(`#calc-${kind}-${i}`);if(el)el.innerHTML=calcHTML(v,p,v.anes[kind][i]);const u=DRUGS[v.anes[kind][i].drug];const inp=$('#'+fid(`v.anes.${kind}.${i}.dose`));if(inp&&inp.nextElementSibling)inp.nextElementSibling.textContent=u?u.u:''}
+}
+function refreshChrome(){
+  // update the stepper and footer without disturbing inputs
+  const v=curV(),p=curP();if(!v)return;
+  // Update text and classes in place; never replace buttons, so a click already in progress still lands.
+  const tmp=document.createElement('div');tmp.innerHTML=vVisit();
+  const ns=tmp.querySelector('.stepstatus'),os=$('.stepstatus');if(ns&&os&&ns.innerHTML!==os.innerHTML)os.innerHTML=ns.innerHTML;
+  const nb=tmp.querySelector('#completeBtn'),ob=$('#completeBtn');if(nb&&ob)ob.textContent=nb.textContent;
+  const nbs=$$('.stepper button',tmp),obs=$$('.stepper button');nbs.forEach((b,i)=>{if(obs[i]){obs[i].className=b.className;obs[i].querySelector('.n').textContent=b.querySelector('.n').textContent}});
+  const na=tmp.querySelector('.summary'),oa=$('.summary');if(na&&oa){
+    const h0=oa.querySelector('h1'),h1=na.querySelector('h1');if(h0&&h1)h0.textContent=h1.textContent;
+    const f0=oa.querySelector('.facts'),f1=na.querySelector('.facts');if(f0&&f1&&f0.innerHTML!==f1.innerHTML)f0.innerHTML=f1.innerHTML;
+    const a1=na.querySelector('.alerts'),a0=oa.firstElementChild;const cur=a0.querySelector('.alerts');if(cur)cur.remove();if(a1)a0.appendChild(a1)}
+}
+let chromeTimer=null;
+document.addEventListener('focusout',e=>{if(ui.view==='visit'&&e.target.dataset&&e.target.dataset.k){clearTimeout(chromeTimer);chromeTimer=setTimeout(refreshChrome,50)}});
+
+function ensureTooth(n){const d=curV().dental;if(!d.teeth[n])d.teeth[n]={codes:{},note:'',ext:false};d.teeth[n].codes=d.teeth[n].codes||{};return d.teeth[n]}
+function refreshTooth(n){const btn=$(`.arch [data-t="${n}"]`);if(!btn)return;const tmp=document.createElement('div');tmp.innerHTML=stDental(curV(),curP());const nb=tmp.querySelector(`.arch [data-t="${n}"]`);if(nb){btn.className=nb.className;btn.title=nb.title;btn.querySelector('.mk').textContent=nb.querySelector('.mk').textContent}}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('#modalRoot').innerHTML){closeModal();return}
+  const t=e.target;if((e.key==='Enter'||e.key===' ')&&t.getAttribute&&t.getAttribute('role')==='button'&&t.dataset.act){e.preventDefault();t.click()}
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const act=b.dataset.act;const v=curV();
+  switch(act){
+    case 'nav':go(b.dataset.view);break;
+    case 'day':{if(b.dataset.d==='0')ui.date=todayISO();else{const [y,m,d]=ui.date.split('-').map(Number);ui.date=isoDate(new Date(y,m-1,d+Number(b.dataset.d)))}ui.openOnly=false;render();break}
+    case 'open-visit':{const vv=visit(b.dataset.id);go('visit',vv.id,nextStep(vv)||'discharge');break}
+    case 'open-patient':go('patient',b.dataset.id);break;
+    case 'visit-for':startVisit(patient(b.dataset.id));break;
+    case 'new-visit':newVisitModal();break;
+    case 'pick-patient':closeModal();startVisit(b.dataset.id?patient(b.dataset.id):null);break;
+    case 'step':ui.step=b.dataset.step;ui.tooth=null;render(true);scrollToPanel();break;
+    case 'complete':{v.done[ui.step]=new Date().toISOString();if(ui.step==='discharge'&&!v.discharge.time)v.discharge.time=nowHM();saveNow();const i=STEPS.findIndex(s=>s[0]===ui.step);if(i<STEPS.length-1){ui.step=STEPS[i+1][0];ui.tooth=null;render(true);scrollToPanel()}else{toast('Visit complete.');render(true)}break}
+    case 'reopen':delete v.done[ui.step];saveNow();render(true);break;
+    case 'stamp':{setK(b.dataset.k,nowHM());const inp=$('#'+fid(b.dataset.k));if(inp)inp.value=nowHM();scheduleSave();if(b.dataset.k==='v.anes.times.isoOn')render(true);else refreshChrome();break}
+    case 'add-drug':v.anes[b.dataset.kind].push({drug:'',dose:'',route:'',given:''});saveNow();render(true);break;
+    case 'del-drug':v.anes[b.dataset.kind].splice(+b.dataset.i,1);saveNow();render(true);break;
+    case 'add-cols':for(let i=0;i<3;i++)v.anes.grid.cols.push({time:''});saveNow();render(true);break;
+    case 'fill-times':{const at=autoTimes(v);if(!at.length){toast('Set the Iso on time first.');break}v.anes.grid.cols.forEach((c,i)=>{if(!c.time)c.time=at[i]});saveNow();render(true);break}
+    case 'exam-wnl':['eent','oral','pln','hl','abd','ms','ug','neuro','rectal','cs'].forEach(k=>{if(!v.exam[k])v.exam[k]='WNL'});saveNow();render(true);break;
+    case 'tooth':{const was=ui.tooth;ui.tooth=+b.dataset.t;render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});if(window.innerWidth<1100&&!was)chartAboveSheet();break}
+    case 'tooth-close':ui.tooth=null;render(true);break;
+    case 'code':{const t=ensureTooth(ui.tooth);const k=b.dataset.code;const on=t.codes[k]===true;EXCL.forEach(g=>{if(g.includes(k))g.forEach(x=>delete t.codes[x])});if(on)delete t.codes[k];else t.codes[k]=true;saveNow();render(true);break}
+    case 't-ext':{const t=ensureTooth(ui.tooth);t.ext=!t.ext;saveNow();render(true);break}
+    case 't-clear':delete v.dental.teeth[ui.tooth];saveNow();render(true);break;
+    case 'sig-clear':delete v.auth.signature;delete v.auth.signedAt;saveNow();render(true);break;
+    case 'del-visit':confirmModal(`Delete this visit for ${esc((curP()||{}).name||'this patient')}?`,'The patient record stays. This cannot be undone unless you have a backup.','Delete visit',()=>{data.visits=data.visits.filter(x=>x.id!==v.id);saveNow();go('visits')});break;
+    case 'remove-samples':confirmModal('Remove the example visits?','Biscuit and Miso, and their visits, will be deleted.','Remove examples',()=>{data.visits=data.visits.filter(x=>!x.sample);data.patients=data.patients.filter(x=>!x.sample);saveNow();render()});break;
+    case 'print':doPrint(b.dataset.sec);break;
+    case 'export':download(`pdc-visits-backup-${todayISO()}.json`,JSON.stringify((flushSave(),data),null,1));toast('Backup downloaded.');break;
+    case 'import':$('#importFile').click();break;
+    case 'save-sync':readSyncForm();toast('Sync settings saved.');render();break;
+    case 'forget-token':LS.del(TKEY);toast('Token removed from this device.');render();break;
+    case 'pull':readSyncForm();pull();break;
+    case 'push':readSyncForm();push();break;
+    case 'wipe':confirmModal('Erase every visit and patient on this device?','Export a backup first if you might need them. GitHub copies are not touched.','Erase everything',()=>{data=blank();lastBody=bodyOf(data);saveNow();go('visits')});break;
+    case 'vitals':vitalsModal();break;
+    case 'save-vitals':saveVitals(+b.dataset.col);break;
+    case 'close-modal':closeModal();break;
+    case 'modal-ok':{const f=pendingOK;closeModal();if(f)f();break}
+    case 'conflict':resolveConflict(b.dataset.keep);break;
+  }
+});
+
+/* ---------- visits ---------- */
+function newVisitModal(){
+  const list=data.patients.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  showModal(`<h2>New visit</h2><p class="note">Returning patient? Pick them to reuse the owner and patient details.</p>
+  <input type="text" id="npq" placeholder="Search pet or owner" aria-label="Search patients" autocomplete="off">
+  <div class="pick" id="npl">${pickList(list)}</div>
+  <div class="acts"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="pick-patient" data-id="">New patient</button></div>`);
+  const q=$('#npq');q.focus();q.addEventListener('input',()=>{const s=q.value.toLowerCase();$('#npl').innerHTML=pickList(list.filter(p=>[p.name,ownerName(p),p.owner&&p.owner.cell].join(' ').toLowerCase().includes(s)))});
+}
+function pickList(l){return l.length?l.map(p=>`<button data-act="pick-patient" data-id="${p.id}"><b>${esc(p.name||'Unnamed')}</b> <span class="tag">${esc(p.species||'—')}</span><br><span class="note">${esc(ownerName(p))}${p.owner&&p.owner.cell?' · '+esc(p.owner.cell):''}</span></button>`).join(''):'<p class="note" style="padding:10px 12px">No matching patients.</p>'}
+function startVisit(p){
+  if(!p){p=newPatient();data.patients.push(p)}
+  const v=ensureShape({id:uid(),patientId:p.id,date:ui.openOnly?todayISO():ui.date,created:new Date().toISOString(),dvm:'',tech:''});
+  const staff=s=>(data.settings[s]||'').split('\n').map(x=>x.trim()).filter(Boolean);
+  if(staff('dvms').length===1)v.dvm=staff('dvms')[0];
+  data.visits.push(v);saveNow();go('visit',v.id,'checkin');
+}
+
+/* ---------- vitals entry sheet ---------- */
+const CARRY=['iso','o2','fluid','crt','pulse','ecg'];
+const NUMERIC=['iso','o2','fluid','hr','spo2','rr','etco2','temp'];
+function vitalsModal(){
+  const v=curV(),g=v.anes.grid;let last=-1;
+  g.cols.forEach((c,i)=>{if(GRID_ROWS.some(([k])=>g.vals[k][i]))last=i});
+  const col=last+1;
+  showModal(`<div class="row" style="justify-content:space-between;align-items:flex-end"><div><div class="eyebrow">${(col+1)*5} min reading</div><h2>Record vitals</h2></div>
+    <div class="f" style="width:170px"><label class="lbl" for="vt_time">Time</label><input type="time" id="vt_time" value="${nowHM()}"></div></div>
+    <div class="vitals">${GRID_ROWS.map(([k,l])=>{const pv=last>=0?(g.vals[k][last]??''):'';const val=CARRY.includes(k)?pv:'';
+      return `<label class="f ${flag(k,val,curP())}" id="vw_${k}" for="vt_${k}"><span class="lbl">${l}</span><input id="vt_${k}" data-vflag="${k}" value="${esc(val)}"${NUMERIC.includes(k)?' inputmode="decimal"':''} autocomplete="off"${k==='bp'?' placeholder="sys/dia/MAP"':''}><span class="prev">${pv!==''?'Last: '+esc(pv):'&nbsp;'}</span></label>`}).join('')}</div>
+    <p class="note">Iso, O₂, fluids, CRT/MM, pulse and ECG carry over from the last reading. Change anything that’s different.</p>
+    <div class="acts"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="save-vitals" data-col="${col}">Save ${(col+1)*5} min reading</button></div>`,'wide');
+  const f=$('#vt_hr');if(f)f.focus({preventScroll:true});
+}
+function saveVitals(col){
+  const v=curV(),g=v.anes.grid;
+  while(g.cols.length<=col)g.cols.push({time:''});
+  g.cols[col].time=($('#vt_time')||{}).value||nowHM();
+  GRID_ROWS.forEach(([k])=>{const e=$('#vt_'+k);g.vals[k][col]=e?e.value.trim():''});
+  saveNow();closeModal();render(true);toast(`${(col+1)*5} min reading saved.`);
+}
+
+/* ---------- modal / toast ---------- */
+let pendingOK=null;
+function showModal(h,cls){$('#modalRoot').innerHTML=`<div class="scrim" data-scrim><div class="modal ${cls||''}" role="dialog" aria-modal="true">${h}</div></div>`;$('#modalRoot .scrim').addEventListener('click',e=>{if(e.target.hasAttribute('data-scrim'))closeModal()})}
+function closeModal(){$('#modalRoot').innerHTML='';pendingOK=null}
+function confirmModal(title,body,ok,fn){pendingOK=fn;showModal(`<h2>${title}</h2><p>${body}</p><div class="acts"><button class="btn" data-act="close-modal">Cancel</button><button class="btn danger" data-act="modal-ok">${ok}</button></div>`)}
+let toastT=null;
+function toast(msg){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;clearTimeout(toastT);toastT=setTimeout(()=>t.remove(),3200)}
+function download(name,text){const blob=new Blob([text],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function summaryOf(d){if(!d)return '—';const open=(d.visits||[]).filter(v=>!(v.done||{}).discharge).length;return `${(d.visits||[]).length} visits (${open} open), ${(d.patients||[]).length} patients`}
+function doImport(file){
+  if(!file)return;const r=new FileReader();
+  r.onload=()=>{const d=parseJSON(r.result);if(!d||d.app!==APP||!Array.isArray(d.visits)){toast('That file is not a Pet Dental Clinic backup.');return}
+    confirmModal('Replace this device’s data with the backup?',`Backup: ${summaryOf(d)}${d.sync&&d.sync.modified?', saved '+esc(new Date(d.sync.modified).toLocaleString()):''}.<br>This device: ${summaryOf(data)}.`,'Replace',()=>{data=d;data.visits.forEach(ensureShape);lastBody='';saveNow();toast('Backup imported.');go('visits')})};
+  r.readAsText(file);
+}
+
+/* ---------- printing ---------- */
+function doPrint(sec){
+  flushSave();const v=curV(),p=curP();if(!v)return;
+  const secs=sec==='all'?['checkin','auth','exam','anes','dental','discharge']:[sec];
+  $('#print').innerHTML=secs.map(s=>`<section class="pp">${printHead(v,p,(s==='dental'?(chartFor(p)?{dog:'Canine',cat:'Feline',ferret:'Ferret'}[chartFor(p)]+' ':'')+'Dental Chart':FORM_TITLES[s]))}${PRINT[s](v,p)}</section>`).join('');
+  window.print();
+}
+window.addEventListener('afterprint',()=>{$('#print').innerHTML=''});
+function printHead(v,p,title){const w=weightKg(v,p);return `<div class="hd"><div><b>Pet Dental Clinic</b><br><small>Cowgill Vet Svc LLC</small></div><div style="text-align:right"><b>${title}</b><br>${esc(p.name||'')} · ${esc(p.species||'')} · ${w?fmt(w.kg,1)+' kg':''} · ${esc(prettyDate(v.date))}</div></div>`}
+const kv=(l,val)=>`<div><b>${l}:</b> ${esc(val||'')}</div>`;
+const PRINT={
+  checkin:(v,p)=>{const o=p.owner;return `<h2>Owner</h2><div class="kv">${kv('Name',ownerName(p))}${kv('Co-owner',o.coowner)}${kv('Email',o.email)}${kv('Address',[o.street,o.city,o.state,o.zip].filter(Boolean).join(', '))}${kv('Cell',o.cell)}${kv('Home',o.home)}${kv('Work',o.work)}${kv('Employer',o.employer)}${kv('Occupation',o.occupation)}</div>
+    <h2>Patient</h2><div class="kv">${kv('Species',p.species==='Other'?p.speciesOther:p.species)}${kv('Name',p.name)}${kv('DOB / age',p.dob||p.age)}${kv('Breed',p.breed)}${kv('Color',p.color)}${kv('Approx. weight',p.weightLbs?p.weightLbs+' lbs':'')}${kv('Sex',p.sex)}${kv('Neutered/spayed',p.neutered)}${kv('Vaccines UTD',p.vaccinesUTD)}${kv('Allergies',p.allergies)}${kv('Conditions',p.conditions)}${kv('Veterinarian',p.rdvm)}</div><p><b>Medications:</b> ${esc(p.meds)}</p><p><b>Insurance claim for this visit:</b> ${esc(v.checkin.insurance)}</p><p style="text-align:right">DVM: ${esc(v.dvm)} &nbsp; Tech: ${esc(v.tech)}</p>`},
+  auth:(v,p)=>{const a=v.auth;const tmp=document.createElement('div');tmp.innerHTML=stAuth(v,p);const paras=[...tmp.querySelectorAll('.consent > p')].map(x=>`<p>${x.innerHTML}</p>`);
+    return `${paras.slice(0,3).join('')}<p><b>Photos:</b> I ${esc(a.photos||'____')} consent to have photos of my pet posted for promotional purposes.</p>${paras.slice(3,7).join('')}<p><b>CPR Directive:</b> ${a.cpr==='DNR'?'<b>DNR (Do Not Resuscitate)</b>':a.cpr==='CPR'?'CPR (medications, chest compressions, assisted ventilation)':'____'}</p>${paras.slice(7,9).join('')}
+    <p><b>Payment due today:</b> $${esc(a.estimate||'____')} +/- $0–500. I ${esc(a.extraOk||'____')} give permission for the veterinarian to remove severely diseased teeth up to an additional $500. <b>Any dental work beyond the 1-hour allotted time frame will be completed at a follow-up visit for oral surgery.</b></p>
+    <p><b>Root canal:</b> I ${esc(a.rootCanal||'____')} like to pursue root canal therapy (referral) preferable to extraction, if it is an option.</p>${paras.slice(9,10).join('')}
+    <p>My pet has been fasted. Time of last meal: <b>${esc(a.lastMeal||'____')}</b>. Nail trim requested: <b>${a.nails?'Yes':'No'}</b></p>
+    <p>By signing below, I certify that I have read and understand the above.</p>${a.signature?`<img class="sig" src="${a.signature}" alt="Signature">`:'<div class="sig" style="border-bottom:1px solid #000"></div>'}<p>Owner/Agent: <b>${esc(a.printedName)}</b> · ${a.signedAt?esc(new Date(a.signedAt).toLocaleString()):''}</p><p style="text-align:right">DVM: ${esc(v.dvm)} &nbsp; Tech: ${esc(v.tech)}</p>`},
+  exam:(v,p)=>{const e=v.exam;return `<div class="kv">${kv('Patient/Client',(p.name||'')+' / '+ownerName(p))}${kv('Species',p.species)}${kv('Age',ageStr(p))}${kv('Wt (kg)',e.wtKg)}${kv('Sex',p.sex)}</div><h2>History</h2><p>${esc(e.history).replace(/\n/g,'<br>')}</p>
+    <h2>Physical exam</h2><div class="kv">${kv('T',e.T)}${kv('P',e.P)}${kv('R',e.R)}${kv('Behavior/mentation',e.mentation)}${kv('BCS',e.bcs?e.bcs+'/9':'')}${kv('MM / CRT',[e.mm,e.crt].filter(Boolean).join(', '))}${[['eent','EENT'],['oral','Oral'],['pln','PLN'],['hl','H/L'],['abd','Abd'],['ms','M/S'],['ug','U/G'],['neuro','Neuro'],['rectal','Rectal'],['cs','C/S']].map(([k,l])=>kv(l,e[k])).join('')}</div>
+    <h2>Assessment</h2><p>${esc(e.assessment).replace(/\n/g,'<br>')}</p><h2>Plan</h2><div class="kv">${kv('Procedure',e.procedure)}${kv('Laboratory',e.laboratory)}</div><p><b>Client comm.:</b> ${esc(e.clientComm)}</p>`},
+  anes:(v,p)=>{const a=v.anes,t=a.times,w=weightKg(v,p);const drugs=(list,kind)=>list.filter(r=>r.drug).map(r=>{const d=DRUGS[r.drug];return `<tr><td>${esc(r.drug)} ${d?d.c+' mg/mL':''}</td><td>${esc(r.dose)} ${d?d.u:''}</td><td>${r.given?esc(r.given)+' mL given':calcHTML(v,p,r).replace(/<[^>]+>/g,'')}</td>${kind==='premed'?`<td>${esc(r.route)}</td>`:''}</tr>`}).join('');
+    const g=a.grid;const lastCol=Math.max(0,...GRID_ROWS.map(([k])=>g.vals[k].reduce((m,x,i)=>x?i+1:m,0)),g.cols.reduce((m,c,i)=>c.time?i+1:m,0));const cols=g.cols.slice(0,Math.max(lastCol,12));
+    return `<div class="kv">${kv('Presents for',a.presentsFor==='Other'?a.presentsOther:a.presentsFor)}${kv('Behavior warnings',a.behaviorWarnings)}${kv('Dosing weight',w?fmt(w.kg,2)+' kg':'')}${kv('Blood draw',[t.bw,a.bwLoc,a.bwBehavior].filter(Boolean).join(' · '))}${kv('Exam behavior',a.examBehavior)}${kv('CPR directive',v.auth.cpr)}</div>
+    <h2>Premedication ${esc(t.premed||'')}</h2><table><tr><th>Drug</th><th>Dose</th><th>Volume</th><th>Route</th></tr>${drugs(a.premed,'premed')}</table><p>Premed was: ${esc(a.premedEffect)} · Behavior: ${esc(a.premedBehavior)}</p>
+    <p><b>IVC ${esc(t.ivc||'')}:</b> ${esc(a.ivcSize)} ${esc(a.ivcSite)}</p>
+    <h2>Induction ${esc(t.induction||'')}</h2><table><tr><th>Drug</th><th>Dose</th><th>Volume</th></tr>${drugs(a.induction,'induction')}</table>
+    <p><b>Intubated ${esc(t.intub||'')}:</b> ET ${esc(a.etSize)} · ${[a.intub.lateral&&'lateral recumbency',a.intub.o2&&'O₂ on',a.intub.cuff&&'cuff checked, no leaks'].filter(Boolean).join(', ')} · <b>Iso on</b> ${esc(t.isoOn||'')} · Nails trimmed: ${esc(a.nails)}</p>
+    <h2>Monitoring</h2><table><tr><th></th>${cols.map((c,i)=>`<th>${(i+1)*5}m<br>${esc(c.time)}</th>`).join('')}</tr>${GRID_ROWS.map(([k,l])=>`<tr><th>${l}</th>${cols.map((c,i)=>`<td>${esc(g.vals[k][i]??'')}</td>`).join('')}</tr>`).join('')}</table>
+    <div class="kv" style="margin-top:6pt">${kv('Iso off / fluids d/c',t.isoOff)}${kv('Total fluids',a.totalFluids?a.totalFluids+' mL':'')}${kv('O₂ off',t.o2Off)}${kv('Final SpO₂',a.finalSpo2)}${kv('Final temp',a.finalTemp)}${kv('Final BP',a.finalBp)}${kv('Extubated',t.extubated)}${kv('Recovery TPR '+(t.tpr||''),[a.recT,a.recP,a.recR].join(' / '))}${kv('Surgery time',t.isoOn&&t.isoOff?t.isoOn+'–'+t.isoOff:'')}</div>
+    <h2>Treatment notes</h2><p>${esc(a.notes).replace(/\n/g,'<br>')}</p><p style="text-align:right">DVM: ${esc(v.dvm)} &nbsp; Tech: ${esc(v.tech)}</p>`},
+  dental:(v,p)=>{const ch=chartFor(p),d=v.dental;const ex=extractions(v);
+    let tbl='';if(ch){const C=CHARTS[ch];const up=[...C.ur.slice().reverse()],upL=C.ul,lo=[...C.lr.slice().reverse()],loL=C.ll;const cell=n=>{const t=d.teeth[n];return `<td style="width:6%"><b>${n}</b></td><td>${esc(t?[t.ext?'X':'',toothStr(t),t.note].filter(Boolean).join(' · '):'')}</td>`};const rows=(a,b)=>{let h='';for(let i=0;i<Math.max(a.length,b.length);i++)h+=`<tr>${a[i]?cell(a[i]):'<td></td><td></td>'}${b[i]?cell(b[i]):'<td></td><td></td>'}</tr>`;return h};
+      tbl=`<table><tr><th colspan="2">Right maxillary</th><th colspan="2">Left maxillary</th></tr>${rows(up,upL)}<tr><th colspan="2">Right mandibular</th><th colspan="2">Left mandibular</th></tr>${rows(lo,loL)}</table>`}
+    return `${tbl}<div class="kv" style="margin-top:6pt">${kv('Gingivitis index',d.gi)}${kv('Calculus index',d.ci)}${kv('Extractions',ex.join(', ')||'None')}</div><p><b>Extraction notes:</b> ${esc(d.extNotes)}</p><p><b>Notes:</b> ${esc(d.notes)}</p><p style="font-size:8pt">${LEGEND.map(([k,l])=>`<b>${esc(k)}</b> ${esc(l)}`).join(' · ')}</p>`},
+  discharge:(v,p)=>`<div class="doc">${dischargeDoc(v,p)}</div>`
+};
+
+/* ---------- GitHub sync ---------- */
+const b64encode=s=>{let b='';new TextEncoder().encode(s).forEach(c=>b+=String.fromCharCode(c));return btoa(b)};
+const b64decode=s=>new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g,'')),c=>c.charCodeAt(0)));
+function readSyncForm(){const g=id=>{const e=$('#'+id);return e?e.value.trim():null};const o=g('cOwner'),r=g('cRepo'),br=g('cBranch'),pa=g('cPath'),tk=g('cTok');
+  if(o!==null){cfg.owner=o;cfg.repo=r;cfg.branch=br||'main';cfg.path=(pa||'pdc/visits.json').replace(/^\/+/,'');cfg.backend=o&&r?'github':'none';if(tk)LS.set(TKEY,tk);saveCfg()}}
+function syncMsg(m,tone){const el=$('#syncMsg');if(el){el.textContent=m;el.style.color=tone==='crit'?'var(--crit)':tone==='ok'?'var(--ok)':''}toast(m)}
+async function gh(method,path,body){
+  const tok=LS.get(TKEY);
+  const r=await fetch(`https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}${path}`,{method,headers:Object.assign({Authorization:'Bearer '+tok,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},body?{'Content-Type':'application/json'}:{}),body:body?JSON.stringify(body):undefined,cache:'no-store'});
+  let j=null;try{j=await r.json()}catch(e){}
+  return {status:r.status,ok:r.ok,j,headers:r.headers};
+}
+const contentPath=()=>'/contents/'+cfg.path.split('/').map(encodeURIComponent).join('/');
+function httpError(r,doing){
+  const m=r.j&&r.j.message?` GitHub says: “${r.j.message}”.`:'';
+  if(r.status===401)return 'GitHub rejected the token. It may be expired, revoked, or mistyped. Paste a new one and save.';
+  if(r.status===403){if(r.headers&&r.headers.get('x-ratelimit-remaining')==='0')return 'GitHub rate limit reached. Try again in a few minutes.';return `The token can’t ${doing}. Give it Contents read/write access to ${cfg.owner}/${cfg.repo}.${m}`}
+  if(r.status===409)return 'The file changed on GitHub while saving. Pull, then push again.';
+  if(r.status===422)return `GitHub refused the request, usually a wrong branch or file path.${m}`;
+  return `GitHub returned ${r.status} while trying to ${doing}.${m}`;
+}
+async function explain404(){
+  const repo=await gh('GET','');
+  if(repo.status===404)return `Can’t see ${cfg.owner}/${cfg.repo}. Check the owner and repo names, and that the token has access to that repository (private repos look missing to tokens without access).`;
+  if(!repo.ok)return httpError(repo,'read the repository');
+  const br=await gh('GET','/branches/'+encodeURIComponent(cfg.branch));
+  if(br.status===404){const all=await gh('GET','/branches?per_page=20');const names=all.ok&&Array.isArray(all.j)?all.j.map(b=>b.name).join(', '):'';return `Branch “${cfg.branch}” doesn’t exist in ${cfg.repo}.${names?' Branches: '+names+'.':''}`}
+  return null; // repo and branch fine: file just doesn't exist yet
+}
+async function readRemote(){
+  const r=await gh('GET',contentPath()+'?ref='+encodeURIComponent(cfg.branch));
+  if(r.status===200){let d=null;try{d=JSON.parse(b64decode(r.j.content))}catch(e){throw new Error('The GitHub file is not valid JSON. Check '+cfg.path+'.')}if(!d||d.app!==APP)throw new Error(cfg.path+' on GitHub is not a Pet Dental Clinic data file.');return {sha:r.j.sha,data:d}}
+  if(r.status===404){const why=await explain404();if(why)throw new Error(why);return {missing:true}}
+  throw new Error(httpError(r,'read '+cfg.path));
+}
+function syncReady(){if(!cfg.owner||!cfg.repo){syncMsg('Enter the owner and private repo, then save.','crit');return false}if(!LS.get(TKEY)){syncMsg('Paste an access token first.','crit');return false}return true}
+const localDirty=()=>(data.sync.rev||0)>(cfg.baseRev||0);
+let busy=false;
+async function pull(){
+  if(busy||!syncReady())return;busy=true;flushSave();syncMsg('Pulling…');
+  try{
+    const rm=await readRemote();
+    if(rm.missing){syncMsg('No data file on GitHub yet. Push to create it.');return}
+    const rRev=rm.data.sync&&rm.data.sync.rev||0;
+    if(rRev>(cfg.baseRev||0)&&localDirty()){conflictModal(rm);return}
+    if(rRev>(cfg.baseRev||0)){adopt(rm.data);syncMsg('Pulled the latest visits from GitHub.','ok');return}
+    if(localDirty())syncMsg('GitHub is behind this device. Push to update it.');
+    else{cfg.lastSync=new Date().toISOString();saveCfg();syncMsg('Already up to date.','ok')}
+  }catch(e){syncMsg(e.message||String(e),'crit')}finally{busy=false}
+}
+async function push(opts={}){
+  if(busy&&!opts.force)return;if(!syncReady())return;busy=true;flushSave();syncMsg('Pushing…');
+  try{
+    let rm=opts.remote||await readRemote();
+    const rRev=rm.missing?0:(rm.data.sync&&rm.data.sync.rev||0);
+    if(!opts.force&&!rm.missing&&rRev>(cfg.baseRev||0)){if(localDirty())conflictModal(rm);else syncMsg('GitHub has newer visits. Pull first.');return}
+    if(!opts.force&&!localDirty()&&!rm.missing){syncMsg('Nothing new to push.','ok');return}
+    if(opts.force||(data.sync.rev||0)<=rRev){data.sync.rev=Math.max(data.sync.rev||0,rRev)+1;data.sync.modified=new Date().toISOString();data.sync.device=cfg.device;lastBody=bodyOf(data);LS.set(KEY,JSON.stringify(data))}
+    const body={message:`Update visits from ${cfg.device} (rev ${data.sync.rev})`,content:b64encode(JSON.stringify(data)),branch:cfg.branch};
+    if(!rm.missing)body.sha=rm.sha;
+    let r=await gh('PUT',contentPath(),body);
+    if(!r.ok&&!body.sha&&(r.status===422||r.status===409)){const again=await readRemote();if(!again.missing){const ar=again.data.sync&&again.data.sync.rev||0;if(ar>(cfg.baseRev||0)){conflictModal(again);return}body.sha=again.sha;r=await gh('PUT',contentPath(),body)}}
+    if(!r.ok)throw new Error(httpError(r,'write '+cfg.path));
+    cfg.baseRev=data.sync.rev;cfg.lastSync=new Date().toISOString();saveCfg();updateSyncChip();syncMsg(`Pushed revision ${data.sync.rev} to GitHub.`,'ok');
+  }catch(e){syncMsg(e.message||String(e),'crit')}finally{busy=false}
+}
+function adopt(d){d.visits.forEach(ensureShape);data=d;lastBody=bodyOf(data);LS.set(KEY,JSON.stringify(data));cfg.baseRev=d.sync.rev||0;cfg.lastSync=new Date().toISOString();saveCfg();render()}
+let conflictRemote=null;
+function conflictModal(rm){
+  conflictRemote=rm;busy=false;const rd=rm.data;
+  showModal(`<h2>Both copies changed</h2><p>Visits were edited on this device and on another one since the last sync. Choose which copy to keep. The other is downloaded as a backup first.</p>
+  <div class="cmp"><div><b>This device</b><br>${esc(cfg.device)}<br>${data.sync.modified?esc(new Date(data.sync.modified).toLocaleString()):''}<br>${esc(summaryOf(data))}</div><div><b>GitHub</b><br>${esc(rd.sync&&rd.sync.device||'unknown device')}<br>${rd.sync&&rd.sync.modified?esc(new Date(rd.sync.modified).toLocaleString()):''}<br>${esc(summaryOf(rd))}</div></div>
+  <div class="acts"><button class="btn" data-act="close-modal">Decide later</button><button class="btn" data-act="conflict" data-keep="remote">Use GitHub copy</button><button class="btn primary" data-act="conflict" data-keep="local">Keep this device’s copy</button></div>`);
+}
+function resolveConflict(keep){
+  const rm=conflictRemote;closeModal();if(!rm)return;
+  if(keep==='remote'){download(`pdc-visits-this-device-${todayISO()}.json`,JSON.stringify(data,null,1));adopt(rm.data);syncMsg('Using the GitHub copy. This device’s version was downloaded as a backup.','ok')}
+  else{download(`pdc-visits-github-${todayISO()}.json`,JSON.stringify(rm.data,null,1));push({force:true,remote:rm})}
+}
+function updateSyncChip(){
+  const c=$('#syncChip');if(!c)return;const dot=c.querySelector('.dot'),tx=c.querySelector('span:last-child');
+  let t='Saved on this device',k='ok';
+  if(!storageOK){t='Not saving: storage blocked';k='crit'}
+  else if(cfg.backend==='github'){if(localDirty()){t='Changes not synced';k='warn'}else if(cfg.lastSync){t='Synced '+new Date(cfg.lastSync).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}}
+  dot.className='dot '+k;tx.textContent=t;
+}
+
+/* expose for tests */
+window.__pdc={get data(){return data},get ui(){return ui},cfg,saveNow,render,go,setK,getK,flag,mapOf,calcHTML,weightKg,missing,extractions,dischargeType,pull,push,toothName,ensureShape,CHARTS};
+render();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
+})();
+</script>
