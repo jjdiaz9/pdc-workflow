@@ -1,3 +1,6 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
 <title>Pet Dental Clinic Visits</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -254,6 +257,57 @@ table.mon td.warn input{color:var(--warn);font-weight:600} table.mon td.crit inp
 .doc h3{margin-top:8px}
 .doc ul{margin:0;padding-left:20px}
 
+/* medication labels (DYMO 30252, 3.5 × 1.125 in) */
+.rxsec{display:grid;gap:12px}
+.rxhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.rxcard{border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:12px;background:var(--surface)}
+.rxbody{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);align-items:start}
+.rxform{display:grid;gap:12px;min-width:0}
+.rxside{display:grid;gap:8px;min-width:0}
+@media (min-width:1000px){.rxbody{grid-template-columns:minmax(0,1fr) 380px}.rxside{position:sticky;top:calc(var(--hh,60px) + env(safe-area-inset-top,0px) + 76px)}}
+@media (max-width:999px){.rxside{order:-1}}
+.rxfind{background:var(--accent-soft)!important}
+.sigb{display:grid;gap:8px 10px;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;background:var(--surface-2);border-radius:8px;padding:10px}
+.sigb>*{grid-column:span 3}
+@media (min-width:720px){.sigb .b1{grid-column:span 1}.sigb .b2{grid-column:span 2}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-strong);border-radius:999px;padding:0 14px 0 10px;min-height:44px;cursor:pointer;font-size:14.5px;background:var(--surface)}
+.chips input{width:20px;height:20px;margin:0;accent-color:var(--accent)}
+.chips label:has(input:checked){background:var(--accent-soft);border-color:var(--accent)}
+.roll{background:#D3DEE2;border-radius:10px;padding:18px 12px;display:flex;justify-content:center;overflow:hidden}
+.rxscale{position:relative;overflow:hidden;background:#fff;flex:none;width:336px;height:108px;border-radius:5px;box-shadow:0 1px 3px rgba(15,50,60,.28)}
+.rxscale>.rxl{position:absolute;top:0;left:0;transform-origin:0 0}
+.rxscale .rxl-in::before{content:"";position:absolute;left:var(--ml);right:var(--mr);top:var(--mt);bottom:var(--mb);outline:1px dashed #8FB9C4;pointer-events:none}
+.fit{font-size:13px;min-height:1.4em}.fit.ok{color:var(--ok)}.fit.warn{color:var(--warn)}.fit.err{color:var(--crit);font-weight:600}
+.csflag{background:var(--crit-soft);color:var(--crit);border-radius:6px;padding:6px 10px;font-size:13px}
+.copies{display:inline-flex;align-items:center;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
+.copies button{border:0;background:var(--surface-2);width:44px;min-height:44px;font-size:20px;cursor:pointer}
+.copies input{width:52px;border:0!important;border-radius:0!important;text-align:center;padding:0!important}
+.fmrow{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));padding-block:10px;border-top:1px solid var(--line)}
+.fmrow .w{grid-column:1/-1}
+@media (min-width:900px){.fmrow{grid-template-columns:2fr 1fr 1.3fr 1.1fr 2.6fr auto;align-items:center}.fmrow .w{grid-column:auto}}
+.fmrow[hidden]{display:none}
+.rxl{width:3.5in;height:1.125in;background:#fff;color:#000;position:relative;overflow:hidden;--s:1;
+  font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rxl-in{position:absolute;inset:0;padding:.06in .18in .05in .1in;display:flex;flex-direction:column;overflow:hidden;line-height:1.1}
+.rxl b{font-weight:700}
+.rl-hd{display:flex;justify-content:space-between;gap:.06in;font-size:calc(5.6pt * var(--s))}
+.rl-org{min-width:0}
+.rl-date{white-space:nowrap;font-weight:700}
+.rl-pt{display:flex;justify-content:space-between;gap:.08in;font-size:calc(7.2pt * var(--s));margin-top:.008in}
+.rl-drug{display:flex;justify-content:space-between;gap:.08in;font-size:calc(8.2pt * var(--s));font-weight:700;border-top:.6pt solid #000;margin-top:.012in;padding-top:.008in}
+.rl-qty{white-space:nowrap}
+.rl-sig{flex:1 0 auto;font-size:calc(8.6pt * var(--s));white-space:pre-wrap;overflow-wrap:anywhere;margin-top:.004in}
+.rl-ft{display:flex;flex-wrap:wrap;column-gap:.09in;font-size:calc(5.8pt * var(--s));border-top:.6pt solid #000;padding-top:.008in}
+.rl-warn{font-size:calc(5.2pt * var(--s))}
+.rl-cs{font-size:calc(5.2pt * var(--s));font-weight:700}
+.rxl .ph{color:#9AA7AC;font-weight:400}
+.cal-line{position:absolute;border-top:.8pt solid #000;height:0}
+.cal-cap{position:absolute;width:0;height:.09in;border-left:1.2pt solid #000}
+.cal-num{position:absolute;font-size:5.5pt;line-height:1;white-space:nowrap}
+.cal-title{position:absolute;left:0;right:0;text-align:center;font-size:5.5pt;line-height:1.15;white-space:nowrap}
+#rxMeasure{position:fixed;left:-10000px;top:0;visibility:hidden;pointer-events:none}
+
 /* patients */
 .plist{display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
 .prow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:12px 16px;border-top:1px solid var(--line);cursor:pointer}
@@ -298,6 +352,8 @@ table.mon td.warn input{color:var(--warn);font-weight:600} table.mon td.crit inp
   .pp p{margin:0 0 5pt}
   .pp .sig{height:60pt}
   .pp ul{margin:0 0 4pt}
+  #print .rxl{break-after:page;page-break-after:always}
+  #print .rxl:last-child{break-after:auto;page-break-after:auto}
 }
 </style>
 
@@ -318,7 +374,9 @@ table.mon td.warn input{color:var(--warn);font-weight:600} table.mon td.crit inp
 </div>
 <div id="modalRoot"></div>
 <div id="print"></div>
+<div id="rxMeasure" aria-hidden="true"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
+<input type="file" id="fmFile" accept=".csv,text/csv" hidden>
 
 <script>
 (function(){
@@ -458,18 +516,184 @@ function missing(v,p,step){
   if(step==='exam'){['T','P','R'].forEach(k=>{if(!e[k])m.push(k==='T'?'Temperature':k==='P'?'Pulse':'Respiration')});if(!e.wtKg)m.push('Weight (kg)');if(!e.bcs)m.push('BCS');if(!e.assessment)m.push('Assessment');}
   if(step==='anes'){if(!an.premed.some(r=>r.drug))m.push('Premedication');if(!an.times.induction)m.push('Induction time');if(!an.times.isoOff)m.push('Iso off time');if(!an.times.extubated)m.push('Extubation time');if(!(an.grid.vals.hr||[]).some(x=>x))m.push('Monitoring values');}
   if(step==='dental'){if(!chartFor(p)&&!v.dental.notes)m.push('Dental notes');if(v.dental.gi===undefined||v.dental.gi==='')m.push('Gingivitis index');if(v.dental.ci===undefined||v.dental.ci==='')m.push('Calculus index');}
-  if(step==='discharge'){const c=v.discharge.check;DIS_CHECK.forEach(([k,l])=>{if(!c[k])m.push(l)});if(!v.dvm)m.push('Veterinarian');if(!v.tech)m.push('Technician');}
+  if(step==='discharge'){const c=v.discharge.check;DIS_CHECK.forEach(([k,l])=>{if(!c[k])m.push(l)});rxList(v).forEach((r,i)=>{const n=r.drug||'medication '+(i+1);if(!r.drug)m.push('Drug name for medication '+(i+1));if(!r.sig)m.push('Directions for '+n);else if(r.drug&&!r.printed)m.push('Print the label for '+n)});if(!v.dvm)m.push('Veterinarian');if(!v.tech)m.push('Technician');}
   return m;
 }
 const DIS_CHECK=[['sheet','Discharge sheet provided'],['vohc','VOHC sheet provided'],['chew','Dental chew / treat given'],['photos','Pre/post photos reviewed'],['meds','Take-home medications reviewed'],['recheck','Recommended yearly dentals']];
+
+/* ---------- medication labels (Rx) ---------- */
+const RX_SEED=[
+  ['Amoxicillin/clavulanate','62.5 mg','tablet'],['Amoxicillin/clavulanate','125 mg','tablet'],['Amoxicillin/clavulanate','250 mg','tablet'],['Amoxicillin/clavulanate','375 mg','tablet'],
+  ['Cephalexin','250 mg','capsule'],['Cephalexin','500 mg','capsule'],['Doxycycline','100 mg','tablet'],['Metronidazole','250 mg','tablet'],['Metronidazole','500 mg','tablet'],
+  ['Enrofloxacin','22.7 mg','tablet'],['Enrofloxacin','68 mg','tablet'],['Enrofloxacin','136 mg','tablet'],
+  ['Clindamycin','75 mg','capsule'],['Clindamycin','150 mg','capsule'],['Clindamycin','25 mg/mL','oral solution'],
+  ['Carprofen','25 mg','tablet'],['Carprofen','75 mg','tablet'],['Carprofen','100 mg','tablet'],['Meloxicam','0.5 mg/mL','oral suspension'],['Meloxicam','1.5 mg/mL','oral suspension'],
+  ['Gabapentin','100 mg','capsule'],['Gabapentin','50 mg/mL','oral solution'],['Trazodone','50 mg','tablet'],['Trazodone','100 mg','tablet'],
+  ['Maropitant','16 mg','tablet'],['Maropitant','24 mg','tablet'],['Maropitant','60 mg','tablet'],['Famotidine','10 mg','tablet'],['Omeprazole','20 mg','capsule'],
+  ['Prednisone','5 mg','tablet'],['Prednisone','20 mg','tablet'],['Prednisolone','5 mg','tablet'],['Oclacitinib','5.4 mg','tablet'],['Oclacitinib','16 mg','tablet'],
+  ['Methimazole','2.5 mg','tablet'],['Methimazole','5 mg','tablet'],
+  ['Tramadol','50 mg','tablet','C-IV'],['Buprenorphine','0.3 mg/mL','solution','C-III'],['Phenobarbital','16.2 mg','tablet','C-IV'],['Phenobarbital','64.8 mg','tablet','C-IV']
+];
+const SCHEDULES=['C-II','C-III','C-IV','C-V'];
+const CAUTIONS=[['food','Give with food','Give with food'],['shake','Shake well before use','Shake well'],['fridge','Keep refrigerated','Refrigerate'],['finish','Give until all medication is gone','Finish all medication'],['drowsy','May cause drowsiness','May cause drowsiness'],['external','For external use only','External use only']];
+const FEDERAL_CAUTION='Caution: Federal law prohibits the transfer of this drug to any person other than the patient for whom it was prescribed.';
+const LBL_FONTS={narrow:'"Arial Narrow","Helvetica Neue",Arial,sans-serif',regular:'Arial,Helvetica,sans-serif'};
+const LBL_DEF={practice:'Pet Dental Clinic',address:'',phone:'',kids:'',discardMonths:12,font:'narrow',maxScale:1.15,mLeft:.10,mRight:.18,mTop:.06,mBottom:.05};
+const LABEL_W=3.5*96,LABEL_H=1.125*96,MIN_SCALE=0.6;
+const SIG_UNITS=['tablet','capsule','mL','chew','drop','pump'];
+const SIG_ROUTES=['by mouth','in the affected ear(s)','in the affected eye(s)','topically','under the skin'];
+const SIG_FREQ=['every 12 hours','every 8 hours','once daily','every other day','once weekly','as needed','once'];
+const PLURAL={tablet:'tablets',capsule:'capsules',chew:'chews',drop:'drops',pump:'pumps'};
+const VERB={'by mouth':'Give','in the affected ear(s)':'Apply','in the affected eye(s)':'Apply','topically':'Apply','under the skin':'Inject'};
+// Label settings: blank fields fall back to the defaults above.
+function lblSet(){const s=data.settings.labels||{},o={};Object.keys(LBL_DEF).forEach(k=>{const v=s[k];o[k]=v===undefined||v===''||v===null?LBL_DEF[k]:typeof LBL_DEF[k]==='number'?(num(v)??LBL_DEF[k]):v});return o}
+// The formulary is the built-in list until someone edits it; only then is it stored (and synced).
+function formulary(){return data.settings.formulary||RX_SEED.map(([name,strength,form,schedule])=>({name,strength,form,schedule:schedule||'',sig:''}))}
+function ensureFormulary(){if(!Array.isArray(data.settings.formulary))data.settings.formulary=formulary();return data.settings.formulary}
+const drugDisplay=x=>[x.name,x.strength,x.form].filter(Boolean).join(' ');
+const byDrug=(a,b)=>drugDisplay(a).localeCompare(drugDisplay(b),undefined,{numeric:true,sensitivity:'base'});
+const rxDrug=r=>[r.drug,r.strength,r.form].filter(Boolean).join(' ');
+function findFormulary(name,strength,form){const k=drugDisplay({name,strength,form}).toLowerCase();return formulary().find(x=>drugDisplay(x).toLowerCase()===k)}
+function addMonthsISO(iso,m){if(!iso)return '';const [y,mo,da]=iso.split('-').map(Number);const t=new Date(y,mo-1+(Number(m)||0),1);const last=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();return `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(Math.min(da,last))}`}
+function usDate(iso){if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||''))return iso||'';const [y,m,d]=iso.split('-');return `${m}/${d}/${y}`}
+function unitFor(form){const f=(form||'').toLowerCase();return /capsule/.test(f)?'capsules':/chew|tablet/.test(f)?'tablets':/susp|solution|liquid|syrup|elixir/.test(f)?'mL':/ointment|cream|gel/.test(f)?'g':''}
+function newRx(v){return {id:uid(),drug:'',strength:'',form:'',schedule:'',qty:'',qtyUnit:'',sig:'',c:{},cautionExtra:'',refills:'0',discard:addMonthsISO(v.date,lblSet().discardMonths),copies:'1',printed:''}}
+const rxList=v=>(v.discharge&&v.discharge.rx)||[];
+function buildSig(amt,unit,route,freq,dur){
+  amt=String(amt||'').trim();dur=String(dur||'').trim();
+  if(amt&&!/^(1|one|½|¼|¾|1\/2|1\/4|3\/4|0?\.\d+)$/i.test(amt)&&PLURAL[unit])unit=PLURAL[unit];
+  let s=[VERB[route]||'Give',amt,unit,route,freq].filter(Boolean).join(' ');
+  if(dur)s+=/^\d+(\.\d+)?$/.test(dur)?` for ${dur} day${dur==='1'?'':'s'}`:` ${dur}`;
+  return s+'.';
+}
+function builderDefaults(form){const f=(form||'').toLowerCase();
+  const unit=/capsule/.test(f)?'capsule':/chew|tablet/.test(f)?'tablet':/susp|solution|liquid/.test(f)?'mL':'';
+  const route=/ophthalmic/.test(f)?'in the affected eye(s)':/otic/.test(f)?'in the affected ear(s)':/cream|topical|ointment/.test(f)?'topically':/injectable/.test(f)?'under the skin':/tablet|capsule|oral|chew/.test(f)?'by mouth':'';
+  return {unit,route}}
+function lblSpecies(p){return {Dog:'Canine',Cat:'Feline'}[p.species]||(p.species==='Other'?p.speciesOther:p.species)||''}
+function lblMargins(s){const c=v=>Math.max(0,Math.min(0.5,Number(v)||0));return {l:c(s.mLeft),r:c(s.mRight),t:c(s.mTop),b:c(s.mBottom)}}
+function labelHTML(v,p,r,preview){
+  const s=lblSet(),m=lblMargins(s);
+  const ph=t=>preview?`<span class="ph">${esc(t)}</span>`:'';
+  const drugLine=rxDrug(r);
+  const qty=r.qty?`Qty ${r.qty}${r.qtyUnit?' '+r.qtyUnit:''}`:'';
+  const contact=[s.address,s.phone].filter(Boolean).map(esc).join(' | ');
+  const sp=lblSpecies(p);
+  const pt=p.name?`<b>${esc(p.name)}</b>${sp?' ('+esc(sp)+')':''}`:ph('Patient (species)');
+  const owner=ownerName(p)?'Owner: '+esc(ownerName(p)):ph('Owner');
+  const ft=[v.dvm?esc(v.dvm):ph('Veterinarian'),'Refills: '+esc(r.refills||'0'),r.discard?'Discard after '+esc(usDate(r.discard)):''].filter(Boolean);
+  const warn=['For veterinary use only',s.kids==='off'?'':'Keep out of reach of children',...CAUTIONS.filter(([k])=>r.c&&r.c[k]).map(x=>x[1]),r.cautionExtra].filter(Boolean).map(t=>esc(String(t).replace(/[.\s]+$/,'')));
+  return `<div class="rxl-in" style="padding:${m.t}in ${m.r}in ${m.b}in ${m.l}in;--ml:${m.l}in;--mr:${m.r}in;--mt:${m.t}in;--mb:${m.b}in">`+
+    `<div class="rl-hd"><span class="rl-org"><b>${esc(s.practice)}</b>${contact?' | '+contact:''}</span><span class="rl-date">${v.date?esc(usDate(v.date)):ph('Date')}</span></div>`+
+    `<div class="rl-pt"><span>${pt}</span><span>${owner}</span></div>`+
+    `<div class="rl-drug"><span>${drugLine?esc(drugLine):ph('Drug strength form')}</span><span class="rl-qty">${esc(qty)}</span></div>`+
+    `<div class="rl-sig">${r.sig?esc(r.sig):ph('Directions')}</div>`+
+    `<div class="rl-ft">${ft.map(x=>`<span>${x}</span>`).join('')}</div>`+
+    `<div class="rl-warn">${warn.join('. ')}.</div>${r.schedule?`<div class="rl-cs">${esc(r.schedule)}. ${esc(FEDERAL_CAUTION)}</div>`:''}</div>`;
+}
+// Shrink the text until it fits inside the margins. Needs the node to be laid out.
+function fitLabel(node){
+  const inner=node.querySelector('.rxl-in');
+  const over=()=>inner.scrollHeight>inner.clientHeight+1||inner.scrollWidth>inner.clientWidth+1;
+  let sc=Math.max(MIN_SCALE,lblSet().maxScale);node.style.setProperty('--s',sc);
+  while(over()&&sc>MIN_SCALE){sc=+(sc-0.02).toFixed(2);node.style.setProperty('--s',sc)}
+  return {scale:sc,overflow:over(),measured:inner.clientHeight>0};
+}
+function labelNode(v,p,r,preview){const n=document.createElement('div');n.className='rxl';n.style.fontFamily=LBL_FONTS[lblSet().font]||LBL_FONTS.narrow;n.innerHTML=labelHTML(v,p,r,preview);return n}
+function fitMsg(f){return !f.measured?['','']:f.overflow?['Text is cut off. Shorten the directions or cautions.','err']:f.scale<0.8?['Fits, but the text is small. Consider shortening the directions.','warn']:['Fits on one 30252 label.','ok']}
+function sizeLabels(){$$('.rxscale').forEach(sca=>{const roll=sca.parentElement;const w=roll.clientWidth-24;if(w<=0)return;const sc=Math.min(1.6,w/LABEL_W);sca.style.width=Math.round(LABEL_W*sc)+'px';sca.style.height=Math.round(LABEL_H*sc)+'px';const l=sca.firstElementChild;if(l)l.style.transform=`scale(${sc})`})}
+window.addEventListener('resize',sizeLabels);
+function rxRefresh(i){
+  const v=curV(),p=curP();const r=v&&rxList(v)[i];if(!r)return;
+  const box=$('#rxs-'+i);if(!box)return;
+  const n=labelNode(v,p,r,true);n.style.transform=box.firstElementChild?box.firstElementChild.style.transform:'';box.replaceChildren(n);
+  const [t,c]=fitMsg(fitLabel(n));const fm=$('#rxfit-'+i);if(fm){fm.textContent=t;fm.className='fit '+c}
+  const cs=$('#rxcs-'+i);if(cs)cs.hidden=!r.schedule;
+  const h=$('#rxh-'+i);if(h)h.textContent=rxDrug(r)||'New medication';
+}
+function rxCheck(v,p,r){const m=[];if(!p.name)m.push('pet name');if(!ownerName(p))m.push('owner name');if(!r.drug)m.push('drug');if(!r.sig)m.push('directions');if(!v.dvm)m.push('veterinarian (DVM at the top of the visit)');return m}
+let pageStyle=null;
+function setPageStyle(css){if(!pageStyle){pageStyle=document.createElement('style');document.head.appendChild(pageStyle)}pageStyle.textContent=css}
+function printLabelNodes(nodes){
+  setPageStyle('@page{size:3.5in 1.125in;margin:0}@media print{html,body{margin:0!important;padding:0!important}}');
+  $('#print').replaceChildren(...nodes);window.print();
+}
+function printLabels(idxs){
+  flushSave();const v=curV(),p=curP();if(!v)return;
+  const list=idxs.map(i=>rxList(v)[i]).filter(Boolean);
+  if(!list.length){toast('Add a medication first.');return}
+  for(const r of list){const m=rxCheck(v,p,r);if(m.length){toast(`${r.drug||'Medication'}: add the ${m.join(', ')} before printing.`);return}}
+  const host=$('#rxMeasure'),nodes=[],over=[];
+  list.forEach(r=>{const n=labelNode(v,p,r,false);host.appendChild(n);const f=fitLabel(n);if(f.overflow)over.push(r.drug);const k=Math.max(1,Math.min(20,parseInt(r.copies,10)||1));nodes.push(n);for(let i=1;i<k;i++)nodes.push(n.cloneNode(true))});
+  host.replaceChildren();
+  const go=()=>{const t=new Date().toISOString();list.forEach(r=>r.printed=t);saveNow();render(true);printLabelNodes(nodes);toast(`Sent ${nodes.length} ${nodes.length===1?'label':'labels'} to the printer.`)};
+  if(over.length)confirmModal('Some label text is cut off',`${esc(over.join(', '))}: shorten the directions or cautions, or print anyway.`,'Print anyway',go);else go();
+}
+function printCalibration(){
+  const m=lblMargins(lblSet()),f=x=>x.toFixed(2).replace(/^0/,'');
+  const n=document.createElement('div');n.className='rxl';n.style.fontFamily=LBL_FONTS.regular;
+  let h=`<div class="cal-title" style="top:.02in"><b>Alignment test</b>  Find the smallest number whose end mark printed completely on each side.</div>`;
+  [0.02,0.05,0.08,0.12,0.16,0.20,0.25].forEach((d,i)=>{const y=0.14+i*0.125;
+    h+=`<div class="cal-line" style="top:${y+.045}in;left:2.3in;right:${d}in"></div><div class="cal-cap" style="top:${y}in;right:${d}in"></div><div class="cal-num" style="top:${y+.015}in;right:1.24in">R ${f(d)}</div>`;
+    h+=`<div class="cal-line" style="top:${y+.045}in;left:${d}in;right:2.3in"></div><div class="cal-cap" style="top:${y}in;left:${d}in"></div><div class="cal-num" style="top:${y+.015}in;left:1.24in">L ${f(d)}</div>`});
+  h+=`<div class="cal-title" style="bottom:.015in">Current margins: left ${f(m.l)}, right ${f(m.r)}, top ${f(m.t)}, bottom ${f(m.b)} in</div>`;
+  n.innerHTML=h;printLabelNodes([n]);
+}
+function rxPick(i,val){
+  const v=curV();const r=v&&rxList(v)[i];const q=String(val||'').trim().toLowerCase();if(!r||!q)return;
+  const x=formulary().find(e=>drugDisplay(e).toLowerCase()===q);if(!x)return;
+  Object.assign(r,{drug:x.name,strength:x.strength,form:x.form,schedule:x.schedule||''});
+  r.qtyUnit=unitFor(x.form)||r.qtyUnit;if(x.sig&&!r.sig)r.sig=x.sig;
+  saveNow();render(true);
+  const b=builderDefaults(x.form);const u=$('#sb-unit-'+i),ro=$('#sb-route-'+i);if(u&&b.unit)u.value=b.unit;if(ro&&b.route)ro.value=b.route;
+  const q2=$('#'+fid(`v.discharge.rx.${i}.qty`));if(q2)q2.focus();
+}
+function saveRxToFormulary(r){
+  if(!r.drug){toast('Enter a drug name first.');return}
+  const hit=findFormulary(r.drug,r.strength,r.form);
+  if(hit&&(hit.schedule||'')===(r.schedule||'')){toast(`${drugDisplay(hit)} is already in the formulary.`);return}
+  const f=ensureFormulary();
+  if(hit){f.find(x=>drugDisplay(x).toLowerCase()===drugDisplay(hit).toLowerCase()).schedule=r.schedule||'';toast(`Updated the schedule for ${drugDisplay(hit)}.`)}
+  else{f.push({name:r.drug,strength:r.strength,form:r.form,schedule:r.schedule||'',sig:''});toast(`Added ${rxDrug(r)} to the formulary.`)}
+  saveNow();render(true);
+}
+function toCSV(rows){return rows.map(r=>r.map(v=>{v=String(v??'');return /[",\r\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v}).join(',')).join('\r\n')}
+function parseCSV(text){
+  const rows=[];let row=[],cur='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){cur+='"';i++}else q=false}else cur+=c}
+    else if(c==='"')q=true;else if(c===','){row.push(cur);cur=''}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cur);rows.push(row);row=[];cur=''}
+    else cur+=c}
+  if(cur!==''||row.length){row.push(cur);rows.push(row)}
+  return rows.filter(r=>r.some(v=>v.trim()!==''));
+}
+function importFormularyCSV(text){
+  const rows=parseCSV(text);if(!rows.length){toast('That file has no rows.');return}
+  const f=ensureFormulary();let added=0,updated=0;
+  for(const r of rows.slice(/^name$/i.test((rows[0][0]||'').trim())?1:0)){
+    const [name,strength='',form='',schedule='',sig='']=r.map(x=>(x||'').trim());if(!name)continue;
+    const sch=/^c-?(ii|iii|iv|v)$/i.test(schedule)?'C-'+schedule.replace(/^c-?/i,'').toUpperCase():'';
+    const k=drugDisplay({name,strength,form}).toLowerCase();const hit=f.find(x=>drugDisplay(x).toLowerCase()===k);
+    if(hit){hit.schedule=sch;if(sig)hit.sig=sig;updated++}else{f.push({name,strength,form,schedule:sch,sig});added++}
+  }
+  saveNow();render(true);toast(`Imported: ${added} added, ${updated} updated.`);
+}
+function exportFormularyCSV(){download(`formulary-${todayISO()}.csv`,toCSV([['name','strength','form','schedule','directions'],...formulary().slice().sort(byDrug).map(x=>[x.name,x.strength,x.form,x.schedule,x.sig])]),'text/csv')}
+function exportDispensingCSV(){
+  const head=['printed_at','visit_date','patient','species','client','drug','strength','form','schedule','qty','unit','directions','cautions','refills','discard_after','veterinarian','copies'];
+  const rows=[];data.visits.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(v=>{const p=patient(v.patientId)||{};rxList(v).filter(r=>r.printed).forEach(r=>rows.push([r.printed,v.date,p.name,p.species,ownerName(p),r.drug,r.strength,r.form,r.schedule,r.qty,r.qtyUnit,r.sig,[...CAUTIONS.filter(([k])=>r.c&&r.c[k]).map(x=>x[1]),r.cautionExtra].filter(Boolean).join('; '),r.refills,r.discard,v.dvm,r.copies]))});
+  if(!rows.length){toast('No labels have been printed yet.');return}
+  download(`dispensing-log-${todayISO()}.csv`,toCSV([head,...rows]),'text/csv');toast(`Dispensing log downloaded (${rows.length} ${rows.length===1?'label':'labels'}).`);
+}
 
 /* ---------- field builders ---------- */
 const fid=k=>'f_'+k.replace(/[^\w]/g,'_');
 function F(k,label,o={}){const v=getK(k);const t=o.type||'text';
   const inp=`<input id="${fid(k)}" type="${t}" data-k="${k}" value="${esc(v)}"${o.ph?` placeholder="${esc(o.ph)}"`:''}${o.im?` inputmode="${o.im}"`:''}${o.rr?' data-rr':''}${o.list?` list="${o.list}"`:''}${o.live?` data-live="${o.live}"`:''} autocomplete="off">`;
   return `<label class="f ${o.cls||''}" for="${fid(k)}"><span class="lbl">${label}</span>${o.unit?`<span class="inw">${inp}<span class="unit">${o.unit}</span></span>`:inp}</label>`}
-function A(k,label,o={}){return `<label class="f ${o.cls||''}" for="${fid(k)}"><span class="lbl">${label}</span><textarea id="${fid(k)}" data-k="${k}" rows="${o.rows||3}"${o.ph?` placeholder="${esc(o.ph)}"`:''}>${esc(getK(k))}</textarea></label>`}
-function S(k,label,opts,o={}){const v=String(getK(k));return `<label class="f ${o.cls||''}" for="${fid(k)}"><span class="lbl">${label}</span><select id="${fid(k)}" data-k="${k}"${o.rr?' data-rr':''}${o.live?` data-live="${o.live}"`:''}><option value="">—</option>${opts.map(x=>{const [val,l]=Array.isArray(x)?x:[x,x];return `<option value="${esc(val)}"${String(val)===v?' selected':''}>${esc(l)}</option>`}).join('')}</select></label>`}
+function A(k,label,o={}){return `<label class="f ${o.cls||''}" for="${fid(k)}"><span class="lbl">${label}</span><textarea id="${fid(k)}" data-k="${k}" rows="${o.rows||3}"${o.ph?` placeholder="${esc(o.ph)}"`:''}${o.live?` data-live="${o.live}"`:''}>${esc(getK(k))}</textarea></label>`}
+function S(k,label,opts,o={}){const v=String(getK(k));return `<label class="f ${o.cls||''}" for="${fid(k)}"><span class="lbl">${label}</span><select id="${fid(k)}" data-k="${k}"${o.rr?' data-rr':''}${o.live?` data-live="${o.live}"`:''}><option value="">${esc(o.none||'—')}</option>${opts.map(x=>{const [val,l]=Array.isArray(x)?x:[x,x];return `<option value="${esc(val)}"${String(val)===v?' selected':''}>${esc(l)}</option>`}).join('')}</select></label>`}
 function R(k,label,opts,o={}){const v=String(getK(k));const n=fid(k);return `<div class="f ${o.cls||''}" role="radiogroup" aria-label="${esc(label)}">${label?`<span class="lbl">${label}</span>`:''}<div class="seg ${o.tone||''}">${opts.map((x,i)=>{const [val,l,cl]=Array.isArray(x)?x:[x,x,''];return `<input type="radio" id="${n}_${i}" name="${n}" value="${esc(val)}" data-k="${k}"${o.rr?' data-rr':''}${String(val)===v?' checked':''}><label for="${n}_${i}" class="${cl||''}">${esc(l)}</label>`}).join('')}</div></div>`}
 function C(k,label,o={}){return `<label class="chk ${o.cls||''}" for="${fid(k)}"><input type="checkbox" id="${fid(k)}" data-k="${k}"${getK(k)?' checked':''}${o.rr?' data-rr':''}><span>${label}</span></label>`}
 function T(k,label,o={}){return `<div class="f ${o.cls||''}"><label class="lbl" for="${fid(k)}">${label}</label><div class="timef"><input id="${fid(k)}" type="time" data-k="${k}" value="${esc(getK(k))}"${o.rr?' data-rr':''}><button class="btn small" data-act="stamp" data-k="${k}" type="button">Now</button></div></div>`}
@@ -824,11 +1048,59 @@ function stDischarge(v,p){
   <div class="grid">
     ${R('v.discharge.type','Instruction sheet',[['auto',`Automatic (${ex.length?'with':'no'} extractions charted)`],['routine','Routine dental'],['extractions','Dental with extractions']],{cls:'s8',rr:1})}
     ${T('v.discharge.time','Discharged at',{cls:'s4'})}
-    ${A('v.discharge.meds','Take-home medications',{cls:'s6',rows:3,ph:'Drug, strength, dose, frequency, duration'})}
     ${A('v.discharge.comments','Additional comments for the owner',{cls:'s6',rows:3})}
+    ${A('v.discharge.meds','Other medication notes for the owner (not printed on labels)',{cls:'s6',rows:3})}
   </div>
+  ${stRx(v,p)}
   <div style="display:grid;gap:8px"><h3>Go-home checklist</h3>${DIS_CHECK.map(([k,l])=>C('v.discharge.check.'+k,l+(k==='sheet'?` (${ty==='extractions'?'with':'without'} extractions)`:''),{rr:1})).join('')}</div>
   <details><summary class="lbl" style="cursor:pointer">Preview the owner’s instruction sheet</summary><div class="doc" style="margin-top:10px">${dischargeDoc(v,p)}</div></details>`;
+}
+function stRx(v,p){
+  const rx=rxList(v);
+  return `<div class="rxsec">
+    <div class="rxhead"><div><h3>Take-home medications &amp; labels</h3><p class="note">One label per medication. The pet, owner, veterinarian and date come from this visit.</p></div>
+      <div class="row"><button class="btn" data-act="rx-add">Add medication</button>${rx.length?`<button class="btn primary" data-act="rx-print-all">Print all labels (${rx.reduce((n,r)=>n+Math.max(1,Math.min(20,parseInt(r.copies,10)||1)),0)})</button>`:''}</div></div>
+    ${rx.length?rx.map((r,i)=>rxCard(v,p,r,i)).join(''):'<p class="note">No take-home medications yet.</p>'}
+    <datalist id="dl-formulary">${formulary().slice().sort(byDrug).map(x=>`<option value="${esc(drugDisplay(x))}">`).join('')}</datalist>
+    <datalist id="dl-rxform">${['tablet','chewable tablet','capsule','oral suspension','oral solution','ophthalmic ointment','ophthalmic solution','otic solution','topical cream','injectable solution'].map(x=>`<option value="${x}">`).join('')}</datalist>
+    <datalist id="dl-rxunit">${['tablets','capsules','mL','chews','g','tubes','bottles','each'].map(x=>`<option value="${x}">`).join('')}</datalist>
+  </div>`;
+}
+function rxCard(v,p,r,i){
+  const k=`v.discharge.rx.${i}.`,L='rx:'+i,b=builderDefaults(r.form);
+  const opt=(list,sel)=>list.map(x=>`<option${x===sel?' selected':''}>${esc(x)}</option>`).join('');
+  return `<div class="rxcard">
+    <div class="rxhead"><h3 id="rxh-${i}">${esc(rxDrug(r)||'New medication')}</h3>
+      <div class="row">${r.printed?`<span class="alert ok">Printed ${esc(new Date(r.printed).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}))}</span>`:''}<button class="btn small ghost" data-act="rx-del" data-i="${i}">Remove</button></div></div>
+    <div class="rxbody">
+      <div class="rxform">
+        <label class="f"><span class="lbl">Find in the formulary</span><input type="text" class="rxfind" data-rxfind="${i}" list="dl-formulary" placeholder="Start typing, e.g. carprofen" autocomplete="off"></label>
+        <div class="grid">
+          ${F(k+'drug','Drug',{cls:'s5',live:L,ph:'Carprofen'})}${F(k+'strength','Strength',{cls:'s3 m6',live:L,ph:'75 mg'})}${F(k+'form','Dosage form',{cls:'s4 m6',live:L,list:'dl-rxform',ph:'tablet'})}
+          ${F(k+'qty','Quantity',{cls:'s3 m6',live:L,im:'decimal'})}${F(k+'qtyUnit','Unit',{cls:'s3 m6',live:L,list:'dl-rxunit'})}${S(k+'schedule','Controlled',SCHEDULES,{cls:'s3 m6',live:L,none:'Not controlled'})}${F(k+'refills','Refills',{cls:'s3 m6',live:L,im:'numeric'})}
+        </div>
+        <div class="sigb" aria-label="Directions builder">
+          <label class="f b1"><span class="lbl">Amount</span><input type="text" id="sb-amt-${i}" value="1" inputmode="decimal"></label>
+          <label class="f b2"><span class="lbl">Unit</span><select id="sb-unit-${i}">${opt(SIG_UNITS,b.unit||'tablet')}<option value="">(none)</option></select></label>
+          <label class="f"><span class="lbl">Route</span><select id="sb-route-${i}">${opt(SIG_ROUTES,b.route||'by mouth')}</select></label>
+          <label class="f"><span class="lbl">How often</span><select id="sb-freq-${i}">${opt(SIG_FREQ,'every 12 hours')}</select></label>
+          <label class="f b1"><span class="lbl">Days</span><input type="text" id="sb-dur-${i}" inputmode="numeric" placeholder="10"></label>
+          <button class="btn b2" data-act="rx-sig" data-i="${i}">Add to directions</button>
+        </div>
+        ${A(k+'sig','Directions',{rows:3,live:L,ph:'Give 1 tablet by mouth every 12 hours for 10 days.'})}
+        <div class="chips" role="group" aria-label="Cautions">${CAUTIONS.map(([c,,l])=>`<label><input type="checkbox" data-k="${k}c.${c}" data-live="${L}"${r.c&&r.c[c]?' checked':''}>${esc(l)}</label>`).join('')}</div>
+        <div class="grid">${F(k+'cautionExtra','Other caution (optional)',{cls:'s8',live:L,ph:'e.g. Wear gloves when handling'})}${F(k+'discard','Discard after',{cls:'s4',type:'date',live:L})}</div>
+        <div class="row"><button class="btn small" data-act="rx-save-drug" data-i="${i}">Save this drug to the formulary</button></div>
+      </div>
+      <div class="rxside">
+        <div class="roll"><div class="rxscale" id="rxs-${i}"></div></div>
+        <p class="fit" id="rxfit-${i}" role="status"></p>
+        <div class="csflag" id="rxcs-${i}"${r.schedule?'':' hidden'}>Controlled substance: record it in the controlled drug log. The federal transfer caution is printed on the label.</div>
+        <div class="row" style="justify-content:space-between"><span class="row" style="gap:8px"><span class="note">Copies</span><span class="copies"><button data-act="rx-copies" data-i="${i}" data-d="-1" aria-label="Fewer copies">−</button><input type="text" inputmode="numeric" id="${fid(k+'copies')}" data-k="${k}copies" value="${esc(r.copies||'1')}" aria-label="Copies"><button data-act="rx-copies" data-i="${i}" data-d="1" aria-label="More copies">+</button></span></span>
+        <button class="btn primary" data-act="rx-print" data-i="${i}">Print label</button></div>
+      </div>
+    </div>
+  </div>`;
 }
 function dischargeDoc(v,p){
   const ext=dischargeType(v)==='extractions';
@@ -845,6 +1117,7 @@ function dischargeDoc(v,p){
   <p><b>Things that are not normal which will require you to seek medical attention immediately:</b></p><ul><li>Excessive sedation/inability to wake your pet when sleeping.</li><li>Excessive bleeding from the mouth. ${ext?'Blood-tinged saliva is normal. There should not be any dripping of blood from the mouth.':'Blood-tinged saliva is normal if your pet had gingivitis.'}</li></ul>
   <p>Please email, text, or fill out a ‘contact us’ form on our website if you have any concerns about how your pet is recovering. Even if we are not in the clinic, we will return your message as soon as we can. Otherwise, we will call the next business day to check in.</p>
   ${ext?'<p>In 2 weeks, please take a look at the extraction sites to ensure that the gingiva is healthy and there is no evidence that the gingival flaps have failed to heal. Some suture material may still be present, but you should not see any defect in the gum tissue. If there is any question regarding this, please email a photo to us at info@petdentalcliniclongmont.com so that we can evaluate the extraction site(s) and provide guidance.</p>':''}
+  ${rxList(v).some(r=>r.drug)?`<p><b>Take-home medications:</b></p><ul>${rxList(v).filter(r=>r.drug).map(r=>{const c=[...CAUTIONS.filter(([k])=>r.c&&r.c[k]).map(x=>x[1]),r.cautionExtra].filter(Boolean);return `<li><b>${esc(rxDrug(r))}</b>${r.qty?` (${esc(r.qty)}${r.qtyUnit?' '+esc(r.qtyUnit):''})`:''}: ${esc(r.sig||'')}${c.length?' '+esc(c.map(x=>x.replace(/[.\s]+$/,'')).join('. '))+'.':''}</li>`}).join('')}</ul>`:''}
   ${v.discharge.meds?`<p><b>Medications:</b><br>${esc(v.discharge.meds).replace(/\n/g,'<br>')}</p>`:''}
   <p><b>Additional comments:</b> ${esc(v.discharge.comments||'')}</p>
   <p>Your veterinarian today was: <b>${esc(v.dvm||'')}</b><br>Your technician today was: <b>${esc(v.tech||'')}</b></p>`;
@@ -875,6 +1148,8 @@ function vSettings(){
   ${IS_IOS&&!STANDALONE?`<section class="panel" style="background:var(--accent-soft)"><h2>Use it as an iPad app</h2><p>In Safari, tap Share, then <b>Add to Home Screen</b>. The app then opens full screen, and Safari will not clear its data after a week away from the site.</p><p class="note">The Home Screen app keeps its own storage, separate from Safari. Export a backup or push to GitHub here first, then import or pull inside the Home Screen app.</p></section>`:''}
   <section class="panel"><h2>Staff</h2><p class="note">One name per line. These appear as suggestions for DVM and Tech on each visit.</p>
     <div class="grid">${A('s.dvms','Veterinarians',{cls:'s6',rows:4,ph:'Dr. Diaz Torres\nDr. Cowgill'})}${A('s.techs','Technicians',{cls:'s6',rows:4})}</div></section>
+  ${vLabelSettings()}
+  ${vFormulary()}
   <section class="panel"><h2>Backups</h2>
     <p class="note">Visits are saved in this browser on this device. Export a backup regularly, or set up GitHub sync below.</p>
     <div class="row"><button class="btn" data-act="export">Export backup (.json)</button><button class="btn" data-act="import">Import backup…</button></div>
@@ -897,6 +1172,43 @@ function vSettings(){
   <section class="panel"><h2>Erase</h2><div class="row"><button class="btn danger" data-act="wipe">Erase all visits on this device</button></div></section>`;
 }
 
+function vLabelSettings(){
+  const d=LBL_DEF,k='s.labels.';
+  return `<section class="panel"><h2>Medication labels</h2>
+    <p class="note">Printed from each visit’s Discharge step on DYMO 30252 labels (3.5 × 1.125 in). Blank fields use the value shown in grey. These settings sync with the visits.</p>
+    <div class="grid">
+      ${F(k+'practice','Practice name',{cls:'s6',ph:d.practice})}${F(k+'phone','Phone',{cls:'s6',type:'tel',ph:'Left off when blank'})}
+      ${F(k+'address','Address',{cls:'s8',ph:'Left off when blank'})}${F(k+'discardMonths','Discard after',{cls:'s4',im:'numeric',ph:String(d.discardMonths),unit:'months'})}
+      ${R(k+'kids','“Keep out of reach of children”',[['','Print it'],['off','Leave it off']],{cls:'s6'})}
+      ${S(k+'font','Label font',[['narrow','Arial Narrow'],['regular','Arial']],{cls:'s3 m6',none:'Default (Arial Narrow)'})}
+      ${S(k+'maxScale','Largest text size',[0.9,1,1.05,1.1,1.15,1.2,1.3,1.4].map(x=>[String(x),Math.round(x*100)+'%']),{cls:'s3 m6',none:'Default (115%)'})}
+      ${[['mLeft','Left margin'],['mRight','Right margin'],['mTop','Top margin'],['mBottom','Bottom margin']].map(([m,l])=>F(k+m,l,{cls:'s3 m6',im:'decimal',unit:'in',ph:d[m].toFixed(2)})).join('')}
+    </div>
+    <div class="row"><button class="btn" data-act="rx-cal">Print alignment test</button><button class="btn" data-act="rx-log">Export dispensing log (.csv)</button></div>
+    <details><summary class="lbl" style="cursor:pointer">Printer setup</summary><div class="doc note" style="margin-top:8px">
+      <p>Text shrinks automatically to fit inside the margins (the dashed box in the preview). If letters are cut off at an edge, print the alignment test, find on each side the smallest number whose end mark printed completely, and set that margin about 0.02 in larger.</p>
+      <p><b>Chrome or Edge on a computer:</b> install the DYMO driver and load a 30252 roll. In the print dialog choose the LabelWriter, then under More settings set Paper size to 30252 Address, Margins to None, Scale to 100%, and turn off Headers and footers. On a Mac, choose 30252 Address under Paper Size and keep Scale at 100%.</p>
+      <p><b>iPad:</b> the iPad prints only to AirPrint printers. A USB DYMO LabelWriter needs a computer; open this app there to print labels, or use an AirPrint label printer loaded with 3.5 × 1.125 in labels.</p>
+    </div></details>
+  </section>`;
+}
+function vFormulary(){
+  const f=formulary(),q=(ui.fq||'').toLowerCase();
+  const rows=f.map((x,i)=>({x,i})).sort((a,b)=>byDrug(a.x,b.x)||a.i-b.i);
+  const inp=(i,key,label,o={})=>`<input type="text" data-k="s.formulary.${i}.${key}" value="${esc(f[i][key]||'')}" placeholder="${esc(label)}" aria-label="${esc(label)}"${o.list?` list="${o.list}"`:''} autocomplete="off">`;
+  return `<section class="panel"><h2>Formulary</h2>
+    <p class="note">Drugs offered when you add a take-home medication. Default directions fill in only when the directions box is empty.${data.settings.formulary?'':' This is the starter list; editing it saves your own copy.'}</p>
+    <div class="row"><input type="text" id="rxfq" placeholder="Filter the formulary" value="${esc(ui.fq||'')}" aria-label="Filter the formulary" style="max-width:320px"><button class="btn" data-act="fm-add">Add drug</button><button class="btn" data-act="fm-export">Export .csv</button><button class="btn" data-act="fm-import">Import .csv…</button>${data.settings.formulary?'<button class="btn ghost" data-act="fm-reset">Restore starter list</button>':''}<span class="note">${f.length} drugs</span></div>
+    <div>${rows.map(({x,i})=>`<div class="fmrow" data-fm="${esc(drugDisplay(x)+' '+(x.schedule||'')+' '+(x.sig||'')).toLowerCase()}"${q&&!drugDisplay(x).concat(' ',x.schedule||'',' ',x.sig||'').toLowerCase().includes(q)?' hidden':''}>
+      <span class="w">${inp(i,'name','Drug')}</span>${inp(i,'strength','Strength')}${inp(i,'form','Dosage form',{list:'dl-fmform'})}
+      <select data-k="s.formulary.${i}.schedule" aria-label="Controlled schedule"><option value="">None</option>${SCHEDULES.map(c=>`<option${x.schedule===c?' selected':''}>${c}</option>`).join('')}</select>
+      <span class="w">${inp(i,'sig','Default directions (optional)')}</span>
+      <button class="btn small ghost" data-act="fm-del" data-i="${i}" aria-label="Delete ${esc(drugDisplay(x))}">Delete</button></div>`).join('')}</div>
+    <datalist id="dl-fmform">${['tablet','chewable tablet','capsule','oral suspension','oral solution','ophthalmic ointment','ophthalmic solution','otic solution','topical cream','injectable solution'].map(x=>`<option value="${x}">`).join('')}</datalist>
+    <p class="note">CSV columns: name, strength, form, schedule, directions. Importing adds new drugs and updates ones with the same name, strength and form.</p>
+  </section>`;
+}
+
 /* ---------- after render hooks ---------- */
 function setHH(){const h=$('.top');if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px')}
 window.addEventListener('resize',setHH);window.addEventListener('orientationchange',()=>setTimeout(setHH,200));
@@ -904,6 +1216,7 @@ function afterRender(){
   setHH();
   document.body.classList.toggle('sheet-open',ui.view==='visit'&&ui.step==='dental'&&!!ui.tooth);
   const pad=$('#sigpad');if(pad)setupSig(pad);
+  $$('.rxscale').forEach(b=>rxRefresh(+b.id.slice(4)));sizeLabels();
 }
 function chartAboveSheet(){const a=$('.arches'),st=$('.stepper');if(!a)return;const top=(($('.top')||{}).offsetHeight||60)+((st||{}).offsetHeight||56)+8;window.scrollTo(0,Math.max(0,a.getBoundingClientRect().top+window.scrollY-top))}
 function scrollToPanel(){const el=$('#stepPanel');if(!el)return;const hh=($('.top')||{}).offsetHeight||60;const y=el.getBoundingClientRect().top+window.scrollY-hh-72;if(window.scrollY>y)window.scrollTo(0,Math.max(0,y))}
@@ -925,7 +1238,10 @@ document.addEventListener('input',e=>{
   const t=e.target;
   if(t.dataset&&t.dataset.vflag){t.closest('.f').className='f '+flag(t.dataset.vflag,t.value,curP());return}
   if(t.id==='pq'){ui.q=t.value;const pos=t.selectionStart;render();const n=$('#pq');n.focus();n.setSelectionRange(pos,pos);return}
+  if(t.dataset&&t.dataset.rxfind!==undefined){rxPick(+t.dataset.rxfind,t.value);return}
+  if(t.id==='rxfq'){ui.fq=t.value;const q=t.value.trim().toLowerCase();$$('.fmrow').forEach(r=>r.hidden=!!q&&!r.dataset.fm.includes(q));return}
   if(!t.dataset||!t.dataset.k||t.type==='radio'||t.type==='checkbox')return;
+  if(t.dataset.k.startsWith('s.formulary.'))ensureFormulary();
   if(t.dataset.tooth)ensureTooth(+t.dataset.tooth);
   setK(t.dataset.k,t.value);scheduleSave();
   if(t.dataset.flag){const td=t.parentElement;td.className=flag(t.dataset.flag,t.value,curP())+(t.dataset.flag==='bp'?' c-bp':'');const tr=$('#trends');if(tr)tr.innerHTML=trends(curV(),curP())}
@@ -937,7 +1253,10 @@ document.addEventListener('change',e=>{
   if(t.id==='dayPick'){ui.date=t.value||todayISO();render();return}
   if(t.id==='openOnly'){ui.openOnly=t.checked;render();return}
   if(t.id==='importFile'){doImport(t.files[0]);t.value='';return}
+  if(t.id==='fmFile'){const f=t.files[0];t.value='';if(f){const r=new FileReader();r.onload=()=>importFormularyCSV(String(r.result||''));r.readAsText(f)}return}
+  if(t.dataset&&t.dataset.rxfind!==undefined){rxPick(+t.dataset.rxfind,t.value);return}
   if(!t.dataset||!t.dataset.k)return;
+  if(t.dataset.k.startsWith('s.formulary.'))ensureFormulary();
   if(t.type==='radio'){if(t.checked)setK(t.dataset.k,t.value)}
   else if(t.type==='checkbox')setK(t.dataset.k,t.checked);
   else setK(t.dataset.k,t.value);
@@ -948,6 +1267,7 @@ document.addEventListener('change',e=>{
 });
 function live(tag){
   const v=curV(),p=curP();if(!v)return;
+  if(tag.startsWith('rx:')){rxRefresh(+tag.slice(3));return}
   if(tag==='wt'){const w=num(v.exam.wtKg);const el=$('#wtConv');if(el)el.textContent=w?fmt(w*2.20462,1)+' lbs':'—';}
   if(tag.startsWith('dose:')){const [,kind,i]=tag.split(':');const el=$(`#calc-${kind}-${i}`);if(el)el.innerHTML=calcHTML(v,p,v.anes[kind][i]);const u=DRUGS[v.anes[kind][i].drug];const inp=$('#'+fid(`v.anes.${kind}.${i}.dose`));if(inp&&inp.nextElementSibling)inp.nextElementSibling.textContent=u?u.u:''}
 }
@@ -1015,6 +1335,20 @@ document.addEventListener('click',e=>{
     case 'close-modal':closeModal();break;
     case 'modal-ok':{const f=pendingOK;closeModal();if(f)f();break}
     case 'conflict':resolveConflict(b.dataset.keep);break;
+    case 'rx-add':{v.discharge.rx=rxList(v);v.discharge.rx.push(newRx(v));saveNow();render(true);const f=$$('.rxfind');if(f.length)f[f.length-1].focus();break}
+    case 'rx-del':{const i=+b.dataset.i,r=rxList(v)[i];const del=()=>{v.discharge.rx.splice(i,1);saveNow();render(true)};if(r&&(r.drug||r.sig))confirmModal(`Remove ${esc(rxDrug(r)||'this medication')}?`,'Its label details will be deleted from this visit.','Remove',del);else del();break}
+    case 'rx-sig':{const i=b.dataset.i,r=rxList(v)[+i];if(!r)break;const g=id=>($('#'+id+'-'+i)||{}).value||'';const sg=buildSig(g('sb-amt'),g('sb-unit'),g('sb-route'),g('sb-freq'),g('sb-dur'));r.sig=r.sig&&r.sig.trim()?r.sig.trim()+' '+sg:sg;const ta=$('#'+fid(`v.discharge.rx.${i}.sig`));if(ta)ta.value=r.sig;scheduleSave();rxRefresh(+i);refreshChrome();break}
+    case 'rx-copies':{const i=b.dataset.i,r=rxList(v)[+i];if(!r)break;r.copies=String(Math.max(1,Math.min(20,(parseInt(r.copies,10)||1)+Number(b.dataset.d))));const inp=$('#'+fid(`v.discharge.rx.${i}.copies`));if(inp)inp.value=r.copies;scheduleSave();const pa=$('[data-act="rx-print-all"]');if(pa)pa.textContent=`Print all labels (${rxList(v).reduce((n,x)=>n+Math.max(1,Math.min(20,parseInt(x.copies,10)||1)),0)})`;break}
+    case 'rx-print':printLabels([+b.dataset.i]);break;
+    case 'rx-print-all':printLabels(rxList(v).map((r,i)=>i));break;
+    case 'rx-save-drug':saveRxToFormulary(rxList(v)[+b.dataset.i]);break;
+    case 'rx-cal':printCalibration();break;
+    case 'rx-log':exportDispensingCSV();break;
+    case 'fm-add':{ensureFormulary().push({name:'',strength:'',form:'',schedule:'',sig:''});ui.fq='';saveNow();render(true);const n=$('.fmrow input');if(n)n.focus();break}
+    case 'fm-del':{const f=ensureFormulary(),x=f[+b.dataset.i];if(!x)break;confirmModal(`Delete ${esc(drugDisplay(x)||'this drug')} from the formulary?`,'Visits that already use it keep their labels.','Delete',()=>{f.splice(+b.dataset.i,1);saveNow();render(true)});break}
+    case 'fm-export':exportFormularyCSV();break;
+    case 'fm-import':$('#fmFile').click();break;
+    case 'fm-reset':confirmModal('Restore the starter formulary?','Your added and edited drugs will be replaced by the built-in list.','Restore',()=>{delete data.settings.formulary;saveNow();render(true);toast('Starter formulary restored.')});break;
   }
 });
 
@@ -1066,7 +1400,7 @@ function closeModal(){$('#modalRoot').innerHTML='';pendingOK=null}
 function confirmModal(title,body,ok,fn){pendingOK=fn;showModal(`<h2>${title}</h2><p>${body}</p><div class="acts"><button class="btn" data-act="close-modal">Cancel</button><button class="btn danger" data-act="modal-ok">${ok}</button></div>`)}
 let toastT=null;
 function toast(msg){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;clearTimeout(toastT);toastT=setTimeout(()=>t.remove(),3200)}
-function download(name,text){const blob=new Blob([text],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function download(name,text,type){const blob=new Blob([text],{type:type||'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 function summaryOf(d){if(!d)return '—';const open=(d.visits||[]).filter(v=>!(v.done||{}).discharge).length;return `${(d.visits||[]).length} visits (${open} open), ${(d.patients||[]).length} patients`}
 function doImport(file){
   if(!file)return;const r=new FileReader();
@@ -1077,12 +1411,12 @@ function doImport(file){
 
 /* ---------- printing ---------- */
 function doPrint(sec){
-  flushSave();const v=curV(),p=curP();if(!v)return;
+  flushSave();const v=curV(),p=curP();if(!v)return;setPageStyle('');
   const secs=sec==='all'?['checkin','auth','exam','anes','dental','discharge']:[sec];
   $('#print').innerHTML=secs.map(s=>`<section class="pp">${printHead(v,p,(s==='dental'?(chartFor(p)?{dog:'Canine',cat:'Feline',ferret:'Ferret'}[chartFor(p)]+' ':'')+'Dental Chart':FORM_TITLES[s]))}${PRINT[s](v,p)}</section>`).join('');
   window.print();
 }
-window.addEventListener('afterprint',()=>{$('#print').innerHTML=''});
+window.addEventListener('afterprint',()=>{$('#print').innerHTML='';setPageStyle('')});
 function printHead(v,p,title){const w=weightKg(v,p);return `<div class="hd"><div><b>Pet Dental Clinic</b><br><small>Cowgill Vet Svc LLC</small></div><div style="text-align:right"><b>${title}</b><br>${esc(p.name||'')} · ${esc(p.species||'')} · ${w?fmt(w.kg,1)+' kg':''} · ${esc(prettyDate(v.date))}</div></div>`}
 const kv=(l,val)=>`<div><b>${l}:</b> ${esc(val||'')}</div>`;
 const PRINT={
@@ -1202,7 +1536,7 @@ function updateSyncChip(){
 }
 
 /* expose for tests */
-window.__pdc={get data(){return data},get ui(){return ui},cfg,saveNow,render,go,setK,getK,flag,mapOf,calcHTML,weightKg,missing,extractions,dischargeType,pull,push,toothName,ensureShape,CHARTS};
+window.__pdc={get data(){return data},get ui(){return ui},cfg,saveNow,render,go,setK,getK,flag,mapOf,calcHTML,weightKg,missing,extractions,dischargeType,pull,push,toothName,ensureShape,CHARTS,buildSig,labelHTML,formulary,lblSet,rxList,importFormularyCSV,addMonthsISO};
 render();
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
 })();
