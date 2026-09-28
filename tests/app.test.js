@@ -107,8 +107,24 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
 
   console.log('Printing');
   P.go('visit',biscuit.id,'auth');click(w,'[data-act="print"][data-sec="all"]');
-  const pr=w.__printed||'';ok(pr.includes('Anesthesia Record')&&pr.includes('Canine Dental Chart')&&pr.includes('Dental with Extractions')&&pr.includes('CPR Directive'),'full visit print has all sections');
-  ok((pr.match(/class="pp"/g)||[]).length===6,'six printed pages');
+  const pr=w.__printed||'';ok(pr.includes('Treatment Notes')&&pr.includes('Surgery Time')&&pr.includes('Canine Dental Chart')&&pr.includes('Dental with Extractions')&&pr.includes('CPR Directive'),'full visit print has all sections');
+  ok((pr.match(/class="pp[" ]/g)||[]).length===7,'seven printed pages (anesthesia is treatment sheet + monitoring form)');
+
+  console.log('Paper-form layouts');
+  const pd=new w.DOMParser().parseFromString('<div>'+pr+'</div>','text/html');
+  const chart=[...pd.querySelectorAll('svg.paper')].find(s=>s.textContent.includes('Canine Dental Chart'));
+  ok(chart&&chart.getAttribute('viewBox').split(' ').length===4&&/data:image\/jpeg;base64,/.test(chart.innerHTML)&&!chart.innerHTML.includes('{LOGO}'),'dental chart is the original drawing with the logo filled in');
+  const fvs=[...chart.querySelectorAll('text.fv')].map(t=>t.textContent);
+  ok(fvs.includes('Biscuit')&&fvs.some(t=>/11\.8 kg/.test(t))&&fvs.some(t=>/^EXT · T\/FX\/CCF · Pulp exposure$/.test(t))&&fvs.some(t=>t==='P6 F2 M1'),'chart fills name, weight and tooth rows');
+  ok(chart.querySelectorAll('ellipse').length===2,'gingivitis and calculus index circled');
+  const mon=[...pd.querySelectorAll('svg.paper')].find(s=>s.textContent.includes('Surgery Time'));
+  ok(mon&&mon.querySelector('g[transform*="rotate(-90)"]')&&/5 min   08 : 38/.test(mon.textContent),'monitoring form prints sideways with column times');
+  ok([...mon.querySelectorAll('text.fv')].some(t=>t.textContent==='112/64/80'),'monitoring values in the grid');
+  const ts=pd.querySelector('.tsheet');ok(ts&&[...ts.querySelectorAll('.ck')].map(x=>x.textContent).join(',')==='SDD,IM,Adequate,22g,R Ceph,Yes,WITH','treatment sheet circles the chosen options');
+  ok(/\d\.\d+ mL Butorphanol 10 mg\/mL, 0\.071 mL Dexmed/.test(ts.textContent),'treatment sheet fills premed volumes');
+  const bv=P.data.visits.find(x=>x.id===biscuit.id);const gridBak=JSON.stringify(bv.anes.grid);bv.anes.grid.cols.push(...Array.from({length:12},()=>({time:''})));bv.anes.grid.vals.hr[26]='90';
+  click(w,'[data-act="print"][data-sec="all"]');ok((w.__printed.match(/Surgery Time/g)||[]).length===2,'more than two hours continues on a second monitoring sheet');
+  bv.anes.grid=JSON.parse(gridBak);
 
   console.log('Medication labels');
   const bp=P.data.patients.find(p=>p.id===biscuit.patientId);
