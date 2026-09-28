@@ -6,6 +6,8 @@ A single-file web app that takes each patient at Pet Dental Clinic through the v
 
 Each step mirrors one of the clinic's paper forms (see `reference/forms/`). A step lists what's still missing before you mark it complete, and each visit prints as paper forms.
 
+The Discharge step also prints **take-home medication labels** (DYMO 30252, 3.5 × 1.125 in). Pick a drug from the formulary, build the directions, tick cautions, and print one label per medication; the pet, owner, veterinarian and date come from the visit. The label's practice details, margins and the formulary are under **Settings → Medication labels / Formulary**. Printed labels can be exported as a dispensing log (.csv).
+
 ## Files
 
 | Path | What it is |
@@ -68,5 +70,6 @@ The form wording is in `index.html`:
 - Treatment sheet and monitoring grid: `stAnes`, `GRID_ROWS`, `DRUGS`
 - Tooth charts and abbreviations: `CHARTS`, `CODE_GROUPS`, `LEGEND`
 - Discharge sheet: `dischargeDoc`
+- Medication labels: `labelHTML`, starter formulary `RX_SEED`, cautions `CAUTIONS`, label defaults `LBL_DEF`
 
 Printed versions are in the `PRINT` object. After an edit, run the tests and check the page on the iPad.
