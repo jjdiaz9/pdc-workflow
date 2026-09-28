@@ -41,6 +41,8 @@ bash "_github-toolkit/update.sh" "Pet Dental Clinic Workflow App" "What changed"
 
 The app is served at `https://<your-username>.github.io/pdc-workflow/` about a minute after publishing.
 
+If Pages isn't on yet, in the repo on GitHub go to **Settings → Pages**, set **Source** to *Deploy from a branch*, pick `main` and `/ (root)`, and save. The empty `.nojekyll` file tells Pages to serve the files as they are, without running Jekyll.
+
 ## Where patient data lives
 
 Patient data is **never** stored in this folder or the public repo.
