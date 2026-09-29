@@ -4,18 +4,20 @@ let fails=0;const ok=(c,m)=>{if(c)console.log('  ok  '+m);else{fails++;console.l
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 // mock GitHub
-function mockGH(){const st={files:{},repoExists:true,branches:['main'],forceStatus:null,puts:0};
-  const fetch=async(url,opt={})=>{const u=new URL(url);const m=opt.method||'GET';const res=(s,j)=>({status:s,ok:s>=200&&s<300,json:async()=>j,headers:{get:()=>null}});
+function mockGH(){const st={files:{},blobs:{},repoExists:true,branches:['main'],forceStatus:null,puts:0,gets:0,offline:false,big:false};
+  const fetch=async(url,opt={})=>{const u=new URL(url);const m=opt.method||'GET';const res=(s,j,etag)=>({status:s,ok:s>=200&&s<300,json:async()=>j,headers:{get:h=>h.toLowerCase()==='etag'?etag||null:null}});
+    if(st.offline)throw new TypeError('Failed to fetch');
     if(st.forceStatus){return res(st.forceStatus,{message:'forced'})}
     const parts=u.pathname.split('/');// /repos/o/r/...
     if(!st.repoExists)return res(404,{message:'Not Found'});
     const rest=parts.slice(4).join('/');
     if(rest==='')return res(200,{});
+    if(rest.startsWith('git/blobs/')){const b=st.blobs[decodeURIComponent(parts[6])];return b?res(200,{content:b,encoding:'base64'}):res(404,{message:'Not Found'})}
     if(rest.startsWith('branches')){const b=decodeURIComponent(parts[5]||'');if(!b)return res(200,st.branches.map(n=>({name:n})));return st.branches.includes(b)?res(200,{}):res(404,{message:'Branch not found'})}
     if(rest.startsWith('contents/')){const path=decodeURIComponent(rest.slice(9));const ref=u.searchParams.get('ref')||JSON.parse(opt.body||'{}').branch;
       if(!st.branches.includes(ref))return res(404,{message:'No commit found for the ref'});
-      if(m==='GET'){const f=st.files[path];return f?res(200,{sha:f.sha,content:f.content}):res(404,{message:'Not Found'})}
-      if(m==='PUT'){const b=JSON.parse(opt.body);const f=st.files[path];if(f&&b.sha!==f.sha)return res(409,{message:'sha mismatch'});if(!f&&b.sha)return res(422,{message:'sha given for new file'});st.puts++;st.files[path]={sha:'s'+st.puts,content:b.content};return res(f?200:201,{})}}
+      if(m==='GET'){st.gets++;const f=st.files[path];const inm=(opt.headers||{})['If-None-Match'];if(f&&inm==='"'+f.sha+'"'){st.notModified=(st.notModified||0)+1;return res(304,null)}return f?res(200,{sha:f.sha,content:st.big?'':f.content,encoding:st.big?'none':'base64'},'"'+f.sha+'"'):res(404,{message:'Not Found'})}
+      if(m==='PUT'){const b=JSON.parse(opt.body);const f=st.files[path];if(f&&b.sha!==f.sha)return res(409,{message:'sha mismatch'});if(!f&&b.sha)return res(422,{message:'sha given for new file'});st.puts++;const sha='s'+st.puts;st.files[path]={sha,content:b.content};st.blobs[sha]=b.content;return res(f?200:201,{content:{sha}})}}
     return res(500,{});};
   return {st,fetch};}
 
@@ -192,27 +194,66 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   console.log('Signature pad draws and saves');
   P.go('visit',P.ui.id,'auth');ok(!!d.getElementById('sigpad'),'signature pad present');
 
-  console.log('Sync (GitHub mock)');
-  const gh=mockGH();const cfgBase={owner:'example-user',repo:'private-data',branch:'main',path:'pdc/visits.json',backend:'github',baseRev:0,device:'Mac · a1'};
-  dom=await boot(gh,{'pdc-sync-v1':JSON.stringify(cfgBase),'pdc-token-v1':'tok'});let A=dom.window;
-  await A.__pdc.push();console.log('    toast:',(A.document.querySelector('.toast')||{}).textContent);ok(gh.st.puts===1,'device A first push creates the file');
-  const snap={};for(let i=0;i<A.localStorage.length;i++){const k=A.localStorage.key(i);if(k!=='pdc-data-v1')snap[k]=A.localStorage.getItem(k)}
-  let dB=await boot(gh,{'pdc-sync-v1':JSON.stringify(Object.assign({},cfgBase,{device:'iPad · b2'})),'pdc-token-v1':'tok'});let B=dB.window;
-  // B has its own seeded data rev 0; pulling should adopt A's (remote rev > base 0, B not dirty)
-  await B.__pdc.pull();ok(B.__pdc.data.visits.length===A.__pdc.data.visits.length&&B.__pdc.data.visits[0].id===A.__pdc.data.visits[0].id,'device B pull adopts GitHub copy');
-  B.__pdc.data.visits[0].dvm='Dr. B';B.__pdc.saveNow();await B.__pdc.push();ok(gh.st.puts===2,'B pushes its edit');
-  A.__pdc.data.visits[0].dvm='Dr. A';A.__pdc.saveNow();await A.__pdc.push();
-  ok(A.document.querySelector('.modal')&&/Both copies changed/.test(A.document.querySelector('.modal').textContent),'A push after B edit raises conflict');
-  ok(gh.st.puts===2,'conflict blocks the write');
-  A.document.querySelector('[data-act="conflict"][data-keep="local"]').dispatchEvent(new A.MouseEvent('click',{bubbles:true}));await sleep(30);
-  ok(gh.st.puts===3&&(A.__downloads||[]).some(n=>/github/.test(n)),'keep local: backup downloaded then pushed');
-  await B.__pdc.pull();ok(B.__pdc.data.visits[0].dvm==='Dr. A','B pulls resolved copy');
-  await B.__pdc.pull();ok(/up to date/.test(B.document.querySelector('.toast').textContent),'second pull says up to date');
+  console.log('Sync (GitHub mock), merged field by field');
+  const gh=mockGH();const cfgBase={owner:'example-user',repo:'private-data',branch:'main',path:'pdc/visits.json',backend:'github',baseRev:0,device:'Mac · a1',auto:false};
+  const remote=()=>JSON.parse(Buffer.from(gh.st.files['pdc/visits.json'].content,'base64').toString());
+  const toastOf=W=>(W.document.querySelector('.toast')||{}).textContent||'';
+  dom=await boot(gh,{'pdc-sync-v1':JSON.stringify(cfgBase),'pdc-token-v1':'tok'});let A=dom.window,PA=A.__pdc;
+  // make A's two example patients real clinic data
+  PA.data.patients.forEach(p=>delete p.sample);PA.data.visits.forEach(v=>delete v.sample);PA.saveNow();
+  await PA.syncNow({manual:true});ok(gh.st.puts===1&&remote().visits.length===2,'device A creates the shared file');
+  let dB=await boot(gh,{'pdc-sync-v1':JSON.stringify(Object.assign({},cfgBase,{device:'iPad · b2'})),'pdc-token-v1':'tok'});let B=dB.window,PB=B.__pdc;
+  await PB.syncNow({manual:true});
+  ok(PB.data.visits.filter(v=>!v.sample).length===2&&PB.data.visits.filter(v=>v.sample).length===2,'device B gets the shared visits and keeps its own examples');
+  ok(remote().visits.length===2&&gh.st.puts===1,'examples are never uploaded');
+  const vid=PA.data.visits[0].id,vid2=PA.data.visits[1].id;
+  const vA=id=>PA.data.visits.find(v=>v.id===id),vB=id=>PB.data.visits.find(v=>v.id===id);
+  vA(vid).dvm='Dr. A';PA.saveNow();vB(vid2).tech='Tech B';PB.saveNow();
+  await PA.syncNow({manual:true});await PB.syncNow({manual:true});await PA.syncNow({manual:true});
+  ok(vA(vid).dvm==='Dr. A'&&vA(vid2).tech==='Tech B'&&vB(vid).dvm==='Dr. A'&&vB(vid2).tech==='Tech B','edits to different visits on two devices are both kept');
+  vA(vid).anes.notes='Smooth induction';PA.saveNow();vB(vid).dental.notes='Heavy calculus';vB(vid).anes.grid.vals.hr[5]='90';PB.saveNow();
+  await PA.syncNow({manual:true});await PB.syncNow({manual:true});await PA.syncNow({manual:true});
+  ok(vA(vid).anes.notes==='Smooth induction'&&vA(vid).dental.notes==='Heavy calculus'&&vA(vid).anes.grid.vals.hr[5]==='90'&&vB(vid).anes.notes==='Smooth induction','different fields of the same visit on two devices are both kept');
+  const rev0=remote().sync.rev,puts0=gh.st.puts;await PA.syncNow({manual:true});await PB.syncNow({manual:true});
+  ok(gh.st.puts===puts0&&remote().sync.rev===rev0&&/Up to date/.test(toastOf(B)),'nothing changed: no upload, revision unchanged');
+  ok((gh.st.notModified||0)>=2,'an unchanged file is not downloaded again (not-modified check)');
+  vA(vid).exam.assessment='Stage 2 PD';PA.saveNow();await PA.syncNow({manual:true});
+  vB(vid).exam.assessment='Stage 3 PD';PB.saveNow();await PB.syncNow({manual:true});
+  ok(vB(vid).exam.assessment==='Stage 3 PD'&&remote().visits.find(v=>v.id===vid).exam.assessment==='Stage 3 PD','same field on both devices: the syncing device keeps its value');
+  const cf=PB.loadConflicts();ok(cf.length===1&&cf[0].other==='Stage 2 PD'&&/exam › assessment/.test(cf[0].label)&&/two devices/.test(toastOf(B)),'the other value is listed for review');
+  PB.go('settings');B.document.querySelector('[data-act="cf-use"]').dispatchEvent(new B.MouseEvent('click',{bubbles:true}));await PB.syncNow({manual:true});
+  ok(vB(vid).exam.assessment==='Stage 2 PD'&&PB.loadConflicts().length===0&&remote().visits.find(v=>v.id===vid).exam.assessment==='Stage 2 PD','“Use other” switches to the other value and syncs it');
+  await PA.syncNow({manual:true});
+  PA.data.visits=PA.data.visits.filter(v=>v.id!==vid2);PA.saveNow();await PA.syncNow({manual:true});await PB.syncNow({manual:true});
+  ok(!vB(vid2)&&remote().visits.length===1,'a visit deleted on one device is deleted on the other');
+  // delete on A while B edits the same visit: the edit wins
+  PA.data.visits=[];PA.saveNow();vB(vid).dvm='Dr. Keep';PB.saveNow();
+  await PA.syncNow({manual:true});await PB.syncNow({manual:true});await PA.syncNow({manual:true});
+  ok(vA(vid)&&vA(vid).dvm==='Dr. Keep'&&vB(vid),'deleted on one device but edited on the other: the visit is kept');
+  // incoming changes wait while someone is typing
+  PB.go('visit',vid,'exam');const inp=B.document.getElementById('f_v_exam_T');inp.focus();
+  vA(vid).exam.P='120';PA.saveNow();await PA.syncNow({manual:true});await PB.syncNow({manual:true});
+  ok(B.document.getElementById('f_v_exam_T')===inp&&vB(vid).exam.P==='120','an update arriving while typing does not redraw the screen');
+  inp.blur();inp.dispatchEvent(new B.FocusEvent('focusout',{bubbles:true}));await sleep(200);
+  ok(B.document.getElementById('f_v_exam_T')!==inp&&B.document.getElementById('f_v_exam_P').value==='120','it redraws after leaving the field');
+  // settings sync too
+  PA.data.settings.techs='Sam';PA.saveNow();await PA.syncNow({manual:true});await PB.syncNow({manual:true});ok(PB.data.settings.techs==='Sam','staff lists sync');
+  // automatic: an edit syncs by itself a few seconds later
+  PA.cfg.auto=true;const puts1=gh.st.puts;vA(vid).exam.R='30';PA.saveNow();await sleep(4600);
+  ok(gh.st.puts===puts1+1&&remote().visits.find(v=>v.id===vid).exam.R==='30','with automatic sync on, an edit uploads by itself');
+  PA.cfg.auto=false;
+  // big file: GitHub omits the content, the app reads it as a blob
+  gh.st.big=true;vA(vid).exam.R='32';PA.saveNow();await PA.syncNow({manual:true});gh.st.big=false;ok(remote().visits.find(v=>v.id===vid).exam.R==='32'&&!/problem/.test(A.document.getElementById('syncChip').textContent),'files over 1 MB still sync');
+  // offline
+  gh.st.offline=true;vA(vid).exam.R='33';PA.saveNow();await PA.syncNow({manual:true});ok(/Offline/.test(A.document.getElementById('syncChip').textContent),'offline shows on the chip and waits');
+  gh.st.offline=false;await PA.syncNow({manual:true});ok(remote().visits.find(v=>v.id===vid).exam.R==='33','back online, the change uploads');
+  // erase turns sync off on that device
+  PB.go('settings');B.document.querySelector('[data-act="wipe"]').dispatchEvent(new B.MouseEvent('click',{bubbles:true}));B.document.querySelector('[data-act="modal-ok"]').dispatchEvent(new B.MouseEvent('click',{bubbles:true}));
+  ok(PB.cfg.auto===false&&PB.data.visits.length===0&&remote().visits.length===1,'erasing a device turns its sync off and leaves GitHub alone');
   // errors
-  gh.st.forceStatus=401;await B.__pdc.pull();ok(/rejected the token/.test(B.document.querySelector('.toast').textContent),'401 message');
-  gh.st.forceStatus=409;B.__pdc.data.visits[0].dvm='x';B.__pdc.saveNow();await B.__pdc.push();ok(/changed on GitHub while saving|rejected|returned 409/.test(B.document.querySelector('.toast').textContent),'409 message: '+B.document.querySelector('.toast').textContent.slice(0,60));
-  gh.st.forceStatus=null;gh.st.branches=['master'];await B.__pdc.pull();ok(/Branch “main” doesn’t exist.*master/.test(B.document.querySelector('.toast').textContent),'missing branch names real branches');
-  gh.st.branches=['main'];gh.st.repoExists=false;await B.__pdc.pull();ok(/Can’t see example-user\/private-data/.test(B.document.querySelector('.toast').textContent),'missing repo explained');
+  gh.st.forceStatus=401;await PB.syncNow({manual:true});ok(/rejected the token/.test(toastOf(B)),'401 message');
+  gh.st.forceStatus=null;gh.st.branches=['master'];await PB.syncNow({manual:true});ok(/Branch “main” doesn’t exist.*master/.test(toastOf(B)),'missing branch names real branches');
+  gh.st.branches=['main'];gh.st.repoExists=false;await PB.syncNow({manual:true});ok(/Can’t see example-user\/private-data/.test(toastOf(B)),'missing repo explained');
 
   console.log(fails?`\n${fails} FAILED`:'\nAll passed');process.exit(fails?1:0);
 })().catch(e=>{console.error(e);process.exit(1)});
