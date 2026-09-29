@@ -126,6 +126,17 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'[data-act="print"][data-sec="all"]');ok((w.__printed.match(/Surgery Time/g)||[]).length===2,'more than two hours continues on a second monitoring sheet');
   bv.anes.grid=JSON.parse(gridBak);
 
+  console.log('Word forms as paper layouts');
+  const pg=t=>[...pd.querySelectorAll('svg.paper')].find(s=>s.textContent.includes(t));
+  const vals=sv=>[...sv.querySelectorAll('text.fv')].map(t=>t.textContent);
+  const np=pg('New Patient Form');ok(np&&vals(np).includes('Sample')&&vals(np).includes('100 Example St')&&vals(np).includes('555')&&vals(np).includes('010-0101'),'new patient form fills owner, address and phone (area code in the brackets)');
+  ok(np.querySelectorAll('path').length===4,'new patient form ticks Dog, Male, neutered and vaccines');
+  const au=pg('Same-Day Dental Cleaning Authorization');ok(au&&vals(au).filter(x=>x==='X').length===5&&vals(au).includes('19:30')&&vals(au).includes('500'),'authorization marks the chosen blanks, last meal and estimate');
+  ok(au.querySelectorAll('rect[fill="#ffff00"]').length===13,'authorization keeps its yellow highlights');
+  const exs=pg('Patient Exam Sheet');ok(exs&&vals(exs).includes('MN')&&vals(exs).includes('100.8')&&vals(exs).includes('Pink')&&vals(exs).includes('moist'),'exam sheet fills vitals, sex and mucous membranes');
+  ok(exs.querySelectorAll('image').length===3,'exam sheet keeps the logo and body diagrams');
+  const dsp=pg('Your veterinarian today was');ok(dsp&&dsp.textContent.includes('Dental with Extractions')&&!dsp.textContent.includes('(Routine Dental)'),'discharge prints the with-extractions sheet');
+
   console.log('Medication labels');
   const bp=P.data.patients.find(p=>p.id===biscuit.patientId);
   await sleep(350);let r1=P.data.sync.rev;P.go('visit',biscuit.id,'discharge');P.go('settings');P.go('visit',biscuit.id,'discharge');P.saveNow();
