@@ -190,12 +190,15 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   ok(P.lblSet().practice==='Example Clinic'&&P.lblSet().mLeft===0.2&&P.lblSet().mTop===0.06,'label settings save, blanks use defaults');
   ok(/Example Clinic/.test(P.labelHTML(biscuit,bp,rx(),false)),'label uses the practice name');
   click(w,'[data-k="s.labels.kids"][value="off"]');ok(!/out of reach/.test(P.labelHTML(biscuit,bp,rx(),false)),'children caution can be turned off');
+  ok(!d.querySelector('.fmrow')&&/Show list/.test(d.querySelector('[data-act="fm-toggle"]').textContent)&&/40 drugs/.test(d.getElementById('fmPanel').textContent),'formulary starts collapsed, with its drug count');
+  click(w,'[data-act="fm-toggle"]');ok(d.querySelectorAll('.fmrow').length===40&&JSON.parse(w.localStorage.getItem('pdc-ui-v1')).fmOpen===true,'Show list opens it and is remembered');
   type(w,'[data-k="s.formulary.0.sig"]','Give 1 tablet by mouth every 12 hours.');
   ok(Array.isArray(P.data.settings.formulary)&&P.data.settings.formulary.length===40&&P.data.settings.formulary[0].sig,'editing the formulary stores a copy');
   P.importFormularyCSV('name,strength,form,schedule,directions\nZoodrug,5 mg,tablet,civ,Give 1 daily.\nCarprofen,75 mg,tablet,,');
   ok(P.formulary().length===41&&P.formulary().find(x=>x.name==='Zoodrug').schedule==='C-IV','CSV import adds and normalizes schedule');
   type(w,'#rxfq','zoo');ok(d.querySelectorAll('.fmrow:not([hidden])').length===1,'formulary filter');
   click(w,'[data-act="fm-reset"]');click(w,'[data-act="modal-ok"]');ok(P.data.settings.formulary===undefined&&P.formulary().length===40,'restore starter list');
+  click(w,'[data-act="fm-toggle"]');ok(!d.querySelector('.fmrow')&&JSON.parse(w.localStorage.getItem('pdc-ui-v1')).fmOpen===false,'Hide list collapses it again');
 
   console.log('New visit flow');
   P.go('visits');click(w,'[data-act="new-visit"]');click(w,'.modal [data-act="pick-patient"][data-id=""]');

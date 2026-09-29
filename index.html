@@ -537,7 +537,7 @@ const patient=id=>data.patients.find(p=>p.id===id);
 const visit=id=>data.visits.find(v=>v.id===id);
 let ui=Object.assign({view:'visits',id:null,step:'checkin',date:todayISO(),q:'',tooth:null,openOnly:false},parseJSON(LS.get(UKEY))||{});
 ui.date=todayISO();
-function saveUI(){LS.set(UKEY,JSON.stringify({view:ui.view,id:ui.id,step:ui.step}))}
+function saveUI(){LS.set(UKEY,JSON.stringify({view:ui.view,id:ui.id,step:ui.step,fmOpen:!!ui.fmOpen}))}
 const curV=()=>ui.view==='visit'?visit(ui.id):null;
 const curP=()=>{if(ui.view==='visit'){const v=curV();return v&&patient(v.patientId)}if(ui.view==='patient')return patient(ui.id);return null};
 function root(n){return n==='p'?curP():n==='v'?curV():n==='s'?data.settings:null}
@@ -1246,9 +1246,12 @@ function vFormulary(){
   const f=formulary(),q=(ui.fq||'').toLowerCase();
   const rows=f.map((x,i)=>({x,i})).sort((a,b)=>byDrug(a.x,b.x)||a.i-b.i);
   const inp=(i,key,label,o={})=>`<input type="text" data-k="s.formulary.${i}.${key}" value="${esc(f[i][key]||'')}" placeholder="${esc(label)}" aria-label="${esc(label)}"${o.list?` list="${o.list}"`:''} autocomplete="off">`;
-  return `<section class="panel"><h2>Formulary</h2>
+  // Collapsed by default: the list is long, and its rows aren't drawn at all while it's closed.
+  const head=`<div class="row" style="justify-content:space-between"><h2>Formulary <span class="note" style="font-family:var(--f-body);font-weight:400">${f.length} drugs</span></h2><button class="btn" data-act="fm-toggle" aria-expanded="${ui.fmOpen?'true':'false'}">${ui.fmOpen?'Hide list':'Show list'}</button></div>`;
+  if(!ui.fmOpen)return `<section class="panel" id="fmPanel">${head}<p class="note">Drugs offered when you add a take-home medication. Show the list to add, edit, import or export drugs.</p></section>`;
+  return `<section class="panel" id="fmPanel">${head}
     <p class="note">Drugs offered when you add a take-home medication. Default directions fill in only when the directions box is empty.${data.settings.formulary?'':' This is the starter list; editing it saves your own copy.'}</p>
-    <div class="row"><input type="text" id="rxfq" placeholder="Filter the formulary" value="${esc(ui.fq||'')}" aria-label="Filter the formulary" style="max-width:320px"><button class="btn" data-act="fm-add">Add drug</button><button class="btn" data-act="fm-export">Export .csv</button><button class="btn" data-act="fm-import">Import .csv…</button>${data.settings.formulary?'<button class="btn ghost" data-act="fm-reset">Restore starter list</button>':''}<span class="note">${f.length} drugs</span></div>
+    <div class="row"><input type="text" id="rxfq" placeholder="Filter the formulary" value="${esc(ui.fq||'')}" aria-label="Filter the formulary" style="max-width:320px"><button class="btn" data-act="fm-add">Add drug</button><button class="btn" data-act="fm-export">Export .csv</button><button class="btn" data-act="fm-import">Import .csv…</button>${data.settings.formulary?'<button class="btn ghost" data-act="fm-reset">Restore starter list</button>':''}</div>
     <div>${rows.map(({x,i})=>`<div class="fmrow" data-fm="${esc(drugDisplay(x)+' '+(x.schedule||'')+' '+(x.sig||'')).toLowerCase()}"${q&&!drugDisplay(x).concat(' ',x.schedule||'',' ',x.sig||'').toLowerCase().includes(q)?' hidden':''}>
       <span class="w">${inp(i,'name','Drug')}</span>${inp(i,'strength','Strength')}${inp(i,'form','Dosage form',{list:'dl-fmform'})}
       <select data-k="s.formulary.${i}.schedule" aria-label="Controlled schedule"><option value="">None</option>${SCHEDULES.map(c=>`<option${x.schedule===c?' selected':''}>${c}</option>`).join('')}</select>
@@ -1256,6 +1259,7 @@ function vFormulary(){
       <button class="btn small ghost" data-act="fm-del" data-i="${i}" aria-label="Delete ${esc(drugDisplay(x))}">Delete</button></div>`).join('')}</div>
     <datalist id="dl-fmform">${['tablet','chewable tablet','capsule','oral suspension','oral solution','ophthalmic ointment','ophthalmic solution','otic solution','topical cream','injectable solution'].map(x=>`<option value="${x}">`).join('')}</datalist>
     <p class="note">CSV columns: name, strength, form, schedule, directions. Importing adds new drugs and updates ones with the same name, strength and form.</p>
+    <div class="row"><button class="btn" data-act="fm-toggle" aria-expanded="true">Hide list</button></div>
   </section>`;
 }
 
@@ -1398,7 +1402,8 @@ document.addEventListener('click',e=>{
     case 'rx-save-drug':saveRxToFormulary(rxList(v)[+b.dataset.i]);break;
     case 'rx-cal':printCalibration();break;
     case 'rx-log':exportDispensingCSV();break;
-    case 'fm-add':{ensureFormulary().push({name:'',strength:'',form:'',schedule:'',sig:''});ui.fq='';saveNow();render(true);const n=$('.fmrow input');if(n)n.focus();break}
+    case 'fm-toggle':{const wasOpen=ui.fmOpen;ui.fmOpen=!ui.fmOpen;saveUI();render(true);if(wasOpen){const el=$('#fmPanel');if(el&&el.getBoundingClientRect().top<0)el.scrollIntoView()}break}
+    case 'fm-add':{ui.fmOpen=true;ensureFormulary().push({name:'',strength:'',form:'',schedule:'',sig:''});ui.fq='';saveNow();render(true);const n=$('.fmrow input');if(n)n.focus();break}
     case 'fm-del':{const f=ensureFormulary(),x=f[+b.dataset.i];if(!x)break;confirmModal(`Delete ${esc(drugDisplay(x)||'this drug')} from the formulary?`,'Visits that already use it keep their labels.','Delete',()=>{f.splice(+b.dataset.i,1);saveNow();render(true)});break}
     case 'fm-export':exportFormularyCSV();break;
     case 'fm-import':$('#fmFile').click();break;
