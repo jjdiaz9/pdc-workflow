@@ -38,7 +38,20 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
 (async()=>{
   console.log('Board & seed');
   let dom=await boot();let w=dom.window,d=w.document,P=w.__pdc;
-  ok(d.querySelectorAll('.vcard').length===2,'two example visits on today’s board');
+  ok(d.querySelectorAll('.vcard').length===3,'three example visits on today’s board');
+  console.log('Complete example (Maple)');
+  {const mv=P.data.visits.find(v=>(P.data.patients.find(p=>p.id===v.patientId)||{}).name==='Maple'),mp=P.data.patients.find(p=>p.id===mv.patientId);
+   const miss=['checkin','auth','exam','anes','dental','discharge'].map(s=>P.missing(mv,mp,s).length);
+   ok(miss.every(n=>n===0)&&['checkin','auth','exam','anes','dental','discharge'].every(s=>mv.done[s]),'every step is filled in and complete');
+   ok(mv.auth.signature.startsWith('data:image/png;base64,')&&mv.discharge.rx.length===2&&mv.discharge.rx.every(r=>r.printed)&&P.extractions(mv).join()==='204,208','signature, printed labels and extractions');
+   let errs=[];for(const s of ['checkin','auth','exam','anes','dental','discharge']){try{P.go('visit',mv.id,s)}catch(e){errs.push(s+': '+e.message)}}ok(!errs.length,'all steps render: '+errs.join('; '));
+   const card=[...d.querySelectorAll('.vcard')];P.go('visits');ok([...d.querySelectorAll('.vcard')].some(c=>/Maple/.test(c.textContent)),'Maple is on the board');}
+  console.log('Removing and adding the examples back');
+  P.go('settings');click(w,'[data-act="remove-samples"]');click(w,'[data-act="modal-ok"]');
+  ok(!P.data.visits.some(v=>v.sample)&&!P.data.patients.some(p=>p.sample),'examples removed');
+  P.go('settings');click(w,'[data-act="add-samples"]');
+  ok(P.data.visits.filter(v=>v.sample).length===3&&P.ui.view==='visits'&&d.querySelectorAll('.vcard').length===3,'Add example patients brings all three back on today’s board');
+  P.go('visits');
   ok(d.querySelector('.banner')&&/Example visits/.test(d.querySelector('.banner').textContent),'example banner shown');
   const errs=[];w.addEventListener('error',e=>errs.push(e.message));
 
@@ -186,7 +199,7 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
 
   console.log('New visit flow');
   P.go('visits');click(w,'[data-act="new-visit"]');click(w,'.modal [data-act="pick-patient"][data-id=""]');
-  ok(P.ui.view==='visit'&&P.ui.step==='checkin'&&P.data.visits.length===3,'new patient visit opens on check-in');
+  ok(P.ui.view==='visit'&&P.ui.step==='checkin'&&P.data.visits.length===4,'new patient visit opens on check-in');
   click(w,'#f_p_species_1');ok(d.querySelector('[data-k="p.species"]:checked').value==='Cat','species radio');
   type(w,'#f_p_name','Pickle');await sleep(80);d.getElementById('f_p_name').dispatchEvent(new w.FocusEvent('focusout',{bubbles:true}));await sleep(80);
   ok(d.querySelector('.summary h1').textContent==='Pickle','summary name updates after leaving the field');
@@ -200,11 +213,12 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   const toastOf=W=>(W.document.querySelector('.toast')||{}).textContent||'';
   dom=await boot(gh,{'pdc-sync-v1':JSON.stringify(cfgBase),'pdc-token-v1':'tok'});let A=dom.window,PA=A.__pdc;
   // make A's two example patients real clinic data
+  {const maple=PA.data.patients.find(p=>p.name==='Maple');PA.data.patients=PA.data.patients.filter(p=>p!==maple);PA.data.visits=PA.data.visits.filter(v=>v.patientId!==maple.id)}
   PA.data.patients.forEach(p=>delete p.sample);PA.data.visits.forEach(v=>delete v.sample);PA.saveNow();
   await PA.syncNow({manual:true});ok(gh.st.puts===1&&remote().visits.length===2,'device A creates the shared file');
   let dB=await boot(gh,{'pdc-sync-v1':JSON.stringify(Object.assign({},cfgBase,{device:'iPad · b2'})),'pdc-token-v1':'tok'});let B=dB.window,PB=B.__pdc;
   await PB.syncNow({manual:true});
-  ok(PB.data.visits.filter(v=>!v.sample).length===2&&PB.data.visits.filter(v=>v.sample).length===2,'device B gets the shared visits and keeps its own examples');
+  ok(PB.data.visits.filter(v=>!v.sample).length===2&&PB.data.visits.filter(v=>v.sample).length===3,'device B gets the shared visits and keeps its own examples');
   ok(remote().visits.length===2&&gh.st.puts===1,'examples are never uploaded');
   const vid=PA.data.visits[0].id,vid2=PA.data.visits[1].id;
   const vA=id=>PA.data.visits.find(v=>v.id===id),vB=id=>PB.data.visits.find(v=>v.id===id);

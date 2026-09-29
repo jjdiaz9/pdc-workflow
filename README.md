@@ -45,6 +45,10 @@ The app is served at `https://<your-username>.github.io/pdc-workflow/` about a m
 
 If Pages isn't on yet, in the repo on GitHub go to **Settings → Pages**, set **Source** to *Deploy from a branch*, pick `main` and `/ (root)`, and save. The empty `.nojekyll` file tells Pages to serve the files as they are, without running Jekyll.
 
+## Example patients
+
+The app starts with three example visits for demos: Miso has just arrived, Biscuit is under anesthesia, and Maple's visit is complete from check-in to discharge (every form filled in, signed consent, charted extractions, printed medication labels). They stay on the device and never sync. Remove them from the Visits board or **Settings → Example patients**, and add them back from the same Settings panel.
+
 ## Where patient data lives
 
 Patient data is **never** stored in this folder or the public repo.
