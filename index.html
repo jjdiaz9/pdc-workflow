@@ -453,7 +453,7 @@ function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,300
 function saveNow(){
   clearTimeout(saveTimer);saveTimer=null;
   const b=bodyOf(data);
-  if(b!==lastBody){data.sync.rev=(data.sync.rev||0)+1;data.sync.modified=new Date().toISOString();data.sync.device=cfg.device;lastBody=b;}
+  if(b!==lastBody){data.sync.rev=(data.sync.rev||0)+1;data.sync.modified=new Date().toISOString();data.sync.device=cfg.device;lastBody=b;scheduleSync();}
   storageOK=LS.set(KEY,JSON.stringify(data));
   updateSyncChip();
 }
@@ -1166,7 +1166,7 @@ function vSettings(){
     <p class="note">${data.visits.length} visits · ${data.patients.length} patients · revision ${data.sync.rev||0}${data.sync.modified?' · last change '+esc(new Date(data.sync.modified).toLocaleString()):''}</p>
   </section>
   <section class="panel"><h2>Sync with a private GitHub repository</h2>
-    <p class="note">Keeps one JSON file in a private repo so several devices can share visits. Pull before you start a day, push when you finish. Nothing syncs automatically.</p>
+    <p class="note">Keeps one JSON file in a private repo so several devices share visits. Each device syncs on its own a few seconds after an edit, when the app opens, and every minute while it is open. When two devices change different things, even in the same visit, both changes are kept. The example patients stay on each device.</p>
     ${onPages?'<div class="banner"><span>This app is hosted on a github.io address. Any other app you publish under the same username can read a token saved here. Use a fine-grained token limited to this one repository with Contents read/write only.</span></div>':''}
     <div class="grid">
       <label class="f s3 m6"><span class="lbl">Owner</span><input id="cOwner" value="${esc(cfg.owner)}" placeholder="github-username"></label>
@@ -1176,7 +1176,9 @@ function vSettings(){
       <label class="f s8"><span class="lbl">Access token ${hasTok?'(saved on this device)':''}</span><input id="cTok" type="password" placeholder="${hasTok?'•••••••• leave blank to keep':'github_pat_…'}" autocomplete="off"></label>
       <div class="s4 row" style="align-self:end"><button class="btn" data-act="save-sync">Save settings</button>${hasTok?'<button class="btn ghost" data-act="forget-token">Forget token</button>':''}</div>
     </div>
-    <div class="row"><button class="btn primary" data-act="pull">Pull from GitHub</button><button class="btn primary" data-act="push">Push to GitHub</button><span class="note" id="syncMsg">${cfg.lastSync?'Last synced '+esc(new Date(cfg.lastSync).toLocaleString()):'Not synced yet.'}</span></div>
+    <label class="chk" for="autoSync"><input type="checkbox" id="autoSync"${cfg.auto!==false?' checked':''}><span>Sync automatically on this device</span></label>
+    <div class="row"><button class="btn primary" data-act="sync-now">Sync now</button><span class="note" id="syncMsg" style="${syncState==='error'?'color:var(--crit)':''}">${syncState==='error'?esc(syncErr):syncState==='offline'?'Offline. Changes will sync when the connection returns.':cfg.lastSync?'Last synced '+esc(new Date(cfg.lastSync).toLocaleString()):'Not synced yet.'}</span></div>
+    ${(()=>{const cf=loadConflicts();return cf.length?`<div class="banner" style="display:grid;gap:10px"><b>Changed on two devices at the same time</b><span class="note">This list is only on this device. The kept value is already synced; choose “Use other” to switch.</span>${cf.map((c,i)=>`<div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding-top:8px"><span><b>${esc(c.label)}</b><br><span class="note">Kept: ${esc(showVal(c.kept))} · ${esc(c.otherFrom)} had: ${esc(showVal(c.other))}</span></span><span class="row"><button class="btn small" data-act="cf-use" data-i="${i}">Use other</button><button class="btn small ghost" data-act="cf-ok" data-i="${i}">OK</button></span></div>`).join('')}</div>`:''})()}
     <p class="note">This device: ${esc(cfg.device)} · synced revision ${cfg.baseRev||0}</p>
   </section>
   <section class="panel"><h2>Erase</h2><div class="row"><button class="btn danger" data-act="wipe">Erase all visits on this device</button></div></section>`;
@@ -1230,6 +1232,7 @@ function afterRender(){
 }
 function chartAboveSheet(){const a=$('.arches'),st=$('.stepper');if(!a)return;const top=(($('.top')||{}).offsetHeight||60)+((st||{}).offsetHeight||56)+8;window.scrollTo(0,Math.max(0,a.getBoundingClientRect().top+window.scrollY-top))}
 function scrollToPanel(){const el=$('#stepPanel');if(!el)return;const hh=($('.top')||{}).offsetHeight||60;const y=el.getBoundingClientRect().top+window.scrollY-hh-72;if(window.scrollY>y)window.scrollTo(0,Math.max(0,y))}
+let sigDrawing=false;
 function setupSig(cv){
   const v=curV();const ratio=window.devicePixelRatio||1;const w=cv.clientWidth,h=cv.clientHeight;cv.width=w*ratio;cv.height=h*ratio;
   const ctx=cv.getContext('2d');ctx.scale(ratio,ratio);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#10202a';
@@ -1237,9 +1240,9 @@ function setupSig(cv){
   if(v.auth.signature){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,w,h);img.src=v.auth.signature}
   let drawing=false,last=null,dirty=false;
   const pt=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]};
-  cv.addEventListener('pointerdown',e=>{drawing=true;last=pt(e);cv.setPointerCapture(e.pointerId);e.preventDefault()});
+  cv.addEventListener('pointerdown',e=>{drawing=true;sigDrawing=true;last=pt(e);cv.setPointerCapture(e.pointerId);e.preventDefault()});
   cv.addEventListener('pointermove',e=>{if(!drawing)return;const p=pt(e);ctx.beginPath();ctx.moveTo(last[0],last[1]);ctx.lineTo(p[0],p[1]);ctx.stroke();last=p;dirty=true});
-  const end=()=>{if(!drawing)return;drawing=false;if(dirty){v.auth.signature=cv.toDataURL('image/png');v.auth.signedAt=new Date().toISOString();scheduleSave();const s=$('.sigline span');if(s)s.textContent='Owner / agent signature · signed '+new Date().toLocaleString()}};
+  const end=()=>{sigDrawing=false;if(!drawing)return;drawing=false;if(dirty){v.auth.signature=cv.toDataURL('image/png');v.auth.signedAt=new Date().toISOString();scheduleSave();const s=$('.sigline span');if(s)s.textContent='Owner / agent signature · signed '+new Date().toLocaleString()}};
   cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
 }
 
@@ -1262,6 +1265,7 @@ document.addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='dayPick'){ui.date=t.value||todayISO();render();return}
   if(t.id==='openOnly'){ui.openOnly=t.checked;render();return}
+  if(t.id==='autoSync'){cfg.auto=t.checked;saveCfg();updateSyncChip();if(t.checked)syncNow({quiet:true});return}
   if(t.id==='importFile'){doImport(t.files[0]);t.value='';return}
   if(t.id==='fmFile'){const f=t.files[0];t.value='';if(f){const r=new FileReader();r.onload=()=>importFormularyCSV(String(r.result||''));r.readAsText(f)}return}
   if(t.dataset&&t.dataset.rxfind!==undefined){rxPick(+t.dataset.rxfind,t.value);return}
@@ -1295,6 +1299,7 @@ function refreshChrome(){
     const a1=na.querySelector('.alerts'),a0=oa.firstElementChild;const cur=a0.querySelector('.alerts');if(cur)cur.remove();if(a1)a0.appendChild(a1)}
 }
 let chromeTimer=null;
+document.addEventListener('focusout',()=>{if(pendingRender)setTimeout(flushPendingRender,120)});
 document.addEventListener('focusout',e=>{if(ui.view==='visit'&&e.target.dataset&&e.target.dataset.k){clearTimeout(chromeTimer);chromeTimer=setTimeout(refreshChrome,50)}});
 
 function ensureTooth(n){const d=curV().dental;if(!d.teeth[n])d.teeth[n]={codes:{},note:'',ext:false};d.teeth[n].codes=d.teeth[n].codes||{};return d.teeth[n]}
@@ -1337,14 +1342,14 @@ document.addEventListener('click',e=>{
     case 'import':$('#importFile').click();break;
     case 'save-sync':readSyncForm();toast('Sync settings saved.');render();break;
     case 'forget-token':LS.del(TKEY);toast('Token removed from this device.');render();break;
-    case 'pull':readSyncForm();pull();break;
-    case 'push':readSyncForm();push();break;
-    case 'wipe':confirmModal('Erase every visit and patient on this device?','Export a backup first if you might need them. GitHub copies are not touched.','Erase everything',()=>{data=blank();lastBody=bodyOf(data);saveNow();go('visits')});break;
+    case 'sync-now':readSyncForm();setSyncState('');syncNow({manual:true});break;
+    case 'cf-use':{const all=loadConflicts(),c=all[+b.dataset.i];if(c&&setPath(c.path,c.other)){all.splice(+b.dataset.i,1);LS.set(CKEY,JSON.stringify(all));saveNow();toast('Using the other value.');render(true)}break}
+    case 'cf-ok':{const all=loadConflicts();all.splice(+b.dataset.i,1);LS.set(CKEY,JSON.stringify(all));render(true);break}
+    case 'wipe':confirmModal('Erase every visit and patient on this device?','Export a backup first if you might need them. GitHub copies are not touched, and automatic sync is turned off on this device.','Erase everything',()=>{data=blank();cfg.baseSha=null;cfg.baseRev=0;cfg.auto=false;saveCfg();lastBody=bodyOf(data);saveNow();go('visits')});break;
     case 'vitals':vitalsModal();break;
     case 'save-vitals':saveVitals(+b.dataset.col);break;
     case 'close-modal':closeModal();break;
     case 'modal-ok':{const f=pendingOK;closeModal();if(f)f();break}
-    case 'conflict':resolveConflict(b.dataset.keep);break;
     case 'rx-add':{v.discharge.rx=rxList(v);v.discharge.rx.push(newRx(v));saveNow();render(true);const f=$$('.rxfind');if(f.length)f[f.length-1].focus();break}
     case 'rx-del':{const i=+b.dataset.i,r=rxList(v)[i];const del=()=>{v.discharge.rx.splice(i,1);saveNow();render(true)};if(r&&(r.drug||r.sig))confirmModal(`Remove ${esc(rxDrug(r)||'this medication')}?`,'Its label details will be deleted from this visit.','Remove',del);else del();break}
     case 'rx-sig':{const i=b.dataset.i,r=rxList(v)[+i];if(!r)break;const g=id=>($('#'+id+'-'+i)||{}).value||'';const sg=buildSig(g('sb-amt'),g('sb-unit'),g('sb-route'),g('sb-freq'),g('sb-dur'));r.sig=r.sig&&r.sig.trim()?r.sig.trim()+' '+sg:sg;const ta=$('#'+fid(`v.discharge.rx.${i}.sig`));if(ta)ta.value=r.sig;scheduleSave();rxRefresh(+i);refreshChrome();break}
@@ -1406,7 +1411,7 @@ function saveVitals(col){
 /* ---------- modal / toast ---------- */
 let pendingOK=null;
 function showModal(h,cls){$('#modalRoot').innerHTML=`<div class="scrim" data-scrim><div class="modal ${cls||''}" role="dialog" aria-modal="true">${h}</div></div>`;$('#modalRoot .scrim').addEventListener('click',e=>{if(e.target.hasAttribute('data-scrim'))closeModal()})}
-function closeModal(){$('#modalRoot').innerHTML='';pendingOK=null}
+function closeModal(){$('#modalRoot').innerHTML='';pendingOK=null;if(pendingRender)setTimeout(flushPendingRender,50)}
 function confirmModal(title,body,ok,fn){pendingOK=fn;showModal(`<h2>${title}</h2><p>${body}</p><div class="acts"><button class="btn" data-act="close-modal">Cancel</button><button class="btn danger" data-act="modal-ok">${ok}</button></div>`)}
 let toastT=null;
 function toast(msg){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;clearTimeout(toastT);toastT=setTimeout(()=>t.remove(),3200)}
@@ -1415,7 +1420,7 @@ function summaryOf(d){if(!d)return '—';const open=(d.visits||[]).filter(v=>!(v
 function doImport(file){
   if(!file)return;const r=new FileReader();
   r.onload=()=>{const d=parseJSON(r.result);if(!d||d.app!==APP||!Array.isArray(d.visits)){toast('That file is not a Pet Dental Clinic backup.');return}
-    confirmModal('Replace this device’s data with the backup?',`Backup: ${summaryOf(d)}${d.sync&&d.sync.modified?', saved '+esc(new Date(d.sync.modified).toLocaleString()):''}.<br>This device: ${summaryOf(data)}.`,'Replace',()=>{data=d;data.visits.forEach(ensureShape);lastBody='';saveNow();toast('Backup imported.');go('visits')})};
+    confirmModal('Replace this device’s data with the backup?',`Backup: ${summaryOf(d)}${d.sync&&d.sync.modified?', saved '+esc(new Date(d.sync.modified).toLocaleString()):''}.<br>This device: ${summaryOf(data)}.`,'Replace',()=>{data=d;data.visits.forEach(ensureShape);cfg.baseSha=null;saveCfg();lastBody='';saveNow();toast('Backup imported.');go('visits')})};
   r.readAsText(file);
 }
 
@@ -1611,10 +1616,10 @@ const b64encode=s=>{let b='';new TextEncoder().encode(s).forEach(c=>b+=String.fr
 const b64decode=s=>new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g,'')),c=>c.charCodeAt(0)));
 function readSyncForm(){const g=id=>{const e=$('#'+id);return e?e.value.trim():null};const o=g('cOwner'),r=g('cRepo'),br=g('cBranch'),pa=g('cPath'),tk=g('cTok');
   if(o!==null){cfg.owner=o;cfg.repo=r;cfg.branch=br||'main';cfg.path=(pa||'pdc/visits.json').replace(/^\/+/,'');cfg.backend=o&&r?'github':'none';if(tk)LS.set(TKEY,tk);saveCfg()}}
-function syncMsg(m,tone){const el=$('#syncMsg');if(el){el.textContent=m;el.style.color=tone==='crit'?'var(--crit)':tone==='ok'?'var(--ok)':''}toast(m)}
-async function gh(method,path,body){
+function syncMsg(m,tone,quiet){const el=$('#syncMsg');if(el){el.textContent=m;el.style.color=tone==='crit'?'var(--crit)':tone==='ok'?'var(--ok)':''}if(!quiet)toast(m)}
+async function gh(method,path,body,extra){
   const tok=LS.get(TKEY);
-  const r=await fetch(`https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}${path}`,{method,headers:Object.assign({Authorization:'Bearer '+tok,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},body?{'Content-Type':'application/json'}:{}),body:body?JSON.stringify(body):undefined,cache:'no-store'});
+  const r=await fetch(`https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}${path}`,{method,headers:Object.assign({Authorization:'Bearer '+tok,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},body?{'Content-Type':'application/json'}:{},extra||{}),body:body?JSON.stringify(body):undefined,cache:'no-store'});
   let j=null;try{j=await r.json()}catch(e){}
   return {status:r.status,ok:r.ok,j,headers:r.headers};
 }
@@ -1635,67 +1640,179 @@ async function explain404(){
   if(br.status===404){const all=await gh('GET','/branches?per_page=20');const names=all.ok&&Array.isArray(all.j)?all.j.map(b=>b.name).join(', '):'';return `Branch “${cfg.branch}” doesn’t exist in ${cfg.repo}.${names?' Branches: '+names+'.':''}`}
   return null; // repo and branch fine: file just doesn't exist yet
 }
+// The last copy read is kept as text with its ETag; asking "changed since?" costs almost nothing
+// when it hasn't, which keeps the once-a-minute check cheap.
+let remoteCache=null;
 async function readRemote(){
-  const r=await gh('GET',contentPath()+'?ref='+encodeURIComponent(cfg.branch));
+  const key=cfg.owner+'/'+cfg.repo+'/'+cfg.branch+'/'+cfg.path;
+  const hit=remoteCache&&remoteCache.key===key?remoteCache:null;
+  const r=await gh('GET',contentPath()+'?ref='+encodeURIComponent(cfg.branch),null,hit?{'If-None-Match':hit.etag}:null);
+  if(r.status===304&&hit)return {sha:hit.sha,data:JSON.parse(hit.text)};
+  const rm=await readRemoteFrom(r);
+  const et=r.headers&&r.headers.get&&r.headers.get('etag');
+  remoteCache=et&&!rm.missing?{key,etag:et,sha:rm.sha,text:JSON.stringify(rm.data)}:null;
+  return rm;
+}
+async function readRemoteFrom(r){
+  if(r.status===200&&!r.j.content&&r.j.sha){const d=await readBlob(r.j.sha);if(!d||d.app!==APP)throw new Error(cfg.path+' on GitHub could not be read.');return {sha:r.j.sha,data:d}}
   if(r.status===200){let d=null;try{d=JSON.parse(b64decode(r.j.content))}catch(e){throw new Error('The GitHub file is not valid JSON. Check '+cfg.path+'.')}if(!d||d.app!==APP)throw new Error(cfg.path+' on GitHub is not a Pet Dental Clinic data file.');return {sha:r.j.sha,data:d}}
   if(r.status===404){const why=await explain404();if(why)throw new Error(why);return {missing:true}}
   throw new Error(httpError(r,'read '+cfg.path));
 }
 function syncReady(){if(!cfg.owner||!cfg.repo){syncMsg('Enter the owner and private repo, then save.','crit');return false}if(!LS.get(TKEY)){syncMsg('Paste an access token first.','crit');return false}return true}
+/* ---------- automatic sync, merged field by field ---------- */
+// Each device syncs on its own a few seconds after edits, when the app opens or comes back on screen,
+// when the connection returns, and every minute while open. Changes are merged three ways against the
+// copy both devices last had in common (read back from GitHub's history by its blob sha), so edits to
+// different fields, visits or patients on different devices are all kept.
+const CKEY='pdc-conflicts-v1';
 const localDirty=()=>(data.sync.rev||0)>(cfg.baseRev||0);
-let busy=false;
-async function pull(){
-  if(busy||!syncReady())return;busy=true;flushSave();syncMsg('Pulling…');
-  try{
-    const rm=await readRemote();
-    if(rm.missing){syncMsg('No data file on GitHub yet. Push to create it.');return}
-    const rRev=rm.data.sync&&rm.data.sync.rev||0;
-    if(rRev>(cfg.baseRev||0)&&localDirty()){conflictModal(rm);return}
-    if(rRev>(cfg.baseRev||0)){adopt(rm.data);syncMsg('Pulled the latest visits from GitHub.','ok');return}
-    if(localDirty())syncMsg('GitHub is behind this device. Push to update it.');
-    else{cfg.lastSync=new Date().toISOString();saveCfg();syncMsg('Already up to date.','ok')}
-  }catch(e){syncMsg(e.message||String(e),'crit')}finally{busy=false}
+const syncOn=()=>cfg.backend==='github'&&!!cfg.owner&&!!cfg.repo&&!!LS.get(TKEY)&&cfg.auto!==false;
+let syncing=null,syncAgain=false,syncTimer=null,syncState='',syncErr='',pendingRender=false,conflictNote=false;
+function scheduleSync(ms){if(!syncOn())return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow({quiet:true}),ms??4000)}
+function setSyncState(s,err){syncState=s;syncErr=err||'';updateSyncChip()}
+
+// undefined, null and '' all mean "empty" and compare equal; key order does not matter
+const blankV=x=>x===undefined||x===null||x==='';
+function same(a,b){
+  if(a===b||(blankV(a)&&blankV(b)))return true;
+  if(!a||!b||typeof a!=='object'||typeof b!=='object'||Array.isArray(a)!==Array.isArray(b))return false;
+  if(Array.isArray(a)){for(let i=0,n=Math.max(a.length,b.length);i<n;i++)if(!same(a[i],b[i]))return false;return true}
+  for(const k of new Set([...Object.keys(a),...Object.keys(b)]))if(!same(a[k],b[k]))return false;return true;
 }
-async function push(opts={}){
-  if(busy&&!opts.force)return;if(!syncReady())return;busy=true;flushSave();syncMsg('Pushing…');
-  try{
-    let rm=opts.remote||await readRemote();
-    const rRev=rm.missing?0:(rm.data.sync&&rm.data.sync.rev||0);
-    if(!opts.force&&!rm.missing&&rRev>(cfg.baseRev||0)){if(localDirty())conflictModal(rm);else syncMsg('GitHub has newer visits. Pull first.');return}
-    if(!opts.force&&!localDirty()&&!rm.missing){syncMsg('Nothing new to push.','ok');return}
-    if(opts.force||(data.sync.rev||0)<=rRev){data.sync.rev=Math.max(data.sync.rev||0,rRev)+1;data.sync.modified=new Date().toISOString();data.sync.device=cfg.device;lastBody=bodyOf(data);LS.set(KEY,JSON.stringify(data))}
-    const body={message:`Update visits from ${cfg.device} (rev ${data.sync.rev})`,content:b64encode(JSON.stringify(data)),branch:cfg.branch};
-    if(!rm.missing)body.sha=rm.sha;
-    let r=await gh('PUT',contentPath(),body);
-    if(!r.ok&&!body.sha&&(r.status===422||r.status===409)){const again=await readRemote();if(!again.missing){const ar=again.data.sync&&again.data.sync.rev||0;if(ar>(cfg.baseRev||0)){conflictModal(again);return}body.sha=again.sha;r=await gh('PUT',contentPath(),body)}}
-    if(!r.ok)throw new Error(httpError(r,'write '+cfg.path));
-    cfg.baseRev=data.sync.rev;cfg.lastSync=new Date().toISOString();saveCfg();updateSyncChip();syncMsg(`Pushed revision ${data.sync.rev} to GitHub.`,'ok');
-  }catch(e){syncMsg(e.message||String(e),'crit')}finally{busy=false}
+const isObj=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+const idList=a=>Array.isArray(a)&&a.length>0&&a.every(x=>isObj(x)&&typeof x.id==='string');
+// b = last common copy, l = this device, r = GitHub. Where both changed the same value, `prefer` wins
+// and the other value is recorded in `out`.
+function merge3(b,l,r,path,out,prefer){
+  if(same(l,r))return l;
+  if(same(b,l))return r;
+  if(same(b,r))return l;
+  if(l===undefined)return r;   // deleted here but edited there: keep the edit
+  if(r===undefined)return l;
+  if(isObj(l)&&isObj(r)){const o={};for(const k of new Set([...Object.keys(l),...Object.keys(r)])){const v=merge3(isObj(b)?b[k]:undefined,l[k],r[k],path.concat(k),out,prefer);if(v!==undefined)o[k]=v}return o}
+  if(Array.isArray(l)&&Array.isArray(r)){
+    if((idList(l)||!l.length)&&(idList(r)||!r.length)){  // records with ids (patients, visits, medications): match by id
+      const bm=new Map((Array.isArray(b)?b:[]).filter(isObj).map(x=>[x.id,x])),lm=new Map(l.map(x=>[x.id,x])),rm=new Map(r.map(x=>[x.id,x]));
+      const o=[];[...l.map(x=>x.id),...r.map(x=>x.id).filter(id=>!lm.has(id))].forEach(id=>{const v=merge3(bm.get(id),lm.get(id),rm.get(id),path.concat(id),out,prefer);if(v!==undefined)o.push(v)});return o;
+    }
+    const bb=Array.isArray(b)?b:[],o=[];   // lists by position (monitoring grid cells, drug rows)
+    for(let i=0,n=Math.max(l.length,r.length);i<n;i++)o[i]=merge3(bb[i],l[i],r[i],path.concat(i),out,prefer);
+    while(o.length&&o[o.length-1]===undefined)o.pop();return o;
+  }
+  const keep=prefer==='remote'?r:l;out.push({path,kept:keep,other:prefer==='remote'?l:r,otherFrom:prefer==='remote'?'this device':'the other device'});return keep;
 }
-function adopt(d){d.visits.forEach(ensureShape);data=d;lastBody=bodyOf(data);LS.set(KEY,JSON.stringify(data));cfg.baseRev=d.sync.rev||0;cfg.lastSync=new Date().toISOString();saveCfg();render()}
-let conflictRemote=null;
-function conflictModal(rm){
-  conflictRemote=rm;busy=false;const rd=rm.data;
-  showModal(`<h2>Both copies changed</h2><p>Visits were edited on this device and on another one since the last sync. Choose which copy to keep. The other is downloaded as a backup first.</p>
-  <div class="cmp"><div><b>This device</b><br>${esc(cfg.device)}<br>${data.sync.modified?esc(new Date(data.sync.modified).toLocaleString()):''}<br>${esc(summaryOf(data))}</div><div><b>GitHub</b><br>${esc(rd.sync&&rd.sync.device||'unknown device')}<br>${rd.sync&&rd.sync.modified?esc(new Date(rd.sync.modified).toLocaleString()):''}<br>${esc(summaryOf(rd))}</div></div>
-  <div class="acts"><button class="btn" data-act="close-modal">Decide later</button><button class="btn" data-act="conflict" data-keep="remote">Use GitHub copy</button><button class="btn primary" data-act="conflict" data-keep="local">Keep this device’s copy</button></div>`);
+// The example patients stay on each device and are never synced.
+const sharedPart=d=>({version:1,app:APP,patients:(d.patients||[]).filter(x=>!x.sample),visits:(d.visits||[]).filter(x=>!x.sample),settings:d.settings||{}});
+
+async function readBlob(sha){
+  const r=await gh('GET','/git/blobs/'+encodeURIComponent(sha));
+  if(!r.ok||!r.j||!r.j.content)return null;
+  try{return JSON.parse(b64decode(r.j.content))}catch(e){return null}
 }
-function resolveConflict(keep){
-  const rm=conflictRemote;closeModal();if(!rm)return;
-  if(keep==='remote'){download(`pdc-visits-this-device-${todayISO()}.json`,JSON.stringify(data,null,1));adopt(rm.data);syncMsg('Using the GitHub copy. This device’s version was downloaded as a backup.','ok')}
-  else{download(`pdc-visits-github-${todayISO()}.json`,JSON.stringify(rm.data,null,1));push({force:true,remote:rm})}
+function syncNow(opts={}){
+  if(syncing){syncAgain=true;return syncing}
+  if(opts.manual){if(!syncReady())return Promise.resolve()}else if(!syncOn())return Promise.resolve();
+  clearTimeout(syncTimer);
+  syncing=(async()=>{
+    setSyncState('syncing');conflictNote=false;
+    try{
+      for(let attempt=0;attempt<3;attempt++){
+        const rm=await readRemote();
+        if(!rm.missing&&rm.sha===cfg.baseSha&&!localDirty()){finishSync('Up to date.',opts);return}
+        flushSave();
+        const local=sharedPart(data),remote=rm.missing?null:sharedPart(rm.data);
+        let base=null,prefer='local';
+        if(!rm.missing){
+          if(rm.sha===cfg.baseSha)base=remote;
+          else if(!localDirty())base=local;
+          else if(cfg.baseSha)base=await readBlob(cfg.baseSha);
+          if(!base){base={};prefer='remote'}   // no common copy (new device, or a restored backup): add, never overwrite
+        }
+        // from here to applying the result nothing is awaited, so no typing can slip in between
+        flushSave();
+        const conflicts=[];
+        const M=remote?merge3(sharedPart(base),sharedPart(data),remote,[],conflicts,prefer):sharedPart(data);
+        const changedLocal=!same(M,sharedPart(data)),changedRemote=!remote||!same(M,remote);
+        if(changedLocal){
+          M.visits.forEach(ensureShape);
+          data=Object.assign({},M,{patients:data.patients.filter(x=>x.sample).concat(M.patients),visits:data.visits.filter(x=>x.sample).concat(M.visits),sync:data.sync});
+          lastBody=bodyOf(data);LS.set(KEY,JSON.stringify(data));refreshAfterSync();
+        }
+        if(conflicts.length)recordConflicts(conflicts);
+        const rRev=rm.missing?0:(rm.data.sync&&rm.data.sync.rev||0);
+        if(!changedRemote){
+          data.sync.rev=rRev;cfg.baseRev=rRev;cfg.baseSha=rm.sha;lastBody=bodyOf(data);LS.set(KEY,JSON.stringify(data));saveCfg();
+          finishSync(changedLocal?'Updated from another device.':'Up to date.',opts);return;
+        }
+        const appliedBody=bodyOf(data),newRev=Math.max(data.sync.rev||0,rRev)+1;
+        const payload=Object.assign({},M,{sync:{rev:newRev,modified:new Date().toISOString(),device:cfg.device}});
+        const body={message:`Update visits from ${cfg.device} (rev ${newRev})`,content:b64encode(JSON.stringify(payload)),branch:cfg.branch};
+        if(!rm.missing)body.sha=rm.sha;
+        const w=await gh('PUT',contentPath(),body);
+        if(w.status===409||w.status===422)continue;   // someone saved in between: read again and merge again
+        if(!w.ok)throw new Error(httpError(w,'write '+cfg.path));
+        const typed=bodyOf(data)!==appliedBody;       // edits made while the upload was running stay unsynced
+        cfg.baseRev=newRev;cfg.baseSha=w.j&&w.j.content&&w.j.content.sha||null;saveCfg();
+        data.sync=Object.assign({},payload.sync,typed?{rev:newRev+1}:{});lastBody=typed?'':bodyOf(data);LS.set(KEY,JSON.stringify(data));
+        if(typed)scheduleSync();
+        finishSync(changedLocal?'Synced changes both ways.':'Sent changes to GitHub.',opts);return;
+      }
+      throw new Error('GitHub kept changing while saving. Will try again shortly.');
+    }catch(e){
+      const offline=(e&&e.name==='TypeError')||(typeof navigator!=='undefined'&&navigator.onLine===false);
+      setSyncState(offline?'offline':'error',offline?'':(e.message||String(e)));
+      if(opts.manual||!offline)syncMsg(offline?'Offline. Changes will sync when the connection returns.':(e.message||String(e)),'crit',!opts.manual);
+    }finally{
+      syncing=null;if(syncAgain){syncAgain=false;scheduleSync(300)}
+    }
+  })();
+  return syncing;
 }
+function finishSync(msg,opts){cfg.lastSync=new Date().toISOString();saveCfg();setSyncState('');syncMsg(msg,'ok',!opts.manual||conflictNote)}  // keep a conflict warning on screen
+// Redraw with incoming changes, but never under someone's fingers.
+function busyEditing(){const a=document.activeElement;return (a&&main.contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))||sigDrawing||!!$('#modalRoot').innerHTML}
+function refreshAfterSync(){if(busyEditing())pendingRender=true;else render(true)}
+function flushPendingRender(){if(pendingRender&&!busyEditing()){pendingRender=false;render(true)}}
+
+function loadConflicts(){return parseJSON(LS.get(CKEY))||[]}
+function describePath(path){
+  const [kind,id,...rest]=path;let who='';
+  if(kind==='visits'){const v=visit(id);const p=v&&patient(v.patientId);who=`${p&&p.name||'A visit'}${v?' · '+prettyDate(v.date):''}`}
+  else if(kind==='patients'){const p=patient(id);who=p&&p.name||'A patient'}
+  else{who='Settings';rest.unshift(id)}
+  return `${who}: ${rest.join(' › ')}`;
+}
+function recordConflicts(list){
+  const all=loadConflicts().concat(list.map(c=>({path:c.path,label:describePath(c.path),kept:c.kept,other:c.other,otherFrom:c.otherFrom,at:new Date().toISOString()}))).slice(-50);
+  LS.set(CKEY,JSON.stringify(all));
+  conflictNote=true;toast(`${list.length} ${list.length===1?'field was':'fields were'} changed on two devices at once. Review in Settings.`);
+  if(ui.view==='settings'&&!busyEditing())render(true);
+}
+function setPath(path,val){
+  let o=data[path[0]];
+  for(let i=1;i<path.length-1;i++){const k=path[i];o=Array.isArray(o)&&typeof k==='string'?o.find(x=>x&&x.id===k):o&&o[k];if(!o)return false}
+  const last=path[path.length-1];
+  if(Array.isArray(o)&&typeof last==='string'){const i=o.findIndex(x=>x&&x.id===last);if(i<0){if(val)o.push(val)}else if(val===undefined)o.splice(i,1);else o[i]=val}
+  else if(o){if(val===undefined)delete o[last];else o[last]=val}
+  return true;
+}
+const showVal=x=>blankV(x)?'(empty)':typeof x==='object'?JSON.stringify(x).slice(0,80):String(x).slice(0,80);
 function updateSyncChip(){
   const c=$('#syncChip');if(!c)return;const dot=c.querySelector('.dot'),tx=c.querySelector('span:last-child');
   let t='Saved on this device',k='ok';
   if(!storageOK){t='Not saving: storage blocked';k='crit'}
-  else if(cfg.backend==='github'){if(localDirty()){t='Changes not synced';k='warn'}else if(cfg.lastSync){t='Synced '+new Date(cfg.lastSync).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}}
+  else if(cfg.backend==='github'){if(syncState==='syncing'){t='Syncing…';k='ok'}else if(syncState==='error'){t='Sync problem';k='crit'}else if(syncState==='offline'){t=localDirty()?'Offline · will sync':'Offline';k='warn'}else if(localDirty()){t=cfg.auto===false?'Changes not synced':'Syncing soon';k='warn'}else if(cfg.lastSync){t='Synced '+new Date(cfg.lastSync).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}}
   dot.className='dot '+k;tx.textContent=t;
 }
 
 /* expose for tests */
-window.__pdc={get data(){return data},get ui(){return ui},cfg,saveNow,render,go,setK,getK,flag,mapOf,calcHTML,weightKg,missing,extractions,dischargeType,pull,push,toothName,ensureShape,CHARTS,buildSig,labelHTML,formulary,lblSet,rxList,importFormularyCSV,addMonthsISO};
+window.__pdc={get data(){return data},get ui(){return ui},cfg,saveNow,render,go,setK,getK,flag,mapOf,calcHTML,weightKg,missing,extractions,dischargeType,syncNow,merge3,same,loadConflicts,toothName,ensureShape,CHARTS,buildSig,labelHTML,formulary,lblSet,rxList,importFormularyCSV,addMonthsISO};
 render();
+setTimeout(()=>syncNow({quiet:true}),800);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow({quiet:true});else if(localDirty())syncNow({quiet:true})});
+window.addEventListener('online',()=>syncNow({quiet:true}));
+setInterval(()=>{if(document.visibilityState==='visible')syncNow({quiet:true})},60000);
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
 })();
 </script>

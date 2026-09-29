@@ -51,7 +51,7 @@ Patient data is **never** stored in this folder or the public repo.
 
 - Visits are saved in the browser on each device, automatically as you type.
 - **Settings → Backups** exports and imports a `.json` backup. `.gitignore` blocks `*.json`, so a backup dropped in this folder can't be committed by accident.
-- **Settings → Sync** can keep one JSON file in a separate private GitHub repo (path `pdc/visits.json` by default). This needs a fine-grained token limited to that one repository, with Contents read/write only. Sync is manual: **Pull** before a clinic day and **Push** after. If two devices both changed, the app asks which copy to keep and downloads the other one as a backup.
+- **Settings → Sync** keeps one JSON file in a separate private GitHub repo (path `pdc/visits.json` by default). This needs a fine-grained token limited to that one repository, with Contents read/write only. Once set up, each device syncs by itself a few seconds after an edit, when the app opens or comes back on screen, when the connection returns, and every minute while it's open. Changes are merged field by field against the last copy the devices had in common, so two iPads can work on different patients, or on different parts of the same visit, at the same time. If two devices change the same field at the same moment, the device that syncs later keeps its value and lists the other one under Settings → Sync, with **Use other** to switch. The example patients stay on each device and are never synced.
 
 ## Running the tests
 
