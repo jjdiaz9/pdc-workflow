@@ -72,4 +72,4 @@ The form wording is in `index.html`:
 - Discharge sheet: `dischargeDoc`
 - Medication labels: `labelHTML`, starter formulary `RX_SEED`, cautions `CAUTIONS`, label defaults `LBL_DEF`
 
-Printed versions are in the `PRINT` object. Every form prints as a replica of the clinic's paper original with the visit's answers filled in: New Patient, Authorization, Exam and Discharge (`newPatientPage`, `authPage`, `examPage`, `dischargePage`, templates in `FORM_ART`), the dental charts (`chartPage`, `CHART_ART`), the treatment sheet and the monitoring form (`treatmentPage`, `monitorPage`). The templates were converted from the clinic's PDFs.
+Printed versions are in the `PRINT` object. Every form prints as a replica of the clinic's paper original with the visit's answers filled in: New Patient, Authorization, Exam, Treatment Notes and Discharge (`newPatientPage`, `authPage`, `examPage`, `treatmentPage`, `dischargePage`, templates in `FORM_ART`), the dental charts (`chartPage`, `CHART_ART`) and the monitoring form (`monitorPage`). The templates were converted from the clinic's PDFs.

@@ -120,8 +120,10 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   const mon=[...pd.querySelectorAll('svg.paper')].find(s=>s.textContent.includes('Surgery Time'));
   ok(mon&&mon.querySelector('g[transform*="rotate(-90)"]')&&/5 min   08 : 38/.test(mon.textContent),'monitoring form prints sideways with column times');
   ok([...mon.querySelectorAll('text.fv')].some(t=>t.textContent==='112/64/80'),'monitoring values in the grid');
-  const ts=pd.querySelector('.tsheet');ok(ts&&[...ts.querySelectorAll('.ck')].map(x=>x.textContent).join(',')==='SDD,IM,Adequate,22g,R Ceph,Yes,WITH','treatment sheet circles the chosen options');
-  ok(/\d\.\d+ mL Butorphanol 10 mg\/mL, 0\.071 mL Dexmed/.test(ts.textContent),'treatment sheet fills premed volumes');
+  const ts=[...pd.querySelectorAll('svg.paper')].find(s=>s.textContent.includes('+TIME'));
+  const tv=[...ts.querySelectorAll('text.fv')].map(t=>t.textContent);
+  ok(ts&&ts.querySelectorAll('ellipse').length===7,'treatment sheet circles 7 choices (SDD, IM, Adequate, 22g, R Ceph, nails Yes, WITH)');
+  ok(tv.some(x=>/^\d\.\d+ mL$/.test(x))&&tv.includes('0.071 mL')&&tv.includes('08:05')&&tv.includes('Biscuit'),'treatment sheet fills premed volumes, times and name');
   const bv=P.data.visits.find(x=>x.id===biscuit.id);const gridBak=JSON.stringify(bv.anes.grid);bv.anes.grid.cols.push(...Array.from({length:12},()=>({time:''})));bv.anes.grid.vals.hr[26]='90';
   click(w,'[data-act="print"][data-sec="all"]');ok((w.__printed.match(/Surgery Time/g)||[]).length===2,'more than two hours continues on a second monitoring sheet');
   bv.anes.grid=JSON.parse(gridBak);
