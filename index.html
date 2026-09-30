@@ -336,11 +336,26 @@ table.mon td.warn input{color:var(--warn);font-weight:600} table.mon td.crit inp
 .vitals .f.crit input{border-color:var(--crit);background:var(--crit-soft)}
 .prev{font-size:12px;color:var(--muted);font-family:var(--f-mono)}
 #print{display:none}
+#print.prep{display:block;position:fixed;left:-30000px;top:0;width:8in;pointer-events:none}
+/* body map (exam) */
+.bmap-wrap{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+.bmap-fig{max-width:480px}
+@media (min-width:960px){.bmap-wrap{grid-template-columns:minmax(0,420px) minmax(0,1fr);align-items:start}}
+.bmap-fig{margin:0;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:6px 8px 4px}
+.bmap-fig figcaption{display:flex;justify-content:space-around;font-size:13px;font-weight:600;color:#3a4a54}
+.bmap{display:block;width:100%;height:auto;touch-action:manipulation;-webkit-user-select:none;user-select:none;cursor:crosshair}
+.bm-mk circle{fill:var(--crit);stroke:#fff;stroke-width:1}
+.bm-mk text{fill:#fff;font:bold 7px Arial,Helvetica,sans-serif;text-anchor:middle;pointer-events:none}
+.bm-mk.sel circle{stroke:#17252E;stroke-width:1.6}
+.bmrow{display:flex;gap:10px;align-items:end}
+.bmrow .f{flex:1;min-width:0}
+.bmrow+.bmrow{margin-top:10px}
+.bmn{flex:none;width:32px;height:32px;margin-bottom:6px;border-radius:50%;background:var(--crit);color:#fff;font-weight:700;display:grid;place-items:center}
 @media print{
   @page{margin:12mm}
   body{background:#fff;color:#000;font-size:11pt}
   #app,.scrim,.toast{display:none!important}
-  #print{display:block}
+  #print,#print.prep{display:block;position:static;width:auto}
   .pp{page-break-after:always}
   .pp:last-child{page-break-after:auto}
   .pp h1{font-size:18pt;margin-bottom:4pt}
@@ -494,6 +509,7 @@ function seed(d){
   Object.assign(v3.exam,{history:'Here for a dental cleaning. Owner has noticed bad breath and dropping kibble on the left side for 2 months. Eating and drinking normally. Last dental in 2022.',
     T:'101.2',P:'92',R:'28',wtKg:'29.1',mentation:'BAR',bcs:'6',mm:'Pink, moist',crt:'<2 sec',eent:'WNL',oral:'Grade 3 calculus, gingival recession 204, fractured 208 with pulp exposure',pln:'WNL',hl:'NSR, no murmur, lungs clear',abd:'Soft, non-painful',ms:'Ambulatory x4, mild hind-end stiffness',ug:'WNL',neuro:'WNL',rectal:'Deferred',cs:'WNL',
     assessment:'Stage 3 periodontal disease; complicated crown fracture 208. Hypothyroid, stable on medication.',procedure:'Oral exam / diagnostics',laboratory:'Pre-anesthetic chemistry + CBC: WNL',clientComm:'Discussed likely extraction of 204 and 208. Owner approved up to the additional $500.'});
+  v3.exam.masses=[{id:uid(),map:'dog',x:64,y:44,note:'1.5 cm soft, mobile SQ mass, L axilla. Likely lipoma; FNA offered.'}];
   Object.assign(v3.anes,{presentsFor:'SDD',behaviorWarnings:'',bwLoc:'L jugular',bwBehavior:'Calm',examBehavior:'Friendly',premedEffect:'Adequate',premedBehavior:'Sedate, calm',ivcSize:'20g',ivcSite:'L Ceph',etSize:'9.0',nails:'Yes',
     totalFluids:'240',finalSpo2:'97',finalTemp:'98.6',finalBp:'118/68/84',recT:'99.0',recP:'84',recR:'20',
     notes:'Local blocks: L caudal maxillary and R infraorbital, 0.8 mL bupivacaine each. Brief bradycardia (HR 58) at 40 min, resolved with a lighter plane. Smooth recovery.'});
@@ -929,6 +945,8 @@ function stExam(v,p){
     <div class="s6" style="align-self:end"><button class="btn small" data-act="exam-wnl" type="button">Fill empty systems with “WNL”</button></div>
     ${[['eent','EENT'],['oral','Oral'],['pln','PLN'],['hl','H/L'],['abd','Abd'],['ms','M/S'],['ug','U/G'],['neuro','Neuro'],['rectal','Rectal'],['cs','C/S']].map(([k,l])=>F('v.exam.'+k,l,{cls:k==='oral'||k==='hl'?'s6':'s3 m6'})).join('')}
   </div>
+  <h3>Masses</h3>
+  ${bodyMapUI(v,p)}
   <h3>Assessment &amp; plan</h3>
   <div class="grid">
     ${A('v.exam.assessment','Assessment',{cls:'s12',rows:3})}
@@ -1370,6 +1388,8 @@ document.addEventListener('click',e=>{
     case 'del-drug':v.anes[b.dataset.kind].splice(+b.dataset.i,1);saveNow();render(true);break;
     case 'add-cols':for(let i=0;i<3;i++)v.anes.grid.cols.push({time:''});saveNow();render(true);break;
     case 'fill-times':{const at=autoTimes(v);if(!at.length){toast('Set the Iso on time first.');break}v.anes.grid.cols.forEach((c,i)=>{if(!c.time)c.time=at[i]});saveNow();render(true);break}
+    case 'bmap':bodyMapTap(b,e);break;
+    case 'mass-del':{const l=v.exam.masses||[],i=l.findIndex(m=>m.id===b.dataset.id);if(i>=0){l.splice(i,1);if(!l.length)delete v.exam.masses;saveNow();render(true)}break}
     case 'exam-wnl':['eent','oral','pln','hl','abd','ms','ug','neuro','rectal','cs'].forEach(k=>{if(!v.exam[k])v.exam[k]='WNL'});saveNow();render(true);break;
     case 'tooth':{const was=ui.tooth;ui.tooth=+b.dataset.t;render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});if(window.innerWidth<1100&&!was)chartAboveSheet();break}
     case 'tooth-close':ui.tooth=null;render(true);break;
@@ -1598,8 +1618,55 @@ function examPage(v,p){
   if(e.crt&&!/^<\s*2\s*s/i.test(e.crt))s+=onLine(F.crt,'('+e.crt+')');
   s+=fitBox(e.assessment,F.assessment,10);
   if(e.procedure&&!/oral exam/i.test(e.procedure))s+=onLine(F.procedure,e.procedure);
-  s+=onLine(F.lab,e.laboratory)+fitBox(e.clientComm,F.comm,10);
+  s+=onLine(F.lab,e.laboratory)+fitBox(e.clientComm,F.comm,10)+bodyMapPrint(v,p);
   return formSVG('exam',s);
+}
+/* ---------- body map (exam: where the masses are) ---------- */
+// The exam sheet's own cat and dog figures (ventral + dorsal, 185 × 145) are the tap maps, so a mark
+// prints on the same spot of the paper. The paper has no ferret: this one is drawn in the same style
+// and, for ferrets, prints over the cat and dog figures. Marks: v.exam.masses = [{id, map, x, y, note}].
+const BM_W=185,BM_H=145;
+const FERRET_MAP="<g fill=\"none\" stroke=\"#000\" stroke-width=\"0.9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M46.0 6.6C46.7 6.6 47.4 6.7 48.2 7.3C49.0 7.9 50.0 9.1 50.8 10.2C51.7 11.3 52.7 13.0 53.5 13.9C54.2 14.8 54.7 15.6 55.2 15.7C55.8 15.7 55.9 14.6 56.6 14.3C57.2 14.1 58.6 13.9 59.2 14.3C59.8 14.7 60.3 15.9 60.3 16.8C60.3 17.6 59.4 18.7 59.0 19.6C58.5 20.5 58.0 21.1 57.7 22.3C57.3 23.4 57.2 25.2 56.8 26.7C56.3 28.1 55.1 29.7 55.0 31.1C55.0 32.4 55.5 34.7 56.6 34.8C57.6 34.9 59.8 33.1 61.4 31.9C63.1 30.8 65.1 28.8 66.5 27.8C67.8 26.7 68.6 25.8 69.5 25.6C70.5 25.3 71.6 25.7 72.2 26.2C72.7 26.8 73.1 28.0 72.8 28.9C72.6 29.7 72.1 30.1 70.9 31.5C69.6 32.9 67.0 35.5 65.1 37.4C63.3 39.3 61.0 40.8 59.9 42.9C58.8 45.1 58.8 47.2 58.5 50.2C58.3 53.2 58.3 57.5 58.3 61.2C58.3 64.9 58.4 68.9 58.5 72.2C58.7 75.5 58.8 78.4 59.2 81.0C59.6 83.6 59.8 85.7 61.0 87.6C62.1 89.5 64.6 90.6 66.2 92.4C67.9 94.3 69.8 97.1 71.1 98.6C72.4 100.1 73.7 100.5 74.2 101.5C74.6 102.5 74.5 103.9 73.9 104.5C73.4 105.2 71.8 105.9 70.6 105.4C69.5 104.9 68.4 102.9 66.9 101.5C65.4 100.1 63.1 98.0 61.4 97.1C59.7 96.1 58.1 95.7 56.6 95.7C55.0 95.8 53.1 96.7 51.9 97.5C50.8 98.3 50.2 98.8 49.7 100.8C49.3 102.8 49.4 106.7 49.3 109.6C49.2 112.5 49.1 115.8 48.9 118.4C48.6 121.0 48.2 123.2 47.8 125.0C47.3 126.8 46.6 129.4 46.0 129.4C45.4 129.4 44.7 126.8 44.2 125.0C43.8 123.2 43.4 121.0 43.1 118.4C42.9 115.8 42.8 112.5 42.7 109.6C42.6 106.7 42.7 102.8 42.3 100.8C41.8 98.8 41.2 98.3 40.1 97.5C38.9 96.7 37.0 95.8 35.4 95.7C33.9 95.7 32.3 96.1 30.6 97.1C28.9 98.0 26.6 100.1 25.1 101.5C23.6 102.9 22.5 104.9 21.4 105.4C20.2 105.9 18.6 105.2 18.1 104.5C17.5 103.9 17.4 102.5 17.8 101.5C18.3 100.5 19.6 100.1 20.9 98.6C22.2 97.1 24.1 94.3 25.8 92.4C27.4 90.6 29.9 89.5 31.0 87.6C32.2 85.7 32.4 83.6 32.8 81.0C33.2 78.4 33.3 75.5 33.5 72.2C33.6 68.9 33.7 64.9 33.7 61.2C33.7 57.5 33.7 53.2 33.5 50.2C33.2 47.2 33.2 45.1 32.1 42.9C31.0 40.8 28.7 39.3 26.9 37.4C25.0 35.5 22.4 32.9 21.1 31.5C19.9 30.1 19.4 29.7 19.2 28.9C18.9 28.0 19.3 26.8 19.8 26.2C20.4 25.7 21.5 25.3 22.5 25.6C23.4 25.8 24.2 26.7 25.5 27.8C26.9 28.8 28.9 30.8 30.6 31.9C32.3 33.1 34.4 34.9 35.4 34.8C36.5 34.7 37.0 32.4 37.0 31.1C36.9 29.7 35.7 28.1 35.2 26.7C34.8 25.2 34.7 23.4 34.3 22.3C34.0 21.1 33.5 20.5 33.0 19.6C32.6 18.7 31.7 17.6 31.7 16.8C31.7 15.9 32.2 14.7 32.8 14.3C33.4 13.9 34.8 14.1 35.4 14.3C36.1 14.6 36.2 15.7 36.8 15.7C37.3 15.6 37.8 14.8 38.5 13.9C39.3 13.0 40.3 11.3 41.2 10.2C42.0 9.1 43.0 7.9 43.8 7.3C44.6 6.7 45.3 6.6 46.0 6.6ZM139.0 6.6C139.7 6.6 140.4 6.7 141.2 7.3C142.0 7.9 143.0 9.1 143.8 10.2C144.7 11.3 145.7 13.0 146.5 13.9C147.2 14.8 147.7 15.6 148.2 15.7C148.8 15.7 148.9 14.6 149.6 14.3C150.2 14.1 151.6 13.9 152.2 14.3C152.8 14.7 153.3 15.9 153.3 16.8C153.3 17.6 152.4 18.7 152.0 19.6C151.5 20.5 151.0 21.1 150.7 22.3C150.3 23.4 150.2 25.2 149.8 26.7C149.3 28.1 148.1 29.7 148.0 31.1C148.0 32.4 148.5 34.7 149.6 34.8C150.6 34.9 152.8 33.1 154.4 31.9C156.1 30.8 158.1 28.8 159.5 27.8C160.8 26.7 161.6 25.8 162.5 25.6C163.5 25.3 164.6 25.7 165.2 26.2C165.7 26.8 166.1 28.0 165.8 28.9C165.6 29.7 165.1 30.1 163.9 31.5C162.6 32.9 160.0 35.5 158.1 37.4C156.3 39.3 154.0 40.8 152.9 42.9C151.8 45.1 151.8 47.2 151.5 50.2C151.3 53.2 151.3 57.5 151.3 61.2C151.3 64.9 151.4 68.9 151.5 72.2C151.7 75.5 151.8 78.4 152.2 81.0C152.6 83.6 152.8 85.7 154.0 87.6C155.1 89.5 157.6 90.6 159.2 92.4C160.9 94.3 162.8 97.1 164.1 98.6C165.4 100.1 166.7 100.5 167.2 101.5C167.6 102.5 167.5 103.9 166.9 104.5C166.4 105.2 164.8 105.9 163.6 105.4C162.5 104.9 161.4 102.9 159.9 101.5C158.4 100.1 156.1 98.0 154.4 97.1C152.7 96.1 151.1 95.7 149.6 95.7C148.0 95.8 146.1 96.7 144.9 97.5C143.8 98.3 143.2 98.8 142.7 100.8C142.3 102.8 142.4 106.7 142.3 109.6C142.2 112.5 142.1 115.8 141.9 118.4C141.6 121.0 141.2 123.2 140.8 125.0C140.3 126.8 139.6 129.4 139.0 129.4C138.4 129.4 137.7 126.8 137.2 125.0C136.8 123.2 136.4 121.0 136.1 118.4C135.9 115.8 135.8 112.5 135.7 109.6C135.6 106.7 135.7 102.8 135.3 100.8C134.8 98.8 134.2 98.3 133.1 97.5C131.9 96.7 130.0 95.8 128.4 95.7C126.9 95.7 125.3 96.1 123.6 97.1C121.9 98.0 119.6 100.1 118.1 101.5C116.6 102.9 115.5 104.9 114.4 105.4C113.2 105.9 111.6 105.2 111.1 104.5C110.5 103.9 110.4 102.5 110.8 101.5C111.3 100.5 112.6 100.1 113.9 98.6C115.2 97.1 117.1 94.3 118.8 92.4C120.4 90.6 122.9 89.5 124.0 87.6C125.2 85.7 125.4 83.6 125.8 81.0C126.2 78.4 126.3 75.5 126.5 72.2C126.6 68.9 126.7 64.9 126.7 61.2C126.7 57.5 126.7 53.2 126.5 50.2C126.2 47.2 126.2 45.1 125.1 42.9C124.0 40.8 121.7 39.3 119.9 37.4C118.0 35.5 115.4 32.9 114.1 31.5C112.9 30.1 112.4 29.7 112.2 28.9C111.9 28.0 112.3 26.8 112.8 26.2C113.4 25.7 114.5 25.3 115.5 25.6C116.4 25.8 117.2 26.7 118.5 27.8C119.9 28.8 121.9 30.8 123.6 31.9C125.3 33.1 127.4 34.9 128.4 34.8C129.5 34.7 130.0 32.4 130.0 31.1C129.9 29.7 128.7 28.1 128.2 26.7C127.8 25.2 127.7 23.4 127.3 22.3C127.0 21.1 126.5 20.5 126.0 19.6C125.6 18.7 124.7 17.6 124.7 16.8C124.7 15.9 125.2 14.7 125.8 14.3C126.4 13.9 127.8 14.1 128.4 14.3C129.1 14.6 129.2 15.7 129.8 15.7C130.3 15.6 130.8 14.8 131.5 13.9C132.3 13.0 133.3 11.3 134.2 10.2C135.0 9.1 136.0 7.9 136.8 7.3C137.6 6.7 138.3 6.6 139.0 6.6Z\"/><path d=\"M38.3 18.7Q41.6 13.9 44.2 13.2M53.7 18.7Q50.4 13.9 47.8 13.2M44.6 8.0L47.4 8.0L46.0 9.5ZM46.0 9.5L46.0 11.3M43.8 85.4L48.2 85.4M150.2 16.1Q151.5 16.8 150.9 18.7M127.8 16.1Q126.5 16.8 127.1 18.7M139.0 32.6L139.0 92.0\" stroke-width=\"0.7\"/></g><g fill=\"#000\"><circle cx=\"42.0\" cy=\"15.9\" r=\"0.9\"/><circle cx=\"50.0\" cy=\"15.9\" r=\"0.9\"/></g><g font-family=\"Arial,Helvetica,sans-serif\" font-weight=\"bold\" font-size=\"9\" text-anchor=\"middle\" fill=\"#000\"><text x=\"92.5\" y=\"70\">FERRET</text><text x=\"46\" y=\"141\">Ventral</text><text x=\"139\" y=\"141\">Dorsal</text></g>";
+const BM_SLOT={};(FORM_ART.exam.svg.match(/<image href="data:[^"]+"[^>]*>/g)||[]).forEach((t,i)=>{
+  const a=k=>+(t.match(new RegExp(' '+k+'="([\\d.]+)"'))||[])[1];BM_SLOT[i?'dog':'cat']={href:t.match(/href="([^"]+)"/)[1],x:a('x'),y:a('y'),w:a('width'),h:a('height')}});
+const bodyMapFor=p=>chartFor(p);
+// The dog picture's own Ventral/Dorsal labels are cut off at the top, so the app hides that strip and labels it itself.
+const bmView=m=>m==='dog'?[0,9,BM_W,BM_H-9]:[0,0,BM_W,BM_H];
+function bodyMapArt(m){const sl=BM_SLOT[m];return m==='ferret'?`<rect width="${BM_W}" height="${BM_H}" fill="#fff"/>${FERRET_MAP}`:sl?`<image href="${sl.href}" x="0" y="0" width="${BM_W}" height="${BM_H}" preserveAspectRatio="none"/>`:''}
+const bmSide=m=>m.x<BM_W/2?'ventral':'dorsal';
+const bmDesc=(m,i)=>`${i+1} ${bmSide(m)}${m.note?' – '+String(m.note).trim():''}`;
+function bmMark(m,n,r,sel){return `<g class="bm-mk${sel?' sel':''}"><circle cx="${fmt(m.x,1)}" cy="${fmt(m.y,1)}" r="${r}"/><text x="${fmt(m.x,1)}" y="${fmt(m.y+r*0.45,1)}" font-size="${fmt(r*1.25,1)}">${n}</text></g>`}
+// On paper a mark is a numbered pen ring.
+const bmPen=(m,n)=>`<circle cx="${fmt(m.x,1)}" cy="${fmt(m.y,1)}" r="6.5" fill="#fff" stroke="#000" stroke-width="1.2"/><text class="fv" x="${fmt(m.x,1)}" y="${fmt(m.y+3.3,1)}" font-size="9" font-weight="bold" text-anchor="middle">${n}</text>`;
+function bodyMapUI(v,p){
+  const m=bodyMapFor(p),list=v.exam.masses||[];
+  if(!m)return `<p class="note">The body map is for dogs, cats and ferrets. Set the species at check-in to use it.</p>`;
+  const marks=list.map((x,i)=>x.map===m?bmMark(x,i+1,6,ui.mass===x.id):'').join('');
+  const rows=list.map((x,i)=>`<div class="bmrow"><span class="bmn" aria-hidden="true">${i+1}</span>${F('v.exam.masses.'+i+'.note',`Mass ${i+1} · ${bmSide(x)}${x.map!==m?' (on the '+x.map+' map)':''}`,{ph:'Size, feel, location — e.g. 2 cm soft mobile SQ, L flank'})}<button class="btn small ghost" data-act="mass-del" data-id="${esc(x.id)}" aria-label="Remove mass ${i+1}">Remove</button></div>`).join('');
+  return `<div class="bmap-wrap">
+    <figure class="bmap-fig">${m==='dog'?'<figcaption><span>Ventral</span><span>Dorsal</span></figcaption>':''}
+      <svg class="bmap" data-act="bmap" data-map="${m}" viewBox="${bmView(m).join(' ')}" role="img" aria-label="${m} body map: tap to mark a mass">${bodyMapArt(m)}${marks}</svg></figure>
+    <div>${rows||'<p class="note">No masses marked. Tap the body where you find one; tap a mark to select it.</p>'}</div>
+  </div>`;
+}
+function bodyMapTap(svg,e){
+  const v=curV();if(!v)return;const r=svg.getBoundingClientRect();if(!r.width)return;
+  const map=svg.dataset.map,[vx,vy,vw,vh]=bmView(map),x=vx+(e.clientX-r.left)/r.width*vw,y=vy+(e.clientY-r.top)/r.height*vh;
+  const list=v.exam.masses=Array.isArray(v.exam.masses)?v.exam.masses:[];
+  const hit=list.find(m=>m.map===map&&Math.hypot(m.x-x,m.y-y)<=9);
+  if(hit)ui.mass=hit.id;
+  else{const m={id:uid(),map,x:+x.toFixed(1),y:+y.toFixed(1),note:''};list.push(m);ui.mass=m.id;saveNow()}
+  render(true);const i=list.findIndex(m=>m.id===ui.mass),inp=$('#'+fid('v.exam.masses.'+i+'.note'));if(inp)inp.focus();
+}
+// Marks on the printed exam sheet: numbered rings on the figures, descriptions under C/S.
+function bodyMapPrint(v,p){
+  const list=v.exam.masses||[];if(!list.length&&bodyMapFor(p)!=='ferret')return '';
+  const cat=BM_SLOT.cat,dog=BM_SLOT.dog;if(!cat||!dog)return '';let s='';
+  if(bodyMapFor(p)==='ferret'){const h=dog.y+dog.h-cat.y,sc=cat.w/BM_W,y=cat.y+(h-BM_H*sc)/2;
+    s+=`<rect x="${cat.x-1}" y="${cat.y-1}" width="${cat.w+2}" height="${fmt(h+2,2)}" fill="#fff"/><g transform="translate(${cat.x} ${fmt(y,2)}) scale(${fmt(sc,4)})">${FERRET_MAP}${list.map((m,i)=>m.map==='ferret'?bmPen(m,i+1):'').join('')}</g>`}
+  else [['cat',cat],['dog',dog]].forEach(([k,sl])=>{const sc=sl.w/BM_W;s+=`<g transform="translate(${sl.x} ${sl.y}) scale(${fmt(sc,4)})">${list.map((m,i)=>m.map===k?bmPen(m,i+1):'').join('')}</g>`});
+  if(list.length)s+=fitBox('Masses: '+list.map(bmDesc).join(' · '),[74,503,318,26],9.5);
+  return s;
 }
 function dischargePage(v,p){
   const key=dischargeType(v)==='extractions'?'dis_ext':'dis_routine',F=FORM_ART[key].f;
@@ -1643,9 +1710,19 @@ function doPrint(sec){
   // Every form prints as its paper layout; only a species without a paper chart falls back to a generic dental page.
   const PAGES={checkin:newPatientPage,auth:authPage,exam:examPage,anes:(v,p)=>treatmentPage(v,p)+monitorPages(v,p),dental:chartPage,discharge:dischargePage};
   $('#print').innerHTML=secs.map(s=>(PAGES[s]&&PAGES[s](v,p))||`<section class="pp">${printHead(v,p,'Dental Chart')}${PRINT[s](v,p)}</section>`).join('');
-  window.print();
+  const wait=imagesReady($('#print'));if(wait)wait.then(()=>window.print());else window.print();
 }
-window.addEventListener('afterprint',()=>{$('#print').innerHTML='';setPageStyle('')});
+// Safari prints straight away, before it has decoded the pictures just put on the page (diagrams, logo,
+// signature), so they come out blank. Lay the pages out off-screen and decode each picture first;
+// give up after 3 s rather than never printing. Returns null when there is nothing to wait for.
+function imagesReady(el){
+  const srcs=[...new Set([...el.querySelectorAll('image,img')].map(n=>n.getAttribute('href')||n.getAttribute('xlink:href')||n.getAttribute('src')).filter(Boolean))];
+  if(!srcs.length||typeof Image==='undefined'||!('decode' in Image.prototype))return null;
+  el.classList.add('prep');
+  const all=Promise.all(srcs.map(src=>{const i=new Image();i.src=src;return i.decode().catch(()=>{})}));
+  return Promise.race([all,new Promise(r=>setTimeout(r,3000))]).then(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+}
+window.addEventListener('afterprint',()=>{$('#print').innerHTML='';$('#print').classList.remove('prep');setPageStyle('')});
 function printHead(v,p,title){const w=weightKg(v,p);return `<div class="hd"><div><b>Pet Dental Clinic</b><br><small>Cowgill Vet Svc LLC</small></div><div style="text-align:right"><b>${title}</b><br>${esc(p.name||'')} · ${esc(p.species||'')} · ${w?fmt(w.kg,1)+' kg':''} · ${esc(prettyDate(v.date))}</div></div>`}
 const kv=(l,val)=>`<div><b>${l}:</b> ${esc(val||'')}</div>`;
 const PRINT={
