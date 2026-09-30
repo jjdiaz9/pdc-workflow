@@ -154,6 +154,46 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   ok(exs.querySelectorAll('image').length===3,'exam sheet keeps the logo and body diagrams');
   const dsp=pg('Your veterinarian today was');ok(dsp&&dsp.textContent.includes('Dental with Extractions')&&!dsp.textContent.includes('(Routine Dental)'),'discharge prints the with-extractions sheet');
 
+  console.log('Body map (masses)');
+  {const bv=P.data.visits.find(x=>x.id===biscuit.id),bpat=P.data.patients.find(p=>p.id===bv.patientId);
+   P.go('visit',biscuit.id,'exam');let map=d.querySelector('svg.bmap');
+   ok(map&&map.dataset.map==='dog'&&/data:image\/jpeg/.test(map.innerHTML)&&!d.querySelector('.bmrow'),'dog exam shows the exam-sheet dog figures with no marks yet');
+   const tap=(fx,fy)=>{const m=d.querySelector('svg.bmap');m.getBoundingClientRect=()=>({left:0,top:0,width:370,height:290});m.dispatchEvent(new w.MouseEvent('click',{bubbles:true,clientX:fx*370,clientY:fy*290}))};
+   tap(0.25,0.5);const ms=bv.exam.masses||[];
+   ok(ms.length===1&&ms[0].map==='dog'&&Math.abs(ms[0].x-46.3)<0.2&&ms[0].y>70&&ms[0].y<80&&d.querySelectorAll('.bm-mk').length===1,'tapping the map adds a numbered mark where tapped');
+   ok(d.activeElement&&d.activeElement.id==='f_v_exam_masses_0_note','the new mark’s description field gets focus');
+   type(w,'#f_v_exam_masses_0_note','2 cm soft SQ');ok(ms[0].note==='2 cm soft SQ','mass description saves');
+   tap(0.26,0.51);ok(ms.length===1,'tapping an existing mark selects it instead of adding another');
+   tap(0.8,0.4);ok(ms.length===2&&d.querySelectorAll('.bmrow').length===2&&/dorsal/.test(d.querySelectorAll('.bmrow')[1].textContent),'a second mark on the dorsal side');
+   click(w,'[data-act="print"][data-sec="exam"]');const ed=new w.DOMParser().parseFromString('<div>'+w.__printed+'</div>','text/html');
+   ok(ed.querySelectorAll('svg.paper circle[r="6.5"]').length===2&&/Masses: 1 ventral – 2 cm soft SQ · 2 dorsal/.test(ed.body.textContent),'exam printout rings each mass on the dog figure and lists them under C/S');
+   bpat.species='Ferret';P.go('visit',biscuit.id,'exam');map=d.querySelector('svg.bmap');
+   ok(map&&map.dataset.map==='ferret'&&/FERRET/.test(map.textContent)&&!d.querySelector('.bm-mk')&&/on the dog map/.test(d.querySelector('.bmrow').textContent),'ferrets get a ferret map; dog marks stay listed');
+   tap(0.3,0.5);click(w,'[data-act="print"][data-sec="exam"]');const fd=new w.DOMParser().parseFromString('<div>'+w.__printed+'</div>','text/html');
+   ok(/FERRET/.test(fd.body.textContent)&&fd.querySelectorAll('svg.paper circle[r="6.5"]').length===1,'ferret printout draws the ferret figure with its mark');
+   bpat.species='Cat';P.go('visit',biscuit.id,'exam');ok(d.querySelector('svg.bmap').dataset.map==='cat','cats get the cat figures');
+   bpat.species='Other';P.go('visit',biscuit.id,'exam');ok(!d.querySelector('svg.bmap')&&/dogs, cats and ferrets/.test(d.querySelector('main').textContent),'other species: no map, just a note');
+   bpat.species='Dog';P.go('visit',biscuit.id,'exam');
+   while((bv.exam.masses||[]).length)click(w,'[data-act="mass-del"]');ok(bv.exam.masses===undefined&&!d.querySelector('.bmrow'),'marks can be removed');}
+
+  console.log('Printing waits for pictures');
+  {const pend=[];w.Image.prototype.decode=function(){return new Promise(r=>pend.push(r))};w.__printed='';
+   click(w,'[data-act="print"][data-sec="exam"]');ok(!w.__printed&&d.getElementById('print').classList.contains('prep'),'print waits while the diagrams decode');
+   pend.forEach(r=>r());await sleep(120);ok(/Patient Exam Sheet/.test(w.__printed),'then prints');
+   w.dispatchEvent(new w.Event('afterprint'));ok(!d.getElementById('print').classList.contains('prep')&&!d.getElementById('print').innerHTML,'print area cleared after printing');
+   delete w.Image.prototype.decode;}
+
+  console.log('Printing from the Home Screen app (share sheet)');
+  {P.printViaShare=true;w.__printed='';click(w,'[data-act="print"][data-sec="exam"]');
+   ok(!w.__printed&&/Preparing the printout/.test(d.getElementById('modalRoot').textContent),'the Home Screen app makes a PDF instead of calling print (a no-op there)');
+   await sleep(50);click(w,'[data-act="close-modal"]');P.printViaShare=false;
+   ok(!d.getElementById('print').innerHTML&&!d.getElementById('print').classList.contains('prep'),'print area cleared afterwards');
+   const blob=P.buildPDF([{w:612,h:792,pw:2,ph:3,jpg:new Uint8Array([255,216,255,217])},{w:252,h:81,pw:2,ph:1,jpg:new Uint8Array([255,216,255,217])}]);
+   const txt=await new Promise(r=>{const fr=new w.FileReader();fr.onload=()=>r(Buffer.from(fr.result).toString('latin1'));fr.readAsArrayBuffer(blob)});const sx=+txt.match(/startxref\n(\d+)/)[1];
+   const offs=[...txt.slice(sx).matchAll(/(\d{10}) 00000 n/g)].map(m=>+m[1]);
+   ok(txt.startsWith('%PDF-1.4')&&/\/Count 2/.test(txt)&&txt.slice(sx,sx+4)==='xref'&&offs.length===8&&offs.every((o,i)=>txt.startsWith((i+1)+' 0 obj',o)),'PDF has two pages, the right page sizes and a valid cross-reference table');
+   ok(/MediaBox \[0 0 612 792\]/.test(txt)&&/MediaBox \[0 0 252 81\]/.test(txt),'letter pages and 3.5 × 1.125 in label pages');}
+
   console.log('Medication labels');
   const bp=P.data.patients.find(p=>p.id===biscuit.patientId);
   await sleep(350);let r1=P.data.sync.rev;P.go('visit',biscuit.id,'discharge');P.go('settings');P.go('visit',biscuit.id,'discharge');P.saveNow();

@@ -6,6 +6,8 @@ A single-file web app that takes each patient at Pet Dental Clinic through the v
 
 Each step mirrors one of the clinic's paper forms (see `reference/forms/`). A step lists what's still missing before you mark it complete, and each visit prints as paper forms.
 
+The Exam step has a **body map** for dogs, cats and ferrets: tap the ventral or dorsal figure to mark a mass, then describe it. Marks print as numbered rings on the exam sheet's figures, with the descriptions under C/S. The dog and cat maps are the exam sheet's own figures; the paper has no ferret, so a ferret figure in the same style prints in their place for ferrets.
+
 The Discharge step also prints **take-home medication labels** (DYMO 30252, 3.5 × 1.125 in). Pick a drug from the formulary, build the directions, tick cautions, and print one label per medication; the pet, owner, veterinarian and date come from the visit. The label's practice details, margins and the formulary are under **Settings → Medication labels / Formulary**. Printed labels can be exported as a dispensing log (.csv).
 
 ## Files
@@ -70,10 +72,10 @@ The form wording is in `index.html`:
 
 - New patient form: `stCheckin`
 - Consent: `stAuth`
-- Exam sheet: `stExam`
+- Exam sheet: `stExam` (body map: `bodyMapUI`, `bodyMapTap`, `bodyMapPrint`, marks in `v.exam.masses`)
 - Treatment sheet and monitoring grid: `stAnes`, `GRID_ROWS`, `DRUGS`
 - Tooth charts and abbreviations: `CHARTS`, `CODE_GROUPS`, `LEGEND`
 - Discharge sheet: `dischargeDoc`
 - Medication labels: `labelHTML`, starter formulary `RX_SEED`, cautions `CAUTIONS`, label defaults `LBL_DEF`
 
-Printed versions are in the `PRINT` object. Every form prints as a replica of the clinic's paper original with the visit's answers filled in: New Patient, Authorization, Exam, Treatment Notes and Discharge (`newPatientPage`, `authPage`, `examPage`, `treatmentPage`, `dischargePage`, templates in `FORM_ART`), the dental charts (`chartPage`, `CHART_ART`) and the monitoring form (`monitorPage`). The templates were converted from the clinic's PDFs.
+Printed versions are in the `PRINT` object. Every form prints as a replica of the clinic's paper original with the visit's answers filled in: New Patient, Authorization, Exam, Treatment Notes and Discharge (`newPatientPage`, `authPage`, `examPage`, `treatmentPage`, `dischargePage`, templates in `FORM_ART`), the dental charts (`chartPage`, `CHART_ART`) and the monitoring form (`monitorPage`). The templates were converted from the clinic's PDFs. The drawings are decoded soon after start-up (`preloadArt`) so a print goes out straight from the tap, as Safari requires. In the iPad Home Screen app Safari ignores `window.print()`, so there **Print** draws the pages into a PDF (`printoutPDF`, `buildPDF`) and opens the share sheet, where you choose Print (AirPrint). Medication labels come out as 3.5 × 1.125 in pages the same way.
