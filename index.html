@@ -336,7 +336,7 @@ table.mon td.warn input{color:var(--warn);font-weight:600} table.mon td.crit inp
 .vitals .f.crit input{border-color:var(--crit);background:var(--crit-soft)}
 .prev{font-size:12px;color:var(--muted);font-family:var(--f-mono)}
 #print{display:none}
-#print.prep{display:block;position:fixed;left:-30000px;top:0;width:8in;pointer-events:none}
+#print.prep{display:block;position:fixed;left:-30000px;top:0;width:544pt;pointer-events:none}
 /* body map (exam) */
 .bmap-wrap{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
 .bmap-fig{max-width:480px}
@@ -677,7 +677,7 @@ let pageStyle=null;
 function setPageStyle(css){if(!pageStyle){pageStyle=document.createElement('style');document.head.appendChild(pageStyle)}pageStyle.textContent=css}
 function printLabelNodes(nodes){
   setPageStyle('@page{size:3.5in 1.125in;margin:0}@media print{html,body{margin:0!important;padding:0!important}}');
-  $('#print').replaceChildren(...nodes);window.print();
+  $('#print').replaceChildren(...nodes);printName='Medication labels';sendToPrinter();
 }
 function printLabels(idxs){
   flushSave();const v=curV(),p=curP();if(!v)return;
@@ -1412,6 +1412,7 @@ document.addEventListener('click',e=>{
     case 'vitals':vitalsModal();break;
     case 'save-vitals':saveVitals(+b.dataset.col);break;
     case 'close-modal':closeModal();break;
+    case 'pdf-share':sharePDF();break;
     case 'modal-ok':{const f=pendingOK;closeModal();if(f)f();break}
     case 'rx-add':{v.discharge.rx=rxList(v);v.discharge.rx.push(newRx(v));saveNow();render(true);const f=$$('.rxfind');if(f.length)f[f.length-1].focus();break}
     case 'rx-del':{const i=+b.dataset.i,r=rxList(v)[i];const del=()=>{v.discharge.rx.splice(i,1);saveNow();render(true)};if(r&&(r.drug||r.sig))confirmModal(`Remove ${esc(rxDrug(r)||'this medication')}?`,'Its label details will be deleted from this visit.','Remove',del);else del();break}
@@ -1710,17 +1711,102 @@ function doPrint(sec){
   // Every form prints as its paper layout; only a species without a paper chart falls back to a generic dental page.
   const PAGES={checkin:newPatientPage,auth:authPage,exam:examPage,anes:(v,p)=>treatmentPage(v,p)+monitorPages(v,p),dental:chartPage,discharge:dischargePage};
   $('#print').innerHTML=secs.map(s=>(PAGES[s]&&PAGES[s](v,p))||`<section class="pp">${printHead(v,p,'Dental Chart')}${PRINT[s](v,p)}</section>`).join('');
-  const wait=imagesReady($('#print'));if(wait)wait.then(()=>window.print());else window.print();
+  printName=[p.name,sec==='all'?'visit':(STEPS.find(x=>x[0]===sec)||[,sec])[1],v.date].filter(Boolean).join(' ');
+  const wait=!PRINT_VIA_SHARE&&imagesReady($('#print'));if(wait)wait.then(sendToPrinter);else sendToPrinter();
 }
 // Safari prints straight away, before it has decoded the pictures just put on the page (diagrams, logo,
 // signature), so they come out blank. Lay the pages out off-screen and decode each picture first;
 // give up after 3 s rather than never printing. Returns null when there is nothing to wait for.
 function imagesReady(el){
-  const srcs=[...new Set([...el.querySelectorAll('image,img')].map(n=>n.getAttribute('href')||n.getAttribute('xlink:href')||n.getAttribute('src')).filter(Boolean))];
+  const srcs=[...new Set([...el.querySelectorAll('image,img')].map(n=>n.getAttribute('href')||n.getAttribute('xlink:href')||n.getAttribute('src')).filter(Boolean))].filter(x=>!decodedArt.has(x));
   if(!srcs.length||typeof Image==='undefined'||!('decode' in Image.prototype))return null;
   el.classList.add('prep');
-  const all=Promise.all(srcs.map(src=>{const i=new Image();i.src=src;return i.decode().catch(()=>{})}));
+  const all=Promise.all(srcs.map(decodeArt));
   return Promise.race([all,new Promise(r=>setTimeout(r,3000))]).then(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+}
+// Pictures already decoded, so a print right after a tap can go out straight away (Safari only lets a
+// page print from the tap itself). The form and chart drawings are decoded once, soon after start-up.
+const decodedArt=new Set(),artImgs=[];
+function decodeArt(src){const i=new Image();i.src=src;artImgs.push(i);return i.decode().then(()=>decodedArt.add(src),()=>{})}
+function preloadArt(){if(typeof Image==='undefined'||!('decode' in Image.prototype))return;
+  const srcs=new Set([FORM_LOGO]);[CHART_ART,FORM_ART].forEach(A=>Object.values(A).forEach(a=>(a.svg.match(/href="data:[^"]+"/g)||[]).forEach(h=>srcs.add(h.slice(6,-1)))));
+  srcs.forEach(decodeArt)}
+setTimeout(preloadArt,1500);
+
+/* ---------- printing from the Home Screen app ---------- */
+// Safari ignores window.print() in a Home Screen app. There the pages are drawn into a PDF and handed
+// to the share sheet, which has Print (AirPrint). In a Safari tab, if no print sheet opens, the same.
+let PRINT_VIA_SHARE=IS_IOS&&STANDALONE,printName='Printout',printFired=false,pdfOut=null;
+window.addEventListener('beforeprint',()=>{printFired=true});
+function sendToPrinter(){
+  if(PRINT_VIA_SHARE){printViaShare();return}
+  printFired=false;window.print();
+  if(IS_IOS)setTimeout(()=>{if(!printFired&&$('#print').children.length)printViaShare()},1500);
+}
+async function printViaShare(){
+  const el=$('#print');if(!el.children.length)return;
+  showModal(`<h2>Preparing the printout…</h2><p class="note">Drawing the pages. This takes a few seconds.</p>`);
+  let file;
+  try{file=await printoutPDF(el,printName)}
+  catch(e){showModal(`<h2>Couldn’t make the printout</h2><p>${esc(e&&e.message||String(e))}</p><div class="acts"><button class="btn" data-act="close-modal">Close</button></div>`);return}
+  finally{el.innerHTML='';el.classList.remove('prep');setPageStyle('')}
+  pdfOut=file;
+  showModal(`<h2>Printout ready</h2><p>${file.pages} page${file.pages===1?'':'s'}. Tap <b>Print</b>, then choose <b>Print</b> in the list that opens.</p><div class="acts"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="pdf-share">Print</button></div>`);
+}
+function sharePDF(){
+  const f=pdfOut&&pdfOut.file;if(!f)return;
+  if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:f.name}).then(closeModal,e=>{if(!e||e.name!=='AbortError')toast('Could not open the share sheet: '+(e&&e.message||e))});return}
+  const u=URL.createObjectURL(f),a=document.createElement('a');a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);closeModal();
+}
+// Each printed page becomes a picture of the page (200 dpi; labels 300 dpi) in a PDF of the right paper size.
+async function printoutPDF(el,name){
+  el.classList.add('prep');
+  const css=[...document.querySelectorAll('style')].map(x=>x.textContent).join('\n').replace(/@media print\s*\{/g,'@media all{');
+  const label=!!el.querySelector('.rxl'),pages=[];
+  for(const pg of [...el.children]){
+    if(label){pages.push(await rasterPage(252,81,300,[0,0,252,81],(w,h)=>htmlSVG(pg,336,108,w,h,css)));continue}
+    const sv=pg.matches('.pp.form')&&pg.querySelector('svg.paper');
+    if(sv){const w=parseFloat(sv.getAttribute('width')),h=parseFloat(sv.getAttribute('height'));
+      pages.push(await rasterPage(612,792,200,[(612-w)/2,34,w,h],(pw,ph)=>paperSVG(sv,pw,ph,css)))}
+    else{const wpx=544*4/3,hpx=Math.max(100,Math.ceil(pg.getBoundingClientRect().height||pg.scrollHeight||1000));let w=544,h=hpx*0.75;if(h>724){w=w*724/h;h=724}
+      pages.push(await rasterPage(612,792,200,[(612-w)/2,34,w,h],(pw,ph)=>htmlSVG(pg,wpx,hpx,pw,ph,css)))}
+  }
+  const safe=String(name||'Printout').replace(/[\/\\:*?"<>|]+/g,'-').trim()||'Printout';
+  return {file:new File([buildPDF(pages)],safe+'.pdf',{type:'application/pdf'}),pages:pages.length};
+}
+const xmlText=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function paperSVG(sv,w,h,css){
+  const c=sv.cloneNode(true);c.setAttribute('width',w);c.setAttribute('height',h);c.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  const st=document.createElementNS('http://www.w3.org/2000/svg','style');st.textContent=css;c.insertBefore(st,c.firstChild);
+  return new XMLSerializer().serializeToString(c);
+}
+function htmlSVG(node,cw,ch,w,h,css){
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${cw} ${ch}"><foreignObject x="0" y="0" width="${cw}" height="${ch}"><div xmlns="http://www.w3.org/1999/xhtml" style="width:${cw}px;background:#fff;color:#000;font:11pt Arial,Helvetica,sans-serif"><style>${xmlText(css)}</style>${new XMLSerializer().serializeToString(node)}</div></foreignObject></svg>`;
+}
+async function rasterPage(pw,ph,dpi,[x,y,w,h],build){
+  const k=dpi/72,cv=document.createElement('canvas');cv.width=Math.round(pw*k);cv.height=Math.round(ph*k);
+  const g=cv.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,cv.width,cv.height);
+  const img=new Image();img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(build(Math.round(w*k),Math.round(h*k)));
+  await img.decode();
+  await new Promise(r=>setTimeout(r,200));   // Safari draws the pictures inside an SVG a moment after it loads
+  g.drawImage(img,x*k,y*k,w*k,h*k);
+  const b=atob(cv.toDataURL('image/jpeg',0.9).split(',')[1]),jpg=new Uint8Array(b.length);for(let i=0;i<b.length;i++)jpg[i]=b.charCodeAt(i);
+  const out={w:pw,h:ph,pw:cv.width,ph:cv.height,jpg};cv.width=cv.height=0;return out;
+}
+function buildPDF(pages){
+  const enc=new TextEncoder(),parts=[],offs=[];let len=0;
+  const put=x=>{const b=typeof x==='string'?enc.encode(x):x;parts.push(b);len+=b.length};
+  const obj=(n,body)=>{offs[n]=len;put(n+' 0 obj\n');body();put('\nendobj\n')};
+  put('%PDF-1.4\n');
+  obj(1,()=>put('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2,()=>put(`<< /Type /Pages /Kids [${pages.map((_,i)=>(3+i*3)+' 0 R').join(' ')}] /Count ${pages.length} >>`));
+  pages.forEach((p,i)=>{const o=3+i*3,c=`q ${p.w} 0 0 ${p.h} 0 0 cm /Im Do Q`;
+    obj(o,()=>put(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${p.w} ${p.h}] /Resources << /XObject << /Im ${o+2} 0 R >> >> /Contents ${o+1} 0 R >>`));
+    obj(o+1,()=>put(`<< /Length ${c.length} >>\nstream\n${c}\nendstream`));
+    obj(o+2,()=>{put(`<< /Type /XObject /Subtype /Image /Width ${p.pw} /Height ${p.ph} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpg.length} >>\nstream\n`);put(p.jpg);put('\nendstream')})});
+  const n=3+pages.length*3,xref=len;
+  put(`xref\n0 ${n}\n0000000000 65535 f \n`+offs.slice(1).map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<< /Size ${n} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(parts,{type:'application/pdf'});
 }
 window.addEventListener('afterprint',()=>{$('#print').innerHTML='';$('#print').classList.remove('prep');setPageStyle('')});
 function printHead(v,p,title){const w=weightKg(v,p);return `<div class="hd"><div><b>Pet Dental Clinic</b><br><small>Cowgill Vet Svc LLC</small></div><div style="text-align:right"><b>${title}</b><br>${esc(p.name||'')} · ${esc(p.species||'')} · ${w?fmt(w.kg,1)+' kg':''} · ${esc(prettyDate(v.date))}</div></div>`}
@@ -1928,7 +2014,7 @@ function updateSyncChip(){
 }
 
 /* expose for tests */
-window.__pdc={get data(){return data},get ui(){return ui},cfg,saveNow,render,go,setK,getK,flag,mapOf,calcHTML,weightKg,missing,extractions,dischargeType,syncNow,merge3,same,loadConflicts,toothName,ensureShape,CHARTS,buildSig,labelHTML,formulary,lblSet,rxList,importFormularyCSV,addMonthsISO};
+window.__pdc={set printViaShare(x){PRINT_VIA_SHARE=x},get pdfOut(){return pdfOut},buildPDF,get data(){return data},get ui(){return ui},cfg,saveNow,render,go,setK,getK,flag,mapOf,calcHTML,weightKg,missing,extractions,dischargeType,syncNow,merge3,same,loadConflicts,toothName,ensureShape,CHARTS,buildSig,labelHTML,formulary,lblSet,rxList,importFormularyCSV,addMonthsISO};
 if(firstRun){seed(data);lastBody=bodyOf(data);LS.set(KEY,JSON.stringify(data))}
 render();
 setTimeout(()=>syncNow({quiet:true}),800);

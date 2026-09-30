@@ -183,6 +183,17 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
    w.dispatchEvent(new w.Event('afterprint'));ok(!d.getElementById('print').classList.contains('prep')&&!d.getElementById('print').innerHTML,'print area cleared after printing');
    delete w.Image.prototype.decode;}
 
+  console.log('Printing from the Home Screen app (share sheet)');
+  {P.printViaShare=true;w.__printed='';click(w,'[data-act="print"][data-sec="exam"]');
+   ok(!w.__printed&&/Preparing the printout/.test(d.getElementById('modalRoot').textContent),'the Home Screen app makes a PDF instead of calling print (a no-op there)');
+   await sleep(50);click(w,'[data-act="close-modal"]');P.printViaShare=false;
+   ok(!d.getElementById('print').innerHTML&&!d.getElementById('print').classList.contains('prep'),'print area cleared afterwards');
+   const blob=P.buildPDF([{w:612,h:792,pw:2,ph:3,jpg:new Uint8Array([255,216,255,217])},{w:252,h:81,pw:2,ph:1,jpg:new Uint8Array([255,216,255,217])}]);
+   const txt=await new Promise(r=>{const fr=new w.FileReader();fr.onload=()=>r(Buffer.from(fr.result).toString('latin1'));fr.readAsArrayBuffer(blob)});const sx=+txt.match(/startxref\n(\d+)/)[1];
+   const offs=[...txt.slice(sx).matchAll(/(\d{10}) 00000 n/g)].map(m=>+m[1]);
+   ok(txt.startsWith('%PDF-1.4')&&/\/Count 2/.test(txt)&&txt.slice(sx,sx+4)==='xref'&&offs.length===8&&offs.every((o,i)=>txt.startsWith((i+1)+' 0 obj',o)),'PDF has two pages, the right page sizes and a valid cross-reference table');
+   ok(/MediaBox \[0 0 612 792\]/.test(txt)&&/MediaBox \[0 0 252 81\]/.test(txt),'letter pages and 3.5 × 1.125 in label pages');}
+
   console.log('Medication labels');
   const bp=P.data.patients.find(p=>p.id===biscuit.patientId);
   await sleep(350);let r1=P.data.sync.rev;P.go('visit',biscuit.id,'discharge');P.go('settings');P.go('visit',biscuit.id,'discharge');P.saveNow();
