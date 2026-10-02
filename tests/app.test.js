@@ -119,6 +119,12 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   ok(/PD4/.test(d.querySelector('.arch [data-t="204"]').title)&&/M3/.test(d.querySelector('.arch [data-t="204"]').title),'a tooth’s tooltip lists both oral and radiograph findings');
   click(w,'.arch [data-t="309"]');click(w,'[data-act="code"][data-code="PD2"]');click(w,'[data-act="t-clear"]');
   ok(biscuit.dental.teeth['309']&&!biscuit.dental.teeth['309'].codes.PD2&&biscuit.dental.teeth['309'].codes.P!==undefined,'clearing in the radiographs view keeps the oral exam findings');
+  click(w,'[data-act="dview"][data-view="oral"]');click(w,'.arch [data-t="304"]');ok(!d.querySelector('[data-act="om-pos"]'),'no mass location until OM is chosen');
+  click(w,'[data-act="code"][data-code="OM"]');click(w,'[data-act="om-pos"][data-pos="R"]');
+  ok(biscuit.dental.teeth['304'].omPos==='R'&&/OM\(rostral\)/.test(d.querySelector('.ftable').textContent),'oral mass rostral to 304');
+  click(w,'[data-act="om-pos"][data-pos="C"]');click(w,'[data-act="print"][data-sec="dental"]');ok(/OM\(caudal\)/.test(w.__printed),'caudal location prints on the chart');
+  click(w,'[data-act="code"][data-code="OM"]');ok(!biscuit.dental.teeth['304'],'removing OM removes its location');
+  click(w,'[data-act="dview"][data-view="rad"]');
   console.log('Treatment (procedures per tooth)');
   click(w,'[data-act="dview"][data-view="tx"]');click(w,'.arch [data-t="106"]');
   ok(!d.querySelector('.mmpad')&&!d.querySelector('[data-act="code"][data-code="PD3"]')&&d.querySelector('[data-act="tx"][data-code="XSS"]'),'treatment view shows procedures only');
