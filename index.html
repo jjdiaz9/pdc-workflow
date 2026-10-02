@@ -538,7 +538,7 @@ function seed(d){
   g3.temp=['100.4','100.1','99.8','99.6','99.4','99.3','99.1','99.0','98.9','98.8','98.7'];
   v3.anes.grid.cols.slice(0,11).forEach((c,i)=>{const m=35+i*5;c.time=`${pad(8+Math.floor(m/60))}:${pad(m%60)}`});
   v3.dental.teeth={'108':{codes:{PD2:true},pockets:{D:'5',L:'3'},note:'',ext:false},'204':{codes:{GR:'4',M2:true,PD4:true,VBL:true},note:'Severe recession',ext:true},'208':{codes:{'T/FX/CCF':true},note:'Pulp exposure',ext:true},'309':{codes:{F1:true,P:'4'},note:'',ext:false},'409':{codes:{HBL:true,PD3:true},note:'',ext:false},'104':{codes:{AT:true},note:'Mild wear',ext:false}};
-  Object.assign(v3.dental,{gi:'2',ci:'3',extNotes:'204 and 208: surgical extractions with flaps, closed with 4-0 Monocryl. Post-op radiographs show no retained roots.',rads:'Full-mouth',stage:'PD3',notes:'Home care: daily brushing and VOHC-approved chews.'});
+  Object.assign(v3.dental,{gi:'2',ci:'3',extNotes:'204 and 208: surgical extractions with flaps, closed with 4-0 Monocryl. Post-op radiographs show no retained roots.',stage:'PD3',notes:'Home care: daily brushing and VOHC-approved chews.'});
   Object.assign(v3.discharge,{type:'auto',time:'10:30',comments:'Recheck the extraction sites in 2 weeks. Soft food for 10 days.',meds:''});
   DIS_CHECK.forEach(([k])=>v3.discharge.check[k]=true);
   v3.discharge.rx=[
@@ -1075,7 +1075,7 @@ function stDental(v,p){
   const header=`<div><div class="eyebrow">${ch?{dog:'Canine',cat:'Feline',ferret:'Ferret'}[ch]:'Dental'} dental chart</div><h2>Dental chart</h2></div>`;
   const indices=`<div class="grid">${R('v.dental.gi','Gingivitis index',['0','1','2','3'],{cls:'s6'})}${R('v.dental.ci','Calculus index',['0','1','2','3'],{cls:'s6'})}</div>
     <p class="note">GI0 none · GI1 mild, no bleeding · GI2 moderate, bleeding on probing · GI3 severe, spontaneous bleeding</p>
-    <div class="grid">${R('v.dental.rads','Radiographs',['Full-mouth','Partial','Declined'],{cls:'s12'})}${R('v.dental.stage','Overall periodontal stage',PD_STAGES.map(([k])=>k),{cls:'s12'})}</div>
+    <div class="grid">${R('v.dental.stage','Overall periodontal stage',PD_STAGES.map(([k])=>k),{cls:'s12'})}</div>
     <p class="note">${PD_STAGES.map(([k,l])=>`${k} ${l.toLowerCase()}`).join(' · ')}. Stage single teeth in the tooth panel.</p>`;
   const tail=`<div class="grid">
       <div class="f s12"><span class="lbl">Extractions (from chart)</span><span class="calc">${ex.length?`<b>${ex.join(', ')}</b> <em>(${ex.length} ${ex.length===1?'tooth':'teeth'})</em>`:'<em>None marked</em>'}</span></div>
@@ -1542,7 +1542,7 @@ function fitBox(text,[x,y,w,h],max,cls){
 const fv=(x,y,text,size)=>text?`<text class="fv" x="${x}" y="${y}" font-size="${size||10}">${svgEsc(text)}</text>`:'';
 const ring=(c,rx,ry)=>c?`<ellipse cx="${c[0]}" cy="${c[1]}" rx="${rx||5.5}" ry="${ry||6.5}" fill="none" stroke="#000" stroke-width="1"/>`:'';
 
-const dentalSummary=d=>[d.rads?'Radiographs: '+d.rads.toLowerCase():'',d.stage?'Periodontal stage: '+d.stage:''].filter(Boolean).join(' · ');
+const dentalSummary=d=>d.stage?'Periodontal stage: '+d.stage:'';
 function chartPage(v,p){
   const ch=chartFor(p);if(!ch)return '';
   const A=CHART_ART[ch],F=A.f,[vx,vy,vw,vh]=A.vb,d=v.dental,w=weightKg(v,p);
@@ -1852,7 +1852,7 @@ const PRINT={
   dental:(v,p)=>{const ch=chartFor(p),d=v.dental;const ex=extractions(v);
     let tbl='';if(ch){const C=CHARTS[ch];const up=[...C.ur.slice().reverse()],upL=C.ul,lo=[...C.lr.slice().reverse()],loL=C.ll;const cell=n=>{const t=d.teeth[n];return `<td style="width:6%"><b>${n}</b></td><td>${esc(t?[t.ext?'X':'',toothStr(t,n),t.note].filter(Boolean).join(' · '):'')}</td>`};const rows=(a,b)=>{let h='';for(let i=0;i<Math.max(a.length,b.length);i++)h+=`<tr>${a[i]?cell(a[i]):'<td></td><td></td>'}${b[i]?cell(b[i]):'<td></td><td></td>'}</tr>`;return h};
       tbl=`<table><tr><th colspan="2">Right maxillary</th><th colspan="2">Left maxillary</th></tr>${rows(up,upL)}<tr><th colspan="2">Right mandibular</th><th colspan="2">Left mandibular</th></tr>${rows(lo,loL)}</table>`}
-    return `${tbl}<div class="kv" style="margin-top:6pt">${kv('Gingivitis index',d.gi)}${kv('Calculus index',d.ci)}${kv('Extractions',ex.join(', ')||'None')}${kv('Radiographs',d.rads)}${kv('Periodontal stage',d.stage)}</div><p><b>Extraction notes:</b> ${esc(d.extNotes)}</p><p><b>Notes:</b> ${esc(d.notes)}</p><p style="font-size:8pt">${LEGEND.map(([k,l])=>`<b>${esc(k)}</b> ${esc(l)}`).join(' · ')}</p>`},
+    return `${tbl}<div class="kv" style="margin-top:6pt">${kv('Gingivitis index',d.gi)}${kv('Calculus index',d.ci)}${kv('Extractions',ex.join(', ')||'None')}${kv('Periodontal stage',d.stage)}</div><p><b>Extraction notes:</b> ${esc(d.extNotes)}</p><p><b>Notes:</b> ${esc(d.notes)}</p><p style="font-size:8pt">${LEGEND.map(([k,l])=>`<b>${esc(k)}</b> ${esc(l)}`).join(' · ')}</p>`},
 };
 
 /* ---------- GitHub sync ---------- */

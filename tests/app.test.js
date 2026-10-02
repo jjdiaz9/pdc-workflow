@@ -109,7 +109,7 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'.arch [data-t="204"]');
   click(w,'[data-act="code"][data-code="PD3"]');click(w,'[data-act="code"][data-code="PD4"]');click(w,'[data-act="code"][data-code="VBL"]');
   ok(biscuit.dental.teeth['204'].codes.PD4===true&&!biscuit.dental.teeth['204'].codes.PD3&&biscuit.dental.teeth['204'].codes.VBL===true,'radiograph findings: one periodontal stage per tooth, plus bone loss');
-  click(w,'#f_v_dental_rads_0');click(w,'#f_v_dental_stage_3');ok(biscuit.dental.rads==='Full-mouth'&&biscuit.dental.stage==='PD3','visit radiographs and overall stage');
+  ok(!d.querySelector('[data-k="v.dental.rads"]'),'no radiographs-taken question (always full-mouth)');click(w,'#f_v_dental_stage_3');ok(biscuit.dental.stage==='PD3','overall periodontal stage');
   ok(P.dischargeType(biscuit)==='extractions','discharge sheet switches to extractions');
   P.data.patients.find(p=>p.id===biscuit.patientId).species='Cat';P.go('visit',biscuit.id,'dental');ok(d.querySelectorAll('.arch .tooth').length===30,'feline chart has 30 teeth');
   P.data.patients.find(p=>p.id===biscuit.patientId).species='Ferret';P.go('visit',biscuit.id,'dental');ok(d.querySelectorAll('.arch .tooth').length===34,'ferret chart has 34 teeth');
