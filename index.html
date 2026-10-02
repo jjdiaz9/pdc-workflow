@@ -234,13 +234,27 @@ table.mon td.warn input{color:var(--warn);font-weight:600} table.mon td.crit inp
 .tooth.missing .crown{background:transparent;border-style:dashed;opacity:.55}
 .tooth[aria-pressed="true"] .num{color:var(--accent-ink);background:var(--accent);border-radius:3px;padding:0 3px}
 .dlayout{display:grid;gap:16px}
-@media(min-width:1100px){.dlayout{grid-template-columns:1fr 330px;align-items:start}.teditor{position:sticky;top:calc(var(--hh,60px) + 80px)}.sheet-x{display:none}}
-@media(max-width:1099px){
-  .teditor{position:fixed;left:0;right:0;bottom:0;z-index:40;max-height:50vh;overflow:auto;padding-inline:16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 70%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(10,20,26,.18)}
-  .teditor:empty,.teditor.idle{display:none}
-  .teditor .panel{max-width:760px;margin:12px auto 0}
-  body.sheet-open main{padding-bottom:60vh}
-}
+/* charting mode (a tooth is selected): chart + options fill the screen */
+.teditor.idle{display:none}
+.teditor.cm{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) calc(12px + env(safe-area-inset-left,0px))}
+.cm-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px}
+.cm-who{display:flex;flex-direction:column;min-width:0;flex:1 1 140px}
+.cm-who .eyebrow{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cm-who b{font-size:20px;line-height:1.1}
+.cm .dview{max-width:none;width:auto;flex:0 1 380px}
+.cm .dview button{padding:0 6px;font-size:14.5px}
+.cm-top>.row{flex:none;flex-wrap:nowrap}
+.cm-chart{flex:none;--tw:min(34px,calc((100vw - 56px) / 24))}
+.cm-chart .arches{padding:6px 8px}
+.cm-chart .tooth{width:var(--tw);min-height:54px;gap:2px}
+.cm-chart .tooth .mk{max-width:calc(var(--tw) - 1px)}
+.cm-chart .archgap{height:6px;margin:0 0 6px}
+.cm-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.cm-panel{columns:290px;column-gap:20px;display:block;padding:12px 14px}
+.cm-sec{break-inside:avoid;-webkit-column-break-inside:avoid;margin-bottom:12px}
+.cm-sec:last-child{margin-bottom:0}
+.grp{display:grid;gap:5px}
+body.sheet-open{overflow:hidden}
 .codes{display:flex;flex-wrap:wrap;gap:6px}
 .omsz input{width:84px;min-height:40px;font-family:var(--f-mono);font-size:16px;padding:0 8px}
 .code{border:1px solid var(--line-strong);background:var(--surface);border-radius:6px;padding:0 11px;min-height:40px;min-width:44px;font-family:var(--f-mono);font-size:14px;cursor:pointer}
@@ -1113,7 +1127,7 @@ function stDental(v,p){
   const ch=chartFor(p);const d=v.dental;const ex=extractions(v);
   const header=`<div><div class="eyebrow">${ch?{dog:'Canine',cat:'Feline',ferret:'Ferret'}[ch]:'Dental'} dental chart</div><h2>Dental chart</h2></div>`;
   const rad=dView()==='rad',tx=dView()==='tx',proc=procSummary(d);
-  const views=`<div class="seg dview" role="tablist" aria-label="Charting view">${[['oral','Oral exam'],['rad','Radiographs'],['tx','Treatment']].map(([k,l])=>`<button type="button" role="tab" data-act="dview" data-view="${k}" aria-selected="${dView()===k}">${l}</button>`).join('')}</div>
+  const views=`${viewTabs()}
     <p class="note">${tx?'Treatment, by the DVM: the procedure done to each tooth. Extractions and the procedure summary fill in from here.':rad?'Radiograph findings, read by the DVM: periodontal stage, bone loss, roots and resorption.':'Oral exam at the table: pocketing, recession, mobility, furcation, fractures and other visible findings.'}</p>`;
   const indices=tx?'':rad?`<div class="grid">${R('v.dental.stage','Overall periodontal stage',PD_STAGES.map(([k])=>k),{cls:'s12'})}</div>
     <p class="note">${PD_STAGES.map(([k,l])=>`${k} ${l.toLowerCase()}`).join(' · ')}. Stage single teeth in the tooth panel.</p>`
@@ -1133,53 +1147,61 @@ function stDental(v,p){
     const mk=t?(t.ext?(tx&&extMethod(t))||'X':t.codes&&t.codes['/']?'/':(!rad&&!tx&&isFinite(deepest(t))?'P'+deepest(t):part(t,n).split(' ')[0].replace(/\(.*$/,''))||(t.note?'•':'')):'';
     return `<button class="${cls.join(' ')}" data-act="tooth" data-t="${n}" aria-pressed="${ui.tooth===n}" title="${n} · ${esc(toothName(n))}${t?' · '+esc(toothStr(t,n)):''}"><span class="num">${n}</span><span class="crown"></span><span class="mk">${esc(mk)}</span></button>`};
   const findings=Object.keys(d.teeth).map(Number).filter(n=>{const t=d.teeth[n];return t.ext||t.note||(t.codes&&t.codes['/'])||part(t,n)}).sort((a,b)=>a-b);
-  return `${header}${views}
-  <div class="dlayout">
-    <div style="display:grid;gap:14px;min-width:0">
-      <div class="arches">
+  const arches=`<div class="arches">
         <div class="arch-lbl"><span>Right maxillary</span><span>Left maxillary</span></div>
         <div class="arch">${C.ur.map(n=>tb(n,false)).join('')}<span class="mid"></span>${C.ul.map(n=>tb(n,false)).join('')}</div>
         <div class="archgap"></div>
         <div class="arch">${C.lr.map(n=>tb(n,true)).join('')}<span class="mid"></span>${C.ll.map(n=>tb(n,true)).join('')}</div>
         <div class="arch-lbl"><span>Right mandibular</span><span>Left mandibular</span></div>
-      </div>
+      </div>`;
+  return `${header}${views}
+  <div class="dlayout">
+    <div style="display:grid;gap:14px;min-width:0">
+      ${ui.tooth?'':arches}
       <p class="note">Tap a tooth to chart it. Amber = findings, red cross = extracted, dashed = missing.</p>
       ${indices}
       <div><h3 style="margin-bottom:6px">${tx?'Treatment':rad?'Radiograph findings':'Oral exam findings'}</h3>${findings.length?`<div class="ftable">${findings.map(n=>{const t=d.teeth[n];return `<div class="frow" data-act="tooth" data-t="${n}" role="button" tabindex="0"><span class="mono">${n}</span><span>${esc([part(t,n),t.ext?'Extracted':'',t.note].filter(Boolean).join(' · '))}</span></div>`}).join('')}</div>`:'<p class="note">No findings charted yet.</p>'}</div>
       ${tail}
     </div>
-    <div class="teditor${ui.tooth?'':' idle'}" id="teditor">${toothEditor(v,p)}</div>
+    <div class="teditor${ui.tooth?' cm':' idle'}" id="teditor">${toothEditor(v,p,arches)}</div>
   </div>`;
 }
+function viewTabs(){return `<div class="seg dview" role="tablist" aria-label="Charting view">${[['oral','Oral exam'],['rad','Radiographs'],['tx','Treatment']].map(([k,l])=>`<button type="button" role="tab" data-act="dview" data-view="${k}" aria-selected="${dView()===k}">${l}</button>`).join('')}</div>`}
 function toothOrder(ch){const C=CHARTS[ch];return [...C.ur.slice().reverse(),...C.ul,...C.ll,...C.lr.slice().reverse()]}
 const MM_VALS=['0','1','2','3','4','5','6','7','8','9','10','11','12'];
-function toothEditor(v,p){
+// Charting mode: with a tooth selected, the chart and every option for that tooth fill the screen,
+// with the options in balanced columns, so nothing needs the page to scroll.
+function toothEditor(v,p,arches){
   const ch=chartFor(p);if(!ch)return '';
   if(!ui.tooth)return `<div class="panel" style="background:var(--surface-2)"><h3>No tooth selected</h3><p class="note">${dView()==='tx'?'Pick a tooth to choose the procedure done to it.':dView()==='rad'?'Pick a tooth to record its periodontal stage, bone loss, root and resorption findings.':'Pick a tooth to record pocketing, mobility, furcation, fractures or an extraction.'}</p></div>`;
   const n=ui.tooth;const t=v.dental.teeth[n]||{codes:{},note:'',ext:false};const c=t.codes||{};
   const order=toothOrder(ch),i=order.indexOf(n),mk=ui.mmK||'P';
-  return `<div class="panel">
-    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">${esc(toothName(n))}</div><h2 class="mono" style="font-family:var(--f-mono)">${n}</h2></div>
-      <div class="row"><button class="btn small" data-act="tooth" data-t="${order[(i-1+order.length)%order.length]}" aria-label="Previous tooth">‹</button><button class="btn small" data-act="tooth" data-t="${order[(i+1)%order.length]}" aria-label="Next tooth">›</button><button class="btn small primary sheet-x" data-act="tooth-close">Done</button></div></div>
-    <div class="row"><button class="code x" data-act="t-ext" aria-pressed="${!!t.ext}">X Extracted</button><button class="code" data-act="code" data-code="/" aria-pressed="${!!c['/']}">/ Missing</button></div>
-    ${dView()==='tx'?`<p class="note"><b>Oral exam:</b> ${esc(toothPart(t,n,false))||'nothing charted'}<br><b>Radiographs:</b> ${esc(toothPart(t,n,true))||'nothing charted'}</p>
-      ${TX_GROUPS.map(([g,list])=>`<div style="display:grid;gap:5px"><span class="lbl">${g}</span><div class="codes">${list.map(([k,l])=>`<button class="code" data-act="tx" data-code="${esc(k)}" aria-pressed="${!!(t.tx&&t.tx[k])}" title="${esc(l+(TX_DEF[k]?': '+TX_DEF[k]:''))}">${esc(k)}</button>`).join('')}</div></div>`).join('')}
-      <p class="note">${txList(t).map(k=>`<b>${esc(k)}</b> ${esc(TX_NAME[k])}${TX_DEF[k]?': '+esc(TX_DEF[k].toLowerCase()):''}`).join('<br>')||'<b>X</b> closed, not sectioned · <b>XS</b> closed, sectioned · <b>XSS</b> open: flap and alveolectomy · <b>CR/A</b> crown amputation'}</p>`
-    :dView()==='rad'?`<p class="note"><b>Oral exam:</b> ${esc(toothPart(t,n,false))||'nothing charted'}</p>`:`<div class="mmpad"><span class="lbl">Measurements (mm): pick one, then tap the number</span>
+  return `<div class="cm-top">
+      <div class="cm-who"><span class="eyebrow">${esc(p.name||'')} · ${esc(toothName(n))}</span><b class="mono">${n}</b></div>
+      ${viewTabs()}
+      <div class="row"><button class="btn small" data-act="tooth" data-t="${order[(i-1+order.length)%order.length]}" aria-label="Previous tooth">‹</button><button class="btn small" data-act="tooth" data-t="${order[(i+1)%order.length]}" aria-label="Next tooth">›</button><button class="btn small primary" data-act="tooth-close">Done</button></div>
+    </div>
+    <div class="cm-chart">${arches||''}</div>
+    <div class="cm-scroll"><div class="panel cm-panel">
+    <div class="cm-sec grp"><div class="row"><button class="code x" data-act="t-ext" aria-pressed="${!!t.ext}">X Extracted</button><button class="code" data-act="code" data-code="/" aria-pressed="${!!c['/']}">/ Missing</button></div>
+    ${dView()==='tx'?`<p class="note"><b>Oral exam:</b> ${esc(toothPart(t,n,false))||'nothing charted'}<br><b>Radiographs:</b> ${esc(toothPart(t,n,true))||'nothing charted'}</p></div>
+      ${TX_GROUPS.map(([g,list])=>`<div class="cm-sec grp"><span class="lbl">${g}</span><div class="codes">${list.map(([k,l])=>`<button class="code" data-act="tx" data-code="${esc(k)}" aria-pressed="${!!(t.tx&&t.tx[k])}" title="${esc(l+(TX_DEF[k]?': '+TX_DEF[k]:''))}">${esc(k)}</button>`).join('')}</div></div>`).join('')}
+      <p class="note cm-sec">${txList(t).map(k=>`<b>${esc(k)}</b> ${esc(TX_NAME[k])}${TX_DEF[k]?': '+esc(TX_DEF[k].toLowerCase()):''}`).join('<br>')||'<b>X</b> closed, not sectioned · <b>XS</b> closed, sectioned · <b>XSS</b> open: flap and alveolectomy · <b>CR/A</b> crown amputation'}</p>`
+    :dView()==='rad'?`<p class="note"><b>Oral exam:</b> ${esc(toothPart(t,n,false))||'nothing charted'}</p></div>`:`</div><div class="mmpad cm-sec"><span class="lbl">Measurements (mm): pick one, then tap the number</span>
       <div class="mmkeys">${MM_CODES.map(([k,l])=>{const val=k==='P'?(isFinite(deepest(t))?String(deepest(t)):''):c[k];return `<button class="code" data-act="mm-key" data-code="${k}" aria-pressed="${k===mk}" title="${l}">${k}<b>${val!==undefined&&val!==''?esc(val):'–'}</b></button>`}).join('')}</div>
       ${mk==='P'?`<div class="psites" role="group" aria-label="Pocket site">${['',...P_SITES].map(x=>{const v0=x?(t.pockets||{})[x]:c.P;return `<button class="code" data-act="p-site" data-site="${x}" aria-pressed="${(ui.pSite||'')===x}" title="${x?siteTitle(n,x):'Deepest, site not noted'}">${x?siteLbl(n,x):'Any'}<b>${v0!==undefined&&v0!==''?esc(v0):''}</b></button>`}).join('')}</div>`:''}
       <div class="mmnums">${MM_VALS.map(x=>`<button class="code" data-act="mm-val" data-val="${x}" aria-pressed="${String((mk==='P'&&ui.pSite?(t.pockets||{})[ui.pSite]:c[mk])??'')===x}">${x}</button>`).join('')}<button class="code" data-act="mm-val" data-val="" aria-label="Clear ${mk}">⌫</button></div>
       <button class="code" data-act="mm-next" aria-pressed="${!!ui.mmNext}">Go to next tooth after P (Any)</button>
     </div>`}
-    ${(dView()==='tx'?[]:dView()==='rad'?RAD_GROUPS:ORAL_GROUPS).map(([g,codes])=>`<div style="display:grid;gap:5px"><span class="lbl">${g}</span><div class="codes">${codes.map(k=>`<button class="code" data-act="code" data-code="${esc(k)}" aria-pressed="${c[k]===true}">${esc(k)}</button>`).join('')}</div></div>`).join('')}
-    ${dView()==='oral'&&c.OM===true?`<div style="display:grid;gap:5px"><span class="lbl">Oral mass location (relative to ${n})</span><div class="codes">${[['','At tooth'],['R','Rostral'],['C','Caudal']].map(([k,l])=>`<button class="code" data-act="om-pos" data-pos="${k}" aria-pressed="${(t.omPos||'')===k}" title="${k==='R'?'Toward the front of the head':k==='C'?'Toward the tail':'At the tooth'}">${l}</button>`).join('')}</div>
+    ${(dView()==='tx'?[]:dView()==='rad'?RAD_GROUPS:ORAL_GROUPS).map(([g,codes])=>`<div class="cm-sec grp"><span class="lbl">${g}</span><div class="codes">${codes.map(k=>`<button class="code" data-act="code" data-code="${esc(k)}" aria-pressed="${c[k]===true}">${esc(k)}</button>`).join('')}</div></div>`).join('')}
+    ${dView()==='oral'&&c.OM===true?`<div class="cm-sec grp"><span class="lbl">Oral mass location (relative to ${n})</span><div class="codes">${[['','At tooth'],['R','Rostral'],['C','Caudal']].map(([k,l])=>`<button class="code" data-act="om-pos" data-pos="${k}" aria-pressed="${(t.omPos||'')===k}" title="${k==='R'?'Toward the front of the head':k==='C'?'Toward the tail':'At the tooth'}">${l}</button>`).join('')}</div>
       <div class="codes">${[['','Side not noted'],['V','Vestibular'],['L',omSideLbl(n,'L')]].map(([k,l])=>`<button class="code" data-act="om-side" data-side="${k}" aria-pressed="${(t.omSide||'')===k}" title="${k==='V'?'Faces the lips or cheek (buccal / labial)':k==='L'?(Math.floor(n/100)<=2?'Faces the palate':'Faces the tongue'):'Side not recorded'}">${l}</button>`).join('')}</div>
       <span class="lbl">Size (cm)</span>
       <div class="codes">${OM_SIZES.map(x=>`<button class="code" data-act="om-size" data-size="${x}" aria-pressed="${num(t.omSize)===num(x)}">${x}</button>`).join('')}
         <label class="omsz"><input aria-label="Other size in cm" type="text" inputmode="decimal" data-k="v.dental.teeth.${n}.omSize" data-tooth="${n}" value="${esc(OM_SIZES.some(x=>num(x)===num(t.omSize))?'':t.omSize||'')}" placeholder="Other" autocomplete="off"></label></div></div>`:''}
-    <label class="f"><span class="lbl">Note</span><input type="text" data-k="v.dental.teeth.${n}.note" data-tooth="${n}" value="${esc(t.note||'')}"></label>
-    <button class="btn small ghost" data-act="t-clear">${dView()==='tx'?'Clear treatment':dView()==='rad'?'Clear radiograph findings':'Clear oral exam findings'}</button>
-  </div>`;
+    <div class="cm-sec grp"><label class="f"><span class="lbl">Note</span><input type="text" data-k="v.dental.teeth.${n}.note" data-tooth="${n}" value="${esc(t.note||'')}"></label>
+    <button class="btn small ghost" data-act="t-clear">${dView()==='tx'?'Clear treatment':dView()==='rad'?'Clear radiograph findings':'Clear oral exam findings'}</button></div>
+  </div></div>`;
 }
 
 /* step 6 */
@@ -1368,7 +1390,6 @@ function afterRender(){
   const pad=$('#sigpad');if(pad)setupSig(pad);
   $$('.rxscale').forEach(b=>rxRefresh(+b.id.slice(4)));sizeLabels();
 }
-function chartAboveSheet(){const a=$('.arches'),st=$('.stepper');if(!a)return;const top=(($('.top')||{}).offsetHeight||60)+((st||{}).offsetHeight||56)+8;window.scrollTo(0,Math.max(0,a.getBoundingClientRect().top+window.scrollY-top))}
 function scrollToPanel(){const el=$('#stepPanel');if(!el)return;const hh=($('.top')||{}).offsetHeight||60;const y=el.getBoundingClientRect().top+window.scrollY-hh-72;if(window.scrollY>y)window.scrollTo(0,Math.max(0,y))}
 let sigDrawing=false;
 function setupSig(cv){
@@ -1469,7 +1490,7 @@ document.addEventListener('click',e=>{
     case 'bmap':bodyMapTap(b,e);break;
     case 'mass-del':{const l=v.exam.masses||[],i=l.findIndex(m=>m.id===b.dataset.id);if(i>=0){l.splice(i,1);if(!l.length)delete v.exam.masses;saveNow();render(true)}break}
     case 'exam-wnl':['eent','oral','pln','hl','abd','ms','ug','neuro','rectal','cs'].forEach(k=>{if(!v.exam[k])v.exam[k]='WNL'});saveNow();render(true);break;
-    case 'tooth':{const was=ui.tooth;ui.tooth=+b.dataset.t;render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});if(window.innerWidth<1100&&!was)chartAboveSheet();break}
+    case 'tooth':{const was=ui.tooth;ui.tooth=+b.dataset.t;render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});break}
     case 'tooth-close':ui.tooth=null;render(true);break;
     case 'code':{const t=ensureTooth(ui.tooth);const k=b.dataset.code;const on=t.codes[k]===true;EXCL.forEach(g=>{if(g.includes(k))g.forEach(x=>delete t.codes[x])});if(on)delete t.codes[k];else t.codes[k]=true;if(!t.codes.OM){delete t.omPos;delete t.omSide;delete t.omSize}if(!toothHas(t)&&!t.pockets)delete v.dental.teeth[ui.tooth];saveNow();render(true);break}
     case 'om-pos':{const t=ensureTooth(ui.tooth);if(b.dataset.pos)t.omPos=b.dataset.pos;else delete t.omPos;saveNow();render(true);break}

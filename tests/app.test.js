@@ -90,6 +90,9 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'.arch [data-t="204"]');click(w,'[data-act="code"][data-code="M2"]');click(w,'[data-act="code"][data-code="M3"]');
   ok(biscuit.dental.teeth['204'].codes.M3===true&&!biscuit.dental.teeth['204'].codes.M2,'mobility grades are exclusive');
   click(w,'[data-act="t-ext"]');ok(P.extractions(biscuit).join()==='108,204','extractions list 108, 204');
+  click(w,'[data-act="tooth-close"]');ok(!d.querySelector('#teditor.cm')&&d.querySelector('#teditor.idle')&&d.querySelector('.arches')&&!d.body.classList.contains('sheet-open'),'Done leaves charting mode');click(w,'.arch [data-t="204"]');
+  ok(d.querySelector('#teditor.cm .cm-chart .arch [data-t="204"][aria-pressed="true"]')&&d.querySelector('#teditor.cm .cm-panel [data-act="mm-val"]')&&d.querySelector('#teditor.cm [data-act="dview"]')&&d.body.classList.contains('sheet-open'),'charting mode: chart, view switch and all options together on one screen');
+  ok(d.querySelectorAll('.arches').length===1,'the chart is drawn once (moved into charting mode)');
   ok(!d.querySelector('#teditor input[inputmode]'),'measurements need no keyboard');
   click(w,'[data-act="mm-val"][data-val="5"]');ok(biscuit.dental.teeth['204'].codes.P==='5'&&/P5/.test(d.querySelector('[data-act="mm-key"][data-code="P"]').textContent),'tapping 5 records P5');
   click(w,'[data-act="mm-key"][data-code="GR"]');click(w,'[data-act="mm-val"][data-val="3"]');ok(biscuit.dental.teeth['204'].codes.GR==='3'&&biscuit.dental.teeth['204'].codes.P==='5','pick GR, tap 3: recession 3 mm, pocket kept');
