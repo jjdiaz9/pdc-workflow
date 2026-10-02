@@ -123,10 +123,12 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'[data-act="code"][data-code="OM"]');click(w,'[data-act="om-pos"][data-pos="R"]');
   ok(biscuit.dental.teeth['304'].omPos==='R'&&/OM\(rostral\)/.test(d.querySelector('.ftable').textContent),'oral mass rostral to 304');
   click(w,'[data-act="om-side"][data-side="L"]');ok(biscuit.dental.teeth['304'].omSide==='L'&&/OM\(rostral, lingual\)/.test(d.querySelector('.ftable').textContent),'lingual side on a mandibular tooth');
-  click(w,'[data-act="om-pos"][data-pos="C"]');click(w,'[data-act="om-side"][data-side="V"]');click(w,'[data-act="print"][data-sec="dental"]');ok(/OM\(caudal, vestibular\)/.test(w.__printed),'location and side print on the chart');
+  click(w,'[data-act="om-size"][data-size="1.5"]');ok(biscuit.dental.teeth['304'].omSize==='1.5'&&/OM\(1\.5 cm, rostral, lingual\)/.test(d.querySelector('.ftable').textContent),'size in cm with one tap');
+  type(w,'input[data-k="v.dental.teeth.304.omSize"]','3.2');ok(biscuit.dental.teeth['304'].omSize==='3.2','any other size can be typed');
+  click(w,'[data-act="om-pos"][data-pos="C"]');click(w,'[data-act="om-side"][data-side="V"]');click(w,'[data-act="print"][data-sec="dental"]');ok(/OM\(3\.2 cm, caudal, vestibular\)/.test(w.__printed),'size, location and side print on the chart');
   click(w,'.arch [data-t="204"]');click(w,'[data-act="code"][data-code="OM"]');ok(/Palatal/.test(d.querySelector('[data-act="om-side"][data-side="L"]').textContent),'maxillary teeth say palatal');click(w,'[data-act="code"][data-code="OM"]');
   click(w,'.arch [data-t="304"]');
-  click(w,'[data-act="code"][data-code="OM"]');ok(!biscuit.dental.teeth['304'],'removing OM removes its location and side');
+  click(w,'[data-act="code"][data-code="OM"]');ok(!biscuit.dental.teeth['304'],'removing OM removes its size, location and side');
   click(w,'[data-act="dview"][data-view="rad"]');
   console.log('Treatment (procedures per tooth)');
   click(w,'[data-act="dview"][data-view="tx"]');click(w,'.arch [data-t="106"]');
