@@ -125,9 +125,9 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'[data-act="tx"][data-code="XSS"]');ok(t106.tx.XSS&&!t106.tx.XS,'one extraction method per tooth');
   click(w,'[data-act="tx"][data-code="ALV"]');
   click(w,'.arch [data-t="309"]');click(w,'[data-act="tx"][data-code="RP/C"]');
-  ok(/^Open \(surgical\) extraction \(XSS\): 106\. Closed root planing \(RP\/C\): 309\. Alveoloplasty \(ALV\): 106\.$/.test(d.getElementById('procSum').textContent),'procedure summary fills in, grouped by procedure');
+  ok(/^Open extraction \(XSS\): 106\. Closed root planing \(RP\/C\): 309\. Alveolectomy \/ alveoloplasty \(ALV\): 106\.$/.test(d.getElementById('procSum').textContent),'procedure summary fills in, grouped by procedure');
   ok(/XSS/.test(d.querySelector('.arch [data-t="106"] .mk').textContent),'chart shows the extraction method');
-  click(w,'[data-act="print"][data-sec="dental"]');ok(/Open \(surgical\) extraction \(XSS\): 106/.test(w.__printed),'printed chart carries the procedures in the Extractions box');
+  click(w,'[data-act="print"][data-sec="dental"]');ok(/Open extraction \(XSS\): 106/.test(w.__printed),'printed chart carries the procedures in the Extractions box');
   click(w,'.arch [data-t="106"]');click(w,'[data-act="tx"][data-code="XSS"]');t106=biscuit.dental.teeth['106'];ok(t106&&t106.ext===false&&t106.tx.ALV,'un-choosing the method un-marks the extraction');
   click(w,'[data-act="t-clear"]');ok(!biscuit.dental.teeth['106'],'clear treatment removes it');
   click(w,'.arch [data-t="309"]');click(w,'[data-act="t-clear"]');ok(biscuit.dental.teeth['309']&&!biscuit.dental.teeth['309'].tx&&biscuit.dental.teeth['309'].codes.P!==undefined,'clearing treatment keeps the exam findings');
