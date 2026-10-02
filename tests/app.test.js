@@ -122,8 +122,11 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'[data-act="dview"][data-view="oral"]');click(w,'.arch [data-t="304"]');ok(!d.querySelector('[data-act="om-pos"]'),'no mass location until OM is chosen');
   click(w,'[data-act="code"][data-code="OM"]');click(w,'[data-act="om-pos"][data-pos="R"]');
   ok(biscuit.dental.teeth['304'].omPos==='R'&&/OM\(rostral\)/.test(d.querySelector('.ftable').textContent),'oral mass rostral to 304');
-  click(w,'[data-act="om-pos"][data-pos="C"]');click(w,'[data-act="print"][data-sec="dental"]');ok(/OM\(caudal\)/.test(w.__printed),'caudal location prints on the chart');
-  click(w,'[data-act="code"][data-code="OM"]');ok(!biscuit.dental.teeth['304'],'removing OM removes its location');
+  click(w,'[data-act="om-side"][data-side="L"]');ok(biscuit.dental.teeth['304'].omSide==='L'&&/OM\(rostral, lingual\)/.test(d.querySelector('.ftable').textContent),'lingual side on a mandibular tooth');
+  click(w,'[data-act="om-pos"][data-pos="C"]');click(w,'[data-act="om-side"][data-side="V"]');click(w,'[data-act="print"][data-sec="dental"]');ok(/OM\(caudal, vestibular\)/.test(w.__printed),'location and side print on the chart');
+  click(w,'.arch [data-t="204"]');click(w,'[data-act="code"][data-code="OM"]');ok(/Palatal/.test(d.querySelector('[data-act="om-side"][data-side="L"]').textContent),'maxillary teeth say palatal');click(w,'[data-act="code"][data-code="OM"]');
+  click(w,'.arch [data-t="304"]');
+  click(w,'[data-act="code"][data-code="OM"]');ok(!biscuit.dental.teeth['304'],'removing OM removes its location and side');
   click(w,'[data-act="dview"][data-view="rad"]');
   console.log('Treatment (procedures per tooth)');
   click(w,'[data-act="dview"][data-view="tx"]');click(w,'.arch [data-t="106"]');
