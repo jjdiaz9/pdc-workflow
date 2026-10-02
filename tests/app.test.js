@@ -108,6 +108,7 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'[data-act="p-site"][data-site=""]');
   click(w,'.arch [data-t="204"]');
   click(w,'[data-act="code"][data-code="PD3"]');click(w,'[data-act="code"][data-code="PD4"]');click(w,'[data-act="code"][data-code="VBL"]');
+  click(w,'[data-act="code"][data-code="TR4"]');click(w,'[data-act="code"][data-code="TR5"]');ok(biscuit.dental.teeth['204'].codes.TR5===true&&!biscuit.dental.teeth['204'].codes.TR4,'resorption stages go to TR5, one per tooth');click(w,'[data-act="code"][data-code="TR5"]');
   ok(biscuit.dental.teeth['204'].codes.PD4===true&&!biscuit.dental.teeth['204'].codes.PD3&&biscuit.dental.teeth['204'].codes.VBL===true,'radiograph findings: one periodontal stage per tooth, plus bone loss');
   ok(!d.querySelector('[data-k="v.dental.rads"]'),'no radiographs-taken question (always full-mouth)');click(w,'#f_v_dental_stage_3');ok(biscuit.dental.stage==='PD3','overall periodontal stage');
   ok(P.dischargeType(biscuit)==='extractions','discharge sheet switches to extractions');
