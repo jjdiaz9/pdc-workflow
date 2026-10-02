@@ -6,6 +6,8 @@ A single-file web app that takes each patient at Pet Dental Clinic through the v
 
 Each step mirrors one of the clinic's paper forms (see `reference/forms/`). A step lists what's still missing before you mark it complete, and each visit prints as paper forms.
 
+In the **Dental chart**, tap a tooth, then enter measurements with the number buttons; there's no keyboard. Pick P, GR, RE or AL and tap the millimetres. With P selected, choose the site first if it matters: mesial, distal, buccal, or palatal on upper teeth and lingual on lower teeth. A tooth can hold several pockets, which print like `P5(D) P3(Pal)`, and the chart shows the deepest. Turn on **Go to next tooth after P** to probe around the mouth with one tap per tooth (site: Any). The **Radiographs** row stages each tooth (PD1–PD4) and records bone loss (HBL, VBL), periapical lucency (PAL), retained roots and resorption type (TR/T1–T3). The whole mouth gets a Radiographs choice (full-mouth / partial / declined) and an overall periodontal stage, which print in the chart's notes.
+
 The Exam step has a **body map** for dogs, cats and ferrets: tap the ventral or dorsal figure to mark a mass, then describe it. Marks print as numbered rings on the exam sheet's figures, with the descriptions under C/S. The dog and cat maps are the exam sheet's own figures; the paper has no ferret, so a ferret figure in the same style prints in their place for ferrets.
 
 The Discharge step also prints **take-home medication labels** (DYMO 30252, 3.5 × 1.125 in). Pick a drug from the formulary, build the directions, tick cautions, and print one label per medication; the pet, owner, veterinarian and date come from the visit. The label's practice details, margins and the formulary are under **Settings → Medication labels / Formulary**. Printed labels can be exported as a dispensing log (.csv).
@@ -74,7 +76,7 @@ The form wording is in `index.html`:
 - Consent: `stAuth`
 - Exam sheet: `stExam` (body map: `bodyMapUI`, `bodyMapTap`, `bodyMapPrint`, marks in `v.exam.masses`)
 - Treatment sheet and monitoring grid: `stAnes`, `GRID_ROWS`, `DRUGS`
-- Tooth charts and abbreviations: `CHARTS`, `CODE_GROUPS`, `LEGEND`
+- Tooth charts and abbreviations: `CHARTS`, `CODE_GROUPS` (radiograph codes in `RAD_CODES`, stages in `PD_STAGES`), `LEGEND`; the mm number pad and pocket sites (`MM_VALS`, `P_SITES`) are in `toothEditor`
 - Discharge sheet: `dischargeDoc`
 - Medication labels: `labelHTML`, starter formulary `RX_SEED`, cautions `CAUTIONS`, label defaults `LBL_DEF`
 
