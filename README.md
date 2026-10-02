@@ -6,12 +6,13 @@ A single-file web app that takes each patient at Pet Dental Clinic through the v
 
 Each step mirrors one of the clinic's paper forms (see `reference/forms/`). A step lists what's still missing before you mark it complete, and each visit prints as paper forms.
 
-The **Dental chart** has two views, and each device remembers which one it's on. Each view shows only its own codes on the chart, in the findings list and in the tooth panel.
+The **Dental chart** has three views, and each device remembers which one it's on. Each view shows only its own codes on the chart, in the findings list and in the tooth panel.
 
 - **Oral exam** (technician, at the table): measurements, gingivitis and calculus indices, mobility, furcation, fractures and other visible findings, including that a resorptive lesion (TR) is present. Tap a tooth, pick P, GR, RE or AL, and tap the millimetres on the number buttons; there's no keyboard. With P selected, choose the site first if it matters: mesial, distal, buccal, or palatal on upper teeth and lingual on lower teeth. A tooth can hold several pockets, which print like `P5(D) P3(Pal)`, and the chart shows the deepest. Turn on **Go to next tooth after P** to probe around the mouth with one tap per tooth (site: Any).
 - **Radiographs** (DVM): each tooth's periodontal stage (PD1–PD4), bone loss (HBL, VBL), periapical lucency (PAL), periapical abscess, retained, supernumerary, embedded or unerupted roots and teeth, and resorption stage (TR1–TR5) and type (TR/T1–T3), plus the overall periodontal stage, which prints in the chart's notes. The tooth panel also shows that tooth's oral exam findings for context.
 
-**Clear** only clears the current view's findings. Full-mouth radiographs are routine, so the app doesn't ask whether they were taken; note any exception (such as a second visit for extractions) in the notes.
+- **Treatment** (DVM): the procedure done to each tooth, with AVDC abbreviations. Extraction method: X closed, XS closed with sectioning, XSS open (surgical), CR/A crown amputation; choosing one marks the tooth extracted. Also RP/C, RP/O, GV, ALV, BG, GTR, VPT, RCT and ONF/R. The chart then writes the procedure summary ("Open (surgical) extraction (XSS): 204, 208. Closed root planing (RP/C): 309."), shown above the extraction notes and printed first in the chart's Extractions box; the extraction notes are for extra detail such as flaps, sutures and blocks.
+**Clear** only clears the current view's entries. Full-mouth radiographs are routine, so the app doesn't ask whether they were taken; note any exception (such as a second visit for extractions) in the notes.
 
 The Exam step has a **body map** for dogs, cats and ferrets: tap the ventral or dorsal figure to mark a mass, then describe it. Marks print as numbered rings on the exam sheet's figures, with the descriptions under C/S. The dog and cat maps are the exam sheet's own figures; the paper has no ferret, so a ferret figure in the same style prints in their place for ferrets.
 
