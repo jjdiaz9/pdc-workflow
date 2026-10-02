@@ -98,6 +98,14 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'[data-act="mm-val"][data-val="4"]');ok(biscuit.dental.teeth['204'].codes.P==='4'&&P.ui.tooth===205,'with it on, a pocket depth moves to the next tooth (204 → 205)');
   click(w,'[data-act="mm-next"]');click(w,'[data-act="mm-val"][data-val="2"]');ok(biscuit.dental.teeth['205'].codes.P==='2'&&P.ui.tooth===205,'with it off, the panel stays on the tooth');
   click(w,'[data-act="mm-val"][data-val=""]');ok(!biscuit.dental.teeth['205'],'⌫ clears; an empty tooth is not kept');
+  click(w,'.arch [data-t="105"]');click(w,'[data-act="p-site"][data-site="M"]');click(w,'[data-act="mm-val"][data-val="4"]');
+  click(w,'[data-act="p-site"][data-site="L"]');click(w,'[data-act="mm-val"][data-val="6"]');
+  const t105=biscuit.dental.teeth['105'];
+  ok(t105.pockets.M==='4'&&t105.pockets.L==='6'&&t105.codes.P===undefined&&P.ui.tooth===105,'pockets by site; a site entry stays on the tooth');
+  ok(/Pal/.test(d.querySelector('[data-act="p-site"][data-site="L"]').textContent)&&/P4\(M\) P6\(Pal\)/.test(d.querySelector('.ftable').textContent)&&/P6/.test(d.querySelector('.arch [data-t="105"] .mk').textContent),'upper teeth say palatal; list shows each site; chart shows the deepest');
+  click(w,'[data-act="mm-val"][data-val="6"]');click(w,'[data-act="p-site"][data-site="M"]');click(w,'[data-act="mm-val"][data-val=""]');ok(!biscuit.dental.teeth['105'],'clearing every site removes the tooth');
+  click(w,'.arch [data-t="405"]');click(w,'[data-act="p-site"][data-site="L"]');ok(/^L/.test(d.querySelector('[data-act="p-site"][data-site="L"]').textContent.trim()),'lower teeth say lingual');
+  click(w,'[data-act="p-site"][data-site=""]');
   click(w,'.arch [data-t="204"]');
   click(w,'[data-act="code"][data-code="PD3"]');click(w,'[data-act="code"][data-code="PD4"]');click(w,'[data-act="code"][data-code="VBL"]');
   ok(biscuit.dental.teeth['204'].codes.PD4===true&&!biscuit.dental.teeth['204'].codes.PD3&&biscuit.dental.teeth['204'].codes.VBL===true,'radiograph findings: one periodontal stage per tooth, plus bone loss');
