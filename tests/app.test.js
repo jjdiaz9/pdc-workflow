@@ -105,6 +105,7 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   ok(/Pal/.test(d.querySelector('[data-act="p-site"][data-site="L"]').textContent)&&/P4\(M\) P6\(Pal\)/.test(d.querySelector('.ftable').textContent)&&/P6/.test(d.querySelector('.arch [data-t="105"] .mk').textContent),'upper teeth say palatal; list shows each site; chart shows the deepest');
   click(w,'[data-act="mm-val"][data-val="6"]');click(w,'[data-act="p-site"][data-site="M"]');click(w,'[data-act="mm-val"][data-val=""]');ok(!biscuit.dental.teeth['105'],'clearing every site removes the tooth');
   click(w,'.arch [data-t="405"]');click(w,'[data-act="p-site"][data-site="L"]');ok(/^L/.test(d.querySelector('[data-act="p-site"][data-site="L"]').textContent.trim()),'lower teeth say lingual');
+  ok(/^V/.test(d.querySelector('[data-act="p-site"][data-site="B"]').textContent.trim())&&/Vestibular/.test(d.querySelector('[data-act="p-site"][data-site="B"]').title),'buccal site is labelled V (vestibular), as AVDC prefers');
   click(w,'[data-act="p-site"][data-site=""]');
   click(w,'.arch [data-t="204"]');
   ok(d.querySelector('[data-act="dview"][data-view="oral"]').getAttribute('aria-selected')==='true'&&d.querySelector('.mmpad')&&!d.querySelector('[data-act="code"][data-code="PD3"]')&&!d.querySelector('#f_v_dental_stage_0')&&d.querySelector('#f_v_dental_gi_0'),'oral exam view: measurements, GI/CI, no radiograph codes');
