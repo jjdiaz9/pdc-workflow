@@ -247,6 +247,9 @@ table.mon td.warn input{color:var(--warn);font-weight:600} table.mon td.crit inp
 .mmkeys .code{min-height:44px;display:flex;justify-content:space-between;align-items:center;gap:6px}
 .mmkeys .code[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .mmkeys .code b{font-weight:600}
+.psites{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.psites .code{min-height:44px;min-width:0;padding:0 6px;display:flex;justify-content:space-between;align-items:center;gap:4px}
+.psites .code[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
 .mmnums{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .mmnums .code{min-height:44px;min-width:0;padding:0;font-size:16px}
 .mmpad>.code[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
@@ -534,7 +537,7 @@ function seed(d){
   g3.ecg=['NSR','NSR','NSR','NSR','NSR','NSR','Sinus brady','Sinus brady','NSR','NSR','NSR'];g3.bp=['124/72/88','118/66/82','112/62/78','108/60/74','106/58/72','104/56/70','100/54/68','96/52/64','104/56/70','110/62/76','114/66/80'];
   g3.temp=['100.4','100.1','99.8','99.6','99.4','99.3','99.1','99.0','98.9','98.8','98.7'];
   v3.anes.grid.cols.slice(0,11).forEach((c,i)=>{const m=35+i*5;c.time=`${pad(8+Math.floor(m/60))}:${pad(m%60)}`});
-  v3.dental.teeth={'108':{codes:{P:'5',PD2:true},note:'',ext:false},'204':{codes:{GR:'4',M2:true,PD4:true,VBL:true},note:'Severe recession',ext:true},'208':{codes:{'T/FX/CCF':true},note:'Pulp exposure',ext:true},'309':{codes:{F1:true,P:'4'},note:'',ext:false},'409':{codes:{HBL:true,PD3:true},note:'',ext:false},'104':{codes:{AT:true},note:'Mild wear',ext:false}};
+  v3.dental.teeth={'108':{codes:{PD2:true},pockets:{D:'5',L:'3'},note:'',ext:false},'204':{codes:{GR:'4',M2:true,PD4:true,VBL:true},note:'Severe recession',ext:true},'208':{codes:{'T/FX/CCF':true},note:'Pulp exposure',ext:true},'309':{codes:{F1:true,P:'4'},note:'',ext:false},'409':{codes:{HBL:true,PD3:true},note:'',ext:false},'104':{codes:{AT:true},note:'Mild wear',ext:false}};
   Object.assign(v3.dental,{gi:'2',ci:'3',extNotes:'204 and 208: surgical extractions with flaps, closed with 4-0 Monocryl. Post-op radiographs show no retained roots.',rads:'Full-mouth',stage:'PD3',notes:'Home care: daily brushing and VOHC-approved chews.'});
   Object.assign(v3.discharge,{type:'auto',time:'10:30',comments:'Recheck the extraction sites in 2 weeks. Soft food for 10 days.',meds:''});
   DIS_CHECK.forEach(([k])=>v3.discharge.check[k]=true);
@@ -574,7 +577,12 @@ function ageStr(p){if(p.dob){const [y,m,d]=p.dob.split('-').map(Number);const b=
 function chartFor(p){const s=(p&&p.species||'').toLowerCase();return s==='dog'?'dog':s==='cat'?'cat':s==='ferret'?'ferret':null}
 function ttype(n){const d=n%100;return d<=3?'i':d===4?'c':d>=9?'m':'pm'}
 function toothName(n){const q=Math.floor(n/100),d=n%100;const side=['','Right maxillary','Left maxillary','Left mandibular','Right mandibular'][q];const ord=['','1st','2nd','3rd','4th'];let t;if(d<=3)t=ord[d]+' incisor';else if(d===4)t='canine';else if(d>=9)t=ord[d-8]+' molar';else t=ord[d-4]+' premolar';return side+' '+t}
-function toothStr(t){if(!t)return '';const c=t.codes||{};const o=[];MM_CODES.forEach(([k])=>{if(c[k]!==undefined&&c[k]!=='')o.push(k+c[k])});Object.keys(c).forEach(k=>{if(c[k]===true)o.push(k)});return o.join(' ')}
+// Pocket depths by site (t.pockets: M mesial, D distal, B buccal, L lingual — palatal on upper teeth), next to the plain P.
+const P_SITES=['M','D','B','L'];
+const siteLbl=(n,s)=>s==='L'&&Math.floor(n/100)<=2?'Pal':s;
+const sitePockets=(n,t)=>P_SITES.filter(s=>t.pockets&&t.pockets[s]!==undefined&&t.pockets[s]!=='').map(s=>`P${t.pockets[s]}(${siteLbl(n,s)})`);
+const deepest=t=>Math.max(...[t.codes&&t.codes.P,...P_SITES.map(s=>t.pockets&&t.pockets[s])].map(num).filter(x=>x!=null));
+function toothStr(t,n){if(!t)return '';const c=t.codes||{};const o=[];MM_CODES.forEach(([k])=>{if(c[k]!==undefined&&c[k]!=='')o.push(k+c[k]);if(k==='P')o.push(...sitePockets(n,t))});Object.keys(c).forEach(k=>{if(c[k]===true)o.push(k)});return o.join(' ')}
 function toothHas(t){return t&&(t.ext||t.note||toothStr(t))}
 function extractions(v){return Object.keys(v.dental.teeth).filter(k=>v.dental.teeth[k].ext).map(Number).sort((a,b)=>a-b)}
 function dischargeType(v){const s=v.discharge.type||'auto';if(s!=='auto')return s;return extractions(v).length?'extractions':'routine'}
@@ -1077,8 +1085,8 @@ function stDental(v,p){
   if(!ch)return `${header}<div class="banner info"><span>${p.species?`No tooth chart is set up for ${esc(p.speciesOther||p.species)}. Record findings in the notes.`:'Choose a species on the Check-in step to load the right tooth chart.'}</span></div>${indices}${tail}`;
   const C=CHARTS[ch];
   const tb=(n,lo)=>{const t=d.teeth[n];const cls=['tooth','t-'+ttype(n),lo?'lo':'up'];if(t&&t.ext)cls.push('ext');else if(t&&t.codes&&t.codes['/'])cls.push('missing');else if(toothHas(t))cls.push('find');
-    const mk=t?(t.ext?'X':t.codes&&t.codes['/']?'/':toothStr(t).split(' ')[0]||(t.note?'•':'')):'';
-    return `<button class="${cls.join(' ')}" data-act="tooth" data-t="${n}" aria-pressed="${ui.tooth===n}" title="${n} · ${esc(toothName(n))}${t?' · '+esc(toothStr(t)):''}"><span class="num">${n}</span><span class="crown"></span><span class="mk">${esc(mk)}</span></button>`};
+    const mk=t?(t.ext?'X':t.codes&&t.codes['/']?'/':(isFinite(deepest(t))?'P'+deepest(t):toothStr(t,n).split(' ')[0])||(t.note?'•':'')):'';
+    return `<button class="${cls.join(' ')}" data-act="tooth" data-t="${n}" aria-pressed="${ui.tooth===n}" title="${n} · ${esc(toothName(n))}${t?' · '+esc(toothStr(t,n)):''}"><span class="num">${n}</span><span class="crown"></span><span class="mk">${esc(mk)}</span></button>`};
   const findings=Object.keys(d.teeth).map(Number).filter(n=>toothHas(d.teeth[n])).sort((a,b)=>a-b);
   return `${header}
   <div class="dlayout">
@@ -1092,7 +1100,7 @@ function stDental(v,p){
       </div>
       <p class="note">Tap a tooth to chart it. Amber = findings, red cross = extracted, dashed = missing.</p>
       ${indices}
-      <div><h3 style="margin-bottom:6px">Charted teeth</h3>${findings.length?`<div class="ftable">${findings.map(n=>{const t=d.teeth[n];return `<div class="frow" data-act="tooth" data-t="${n}" role="button" tabindex="0"><span class="mono">${n}</span><span>${esc([toothStr(t),t.ext?'Extracted':'',t.note].filter(Boolean).join(' · '))}</span></div>`}).join('')}</div>`:'<p class="note">No findings charted yet.</p>'}</div>
+      <div><h3 style="margin-bottom:6px">Charted teeth</h3>${findings.length?`<div class="ftable">${findings.map(n=>{const t=d.teeth[n];return `<div class="frow" data-act="tooth" data-t="${n}" role="button" tabindex="0"><span class="mono">${n}</span><span>${esc([toothStr(t,n),t.ext?'Extracted':'',t.note].filter(Boolean).join(' · '))}</span></div>`}).join('')}</div>`:'<p class="note">No findings charted yet.</p>'}</div>
       ${tail}
     </div>
     <div class="teditor${ui.tooth?'':' idle'}" id="teditor">${toothEditor(v,p)}</div>
@@ -1110,9 +1118,10 @@ function toothEditor(v,p){
       <div class="row"><button class="btn small" data-act="tooth" data-t="${order[(i-1+order.length)%order.length]}" aria-label="Previous tooth">‹</button><button class="btn small" data-act="tooth" data-t="${order[(i+1)%order.length]}" aria-label="Next tooth">›</button><button class="btn small primary sheet-x" data-act="tooth-close">Done</button></div></div>
     <div class="row"><button class="code x" data-act="t-ext" aria-pressed="${!!t.ext}">X Extracted</button><button class="code" data-act="code" data-code="/" aria-pressed="${!!c['/']}">/ Missing</button></div>
     <div class="mmpad"><span class="lbl">Measurements (mm): pick one, then tap the number</span>
-      <div class="mmkeys">${MM_CODES.map(([k,l])=>`<button class="code" data-act="mm-key" data-code="${k}" aria-pressed="${k===mk}" title="${l}">${k}<b>${c[k]!==undefined&&c[k]!==''?esc(c[k]):'–'}</b></button>`).join('')}</div>
-      <div class="mmnums">${MM_VALS.map(x=>`<button class="code" data-act="mm-val" data-val="${x}" aria-pressed="${String(c[mk]??'')===x}">${x}</button>`).join('')}<button class="code" data-act="mm-val" data-val="" aria-label="Clear ${mk}">⌫</button></div>
-      <button class="code" data-act="mm-next" aria-pressed="${!!ui.mmNext}">Go to next tooth after P</button>
+      <div class="mmkeys">${MM_CODES.map(([k,l])=>{const val=k==='P'?(isFinite(deepest(t))?String(deepest(t)):''):c[k];return `<button class="code" data-act="mm-key" data-code="${k}" aria-pressed="${k===mk}" title="${l}">${k}<b>${val!==undefined&&val!==''?esc(val):'–'}</b></button>`}).join('')}</div>
+      ${mk==='P'?`<div class="psites" role="group" aria-label="Pocket site">${['',...P_SITES].map(x=>{const v0=x?(t.pockets||{})[x]:c.P;return `<button class="code" data-act="p-site" data-site="${x}" aria-pressed="${(ui.pSite||'')===x}" title="${x?{M:'Mesial',D:'Distal',B:'Buccal',L:Math.floor(n/100)<=2?'Palatal':'Lingual'}[x]:'Deepest, site not noted'}">${x?siteLbl(n,x):'Any'}<b>${v0!==undefined&&v0!==''?esc(v0):''}</b></button>`}).join('')}</div>`:''}
+      <div class="mmnums">${MM_VALS.map(x=>`<button class="code" data-act="mm-val" data-val="${x}" aria-pressed="${String((mk==='P'&&ui.pSite?(t.pockets||{})[ui.pSite]:c[mk])??'')===x}">${x}</button>`).join('')}<button class="code" data-act="mm-val" data-val="" aria-label="Clear ${mk}">⌫</button></div>
+      <button class="code" data-act="mm-next" aria-pressed="${!!ui.mmNext}">Go to next tooth after P (Any)</button>
     </div>
     ${CODE_GROUPS.map(([g,codes])=>`<div style="display:grid;gap:5px"><span class="lbl">${g}</span><div class="codes">${codes.map(k=>`<button class="code" data-act="code" data-code="${esc(k)}" aria-pressed="${c[k]===true}">${esc(k)}</button>`).join('')}</div></div>`).join('')}
     <label class="f"><span class="lbl">Note</span><input type="text" data-k="v.dental.teeth.${n}.note" data-tooth="${n}" value="${esc(t.note||'')}"></label>
@@ -1411,12 +1420,15 @@ document.addEventListener('click',e=>{
     case 'tooth-close':ui.tooth=null;render(true);break;
     case 'code':{const t=ensureTooth(ui.tooth);const k=b.dataset.code;const on=t.codes[k]===true;EXCL.forEach(g=>{if(g.includes(k))g.forEach(x=>delete t.codes[x])});if(on)delete t.codes[k];else t.codes[k]=true;saveNow();render(true);break}
     case 'mm-key':ui.mmK=b.dataset.code;render(true);break;
+    case 'p-site':ui.pSite=b.dataset.site;render(true);break;
     case 'mm-next':ui.mmNext=!ui.mmNext;saveUI();render(true);break;
     case 'mm-val':{const k=ui.mmK||'P',t=ensureTooth(ui.tooth),val=b.dataset.val;
-      if(val===''||String(t.codes[k]??'')===val)delete t.codes[k];else t.codes[k]=val;
-      if(!toothHas(t)&&!Object.keys(t.codes).length)delete v.dental.teeth[ui.tooth];
+      const site=k==='P'&&ui.pSite,box=site?(t.pockets=t.pockets||{}):t.codes,key=site||k;
+      if(val===''||String(box[key]??'')===val)delete box[key];else box[key]=val;
+      if(t.pockets&&!Object.keys(t.pockets).length)delete t.pockets;
+      if(!toothHas(t)&&!Object.keys(t.codes).length&&!t.pockets)delete v.dental.teeth[ui.tooth];
       saveNow();
-      if(val!==''&&k==='P'&&ui.mmNext&&t.codes.P===val){const o=toothOrder(chartFor(curP())),i=o.indexOf(ui.tooth);if(i<o.length-1)ui.tooth=o[i+1]}
+      if(val!==''&&k==='P'&&!site&&ui.mmNext&&t.codes.P===val){const o=toothOrder(chartFor(curP())),i=o.indexOf(ui.tooth);if(i<o.length-1)ui.tooth=o[i+1]}
       render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});break}
     case 't-ext':{const t=ensureTooth(ui.tooth);t.ext=!t.ext;saveNow();render(true);break}
     case 't-clear':delete v.dental.teeth[ui.tooth];saveNow();render(true);break;
@@ -1537,7 +1549,7 @@ function chartPage(v,p){
   const sc=Math.min(1,PAGE_W/vw,PAGE_H/vh);
   let o='';
   o+=fv(F.name[0],F.name[1],p.name,11)+fv(F.weight[0],F.weight[1],w?`${fmt(w.kg,1)} kg (${fmt(w.kg*2.20462,1)} lbs)`:'',11)+fv(F.date[0],F.date[1],usDate(v.date),11);
-  Object.keys(F.teeth).forEach(n=>{const t=d.teeth[n];if(!toothHas(t))return;o+=fitBox([t.ext?'EXT':'',toothStr(t),t.note].filter(Boolean).join(' · '),F.teeth[n],8.5)});
+  Object.keys(F.teeth).forEach(n=>{const t=d.teeth[n];if(!toothHas(t))return;o+=fitBox([t.ext?'EXT':'',toothStr(t,+n),t.note].filter(Boolean).join(' · '),F.teeth[n],8.5)});
   o+=ring(F.gi[d.gi])+ring(F.ci[d.ci]);
   const ex=extractions(v);
   o+=fitBox([ex.length?ex.join(', '):'',d.extNotes].filter(Boolean).join(' · '),F.ext,10);
@@ -1838,7 +1850,7 @@ function printHead(v,p,title){const w=weightKg(v,p);return `<div class="hd"><div
 const kv=(l,val)=>`<div><b>${l}:</b> ${esc(val||'')}</div>`;
 const PRINT={
   dental:(v,p)=>{const ch=chartFor(p),d=v.dental;const ex=extractions(v);
-    let tbl='';if(ch){const C=CHARTS[ch];const up=[...C.ur.slice().reverse()],upL=C.ul,lo=[...C.lr.slice().reverse()],loL=C.ll;const cell=n=>{const t=d.teeth[n];return `<td style="width:6%"><b>${n}</b></td><td>${esc(t?[t.ext?'X':'',toothStr(t),t.note].filter(Boolean).join(' · '):'')}</td>`};const rows=(a,b)=>{let h='';for(let i=0;i<Math.max(a.length,b.length);i++)h+=`<tr>${a[i]?cell(a[i]):'<td></td><td></td>'}${b[i]?cell(b[i]):'<td></td><td></td>'}</tr>`;return h};
+    let tbl='';if(ch){const C=CHARTS[ch];const up=[...C.ur.slice().reverse()],upL=C.ul,lo=[...C.lr.slice().reverse()],loL=C.ll;const cell=n=>{const t=d.teeth[n];return `<td style="width:6%"><b>${n}</b></td><td>${esc(t?[t.ext?'X':'',toothStr(t,n),t.note].filter(Boolean).join(' · '):'')}</td>`};const rows=(a,b)=>{let h='';for(let i=0;i<Math.max(a.length,b.length);i++)h+=`<tr>${a[i]?cell(a[i]):'<td></td><td></td>'}${b[i]?cell(b[i]):'<td></td><td></td>'}</tr>`;return h};
       tbl=`<table><tr><th colspan="2">Right maxillary</th><th colspan="2">Left maxillary</th></tr>${rows(up,upL)}<tr><th colspan="2">Right mandibular</th><th colspan="2">Left mandibular</th></tr>${rows(lo,loL)}</table>`}
     return `${tbl}<div class="kv" style="margin-top:6pt">${kv('Gingivitis index',d.gi)}${kv('Calculus index',d.ci)}${kv('Extractions',ex.join(', ')||'None')}${kv('Radiographs',d.rads)}${kv('Periodontal stage',d.stage)}</div><p><b>Extraction notes:</b> ${esc(d.extNotes)}</p><p><b>Notes:</b> ${esc(d.notes)}</p><p style="font-size:8pt">${LEGEND.map(([k,l])=>`<b>${esc(k)}</b> ${esc(l)}`).join(' · ')}</p>`},
 };
