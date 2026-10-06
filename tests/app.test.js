@@ -187,12 +187,14 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   const chart=[...pd.querySelectorAll('svg.paper')].find(s=>s.textContent.includes('Canine Dental Chart'));
   ok(chart&&chart.getAttribute('viewBox').split(' ').length===4&&/data:image\/jpeg;base64,/.test(chart.innerHTML)&&!chart.innerHTML.includes('{LOGO}'),'dental chart is the original drawing with the logo filled in');
   const fvs=[...chart.querySelectorAll('text.fv')].map(t=>t.textContent);
-  ok(fvs.includes('Biscuit')&&fvs.some(t=>/11\.8 kg/.test(t))&&fvs.some(t=>/^EXT · T\/FX\/CCF · Pulp exposure$/.test(t))&&fvs.some(t=>t==='P6 F2 M1'),'chart fills name, weight and tooth rows');
+  ok(fvs.includes('Biscuit')&&fvs.some(t=>/11\.8 kg/.test(t))&&fvs.some(t=>/^T\/FX\/CCF · Pulp exposure$/.test(t))&&fvs.some(t=>t==='P6 F2 M1'),'chart fills name, weight and tooth rows');
   ok(chart.querySelectorAll('ellipse').length===2,'gingivitis and calculus index circled');
   {const bv=P.data.visits.find(x=>x.id===biscuit.id),keep=JSON.stringify(bv.dental.teeth);bv.dental.teeth['106']={codes:{'/':true},note:'',ext:false};bv.dental.teeth['307']={codes:{'/':true,F1:true},note:'',ext:false};
    P.go('visit',biscuit.id,'dental');click(w,'[data-act="print"][data-sec="dental"]');const cd=new w.DOMParser().parseFromString('<div>'+w.__printed+'</div>','text/html');const sv=cd.querySelector('svg.paper');
    const ln=[...sv.querySelectorAll('line[stroke-width="1.3"]')];const fv=[...sv.querySelectorAll('text.fv')].map(t=>t.textContent);
-   ok(ln.length===4&&ln.every(l=>+l.getAttribute('x1')<+l.getAttribute('x2')&&+l.getAttribute('y1')>+l.getAttribute('y2')),'missing teeth are slashed (/) on both drawings of each tooth');
+   const exT=Object.keys(bv.dental.teeth).filter(k=>bv.dental.teeth[k].ext).length,slash=ln.filter(l=>+l.getAttribute('y1')>+l.getAttribute('y2')),back=ln.filter(l=>+l.getAttribute('y1')<+l.getAttribute('y2'));
+   ok(exT>0&&slash.length===4+2*exT&&back.length===2*exT,'missing teeth get a / and extracted teeth an X on both drawings of each tooth');
+   ok(!fv.some(t=>/\bEXT\b/.test(t)),'the table row leaves out EXT (the X shows it)');
    ok(!fv.some(t=>/(^|\s)\/(\s|$)/.test(t))&&fv.includes('F1'),'the table row leaves out the slash but keeps other findings');
    bv.dental.teeth=JSON.parse(keep);}
   const mon=[...pd.querySelectorAll('svg.paper')].find(s=>s.textContent.includes('Surgery Time'));
