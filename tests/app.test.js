@@ -137,6 +137,17 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'[data-act="dview"][data-view="rad"]');
   {const bv=P.data.visits.find(x=>x.id===biscuit.id);click(w,'[data-act="dview"][data-view="oral"]');click(w,'.arch [data-t="204"]');click(w,'[data-act="code"][data-code="AB"]');
    ok(bv.dental.teeth['204'].codes.AB===true&&/\bAB\b/.test(d.querySelector('.ftable').textContent),'abrasion (AB) is an oral exam finding');click(w,'[data-act="code"][data-code="AB"]');}
+  {const bv=P.data.visits.find(x=>x.id===biscuit.id),keep=JSON.stringify(bv.dental.teeth);const bare=[];
+   click(w,'.arch [data-t="204"]');click(w,'[data-act="dview"][data-view="oral"]');if(!(bv.dental.teeth['204']||{codes:{}}).codes.OM)click(w,'[data-act="code"][data-code="OM"]');click(w,'[data-act="code"][data-code="DT/P"]');
+   for(const vw of ['oral','rad','tx']){click(w,`[data-act="dview"][data-view="${vw}"]`);d.querySelectorAll('#teditor .cm-panel button').forEach(b=>{if(['mm-val','mm-next','t-clear','om-size'].includes(b.dataset.act))return;if(!b.title||(/^[A-Z]/.test(b.textContent.trim())&&!/: /.test(b.title)&&!['om-pos','om-side','p-site','dtx'].includes(b.dataset.act)))bare.push(vw+':'+b.textContent.trim())})}
+   ok(!bare.length,'every abbreviation button explains itself (tooltip)'+(bare.length?' — missing: '+bare.join(', '):''));
+   click(w,'[data-act="dview"][data-view="oral"]');const gh=d.querySelector('[data-act="code"][data-code="GH"]');ok(gh.title==='GH: Gingival hyperplasia','e.g. GH: Gingival hyperplasia');
+   const before=!!(bv.dental.teeth['204'].codes||{}).GH;gh.dispatchEvent(new w.MouseEvent('pointerdown',{bubbles:true,clientX:5,clientY:5}));await sleep(500);
+   ok(/Gingival hyperplasia/.test((d.querySelector('.tip')||{}).textContent||''),'press and hold shows the definition (iPad)');
+   gh.dispatchEvent(new w.MouseEvent('pointerup',{bubbles:true}));gh.dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+   ok(!!(bv.dental.teeth['204'].codes||{}).GH===before,'…and does not toggle the code');
+   click(w,'[data-act="code"][data-code="GH"]');ok(!!bv.dental.teeth['204'].codes.GH!==before,'a normal tap still toggles it');
+   bv.dental.teeth=JSON.parse(keep);P.go('visit',biscuit.id,'dental');click(w,'.arch [data-t="204"]');}
   console.log('Persistent deciduous teeth (DT/P)');
   {const bv=P.data.visits.find(x=>x.id===biscuit.id),keep=JSON.stringify(bv.dental.teeth);
    click(w,'[data-act="dview"][data-view="oral"]');click(w,'.arch [data-t="105"]');ok(!d.querySelector('[data-act="code"][data-code="DT/P"]'),'no DT/P on a first premolar (no deciduous predecessor)');
