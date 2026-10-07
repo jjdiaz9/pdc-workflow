@@ -17,6 +17,8 @@ The **Dental chart** has three views, and each device remembers which one it's o
 
 Persistent deciduous teeth: in the oral exam, tap **DT/P** on the permanent tooth's position (e.g. on 104 for deciduous 504; not offered on molars or first premolars). In the treatment view, a "Persistent deciduous tooth 504: extraction" row records X, XS or XSS for it. It prints as `DT/P(504) XS(504)` on 104's row, appears as 504 in the extractions and procedure summary, switches the discharge sheet to the extraction one, and does not mark the permanent tooth extracted.
 
+
+Every abbreviation button explains itself: hover over it on a computer, or press and hold it on the iPad (a quick tap still charts it as usual).
 **Clear** only clears the current view's entries. Full-mouth radiographs are routine, so the app doesn't ask whether they were taken; note any exception (such as a second visit for extractions) in the notes.
 
 The Exam step has a **body map** for dogs, cats and ferrets: tap the ventral or dorsal figure to mark a mass, then describe it. Marks print as numbered rings on the exam sheet's figures, with the descriptions under C/S. The dog and cat maps are the exam sheet's own figures; the paper has no ferret, so a ferret figure in the same style prints in their place for ferrets.
