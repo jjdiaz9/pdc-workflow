@@ -133,6 +133,8 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'.arch [data-t="304"]');
   click(w,'[data-act="code"][data-code="OM"]');ok(!biscuit.dental.teeth['304'],'removing OM removes its size, location and side');
   click(w,'[data-act="dview"][data-view="rad"]');
+  {const bv=P.data.visits.find(x=>x.id===biscuit.id);click(w,'[data-act="dview"][data-view="oral"]');click(w,'.arch [data-t="204"]');click(w,'[data-act="code"][data-code="AB"]');
+   ok(bv.dental.teeth['204'].codes.AB===true&&/\bAB\b/.test(d.querySelector('.ftable').textContent),'abrasion (AB) is an oral exam finding');click(w,'[data-act="code"][data-code="AB"]');}
   console.log('Persistent deciduous teeth (DT/P)');
   {const bv=P.data.visits.find(x=>x.id===biscuit.id),keep=JSON.stringify(bv.dental.teeth);
    click(w,'[data-act="dview"][data-view="oral"]');click(w,'.arch [data-t="105"]');ok(!d.querySelector('[data-act="code"][data-code="DT/P"]'),'no DT/P on a first premolar (no deciduous predecessor)');
