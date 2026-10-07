@@ -258,7 +258,11 @@ body.sheet-open{overflow:hidden}
 .codes{display:flex;flex-wrap:wrap;gap:6px}
 .omsz input{width:84px;min-height:40px;font-family:var(--f-mono);font-size:16px;padding:0 8px}
 .tip{position:fixed;z-index:200;max-width:300px;padding:8px 11px;border-radius:8px;background:var(--ink);color:var(--bg);font-size:14px;line-height:1.35;box-shadow:0 6px 18px rgba(0,0,0,.25);pointer-events:none}
-#teditor .code,#teditor .tooth{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+/* No iOS text selection or callout from pressing buttons (a hold, or two quick taps like 3 then P),
+   and none anywhere in charting mode except where you type. */
+button,.code,.tooth,[data-act],.seg label,.chk,#teditor.cm,#teditor.cm *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+#teditor.cm input,#teditor.cm textarea{-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}
+button,.code,.tooth,[data-act]{touch-action:manipulation}
 .code{border:1px solid var(--line-strong);background:var(--surface);border-radius:6px;padding:0 11px;min-height:40px;min-width:44px;font-family:var(--f-mono);font-size:14px;cursor:pointer}
 .code[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:#fff}
 .code.x[aria-pressed="true"]{background:var(--crit);border-color:var(--crit)}
@@ -1511,7 +1515,11 @@ document.addEventListener('pointerdown',e=>{hideTip();tipHeld=false;clearTimeout
 document.addEventListener('pointermove',e=>{if(tipXY&&Math.hypot(e.clientX-tipXY[0],e.clientY-tipXY[1])>10)clearTimeout(tipT)},{passive:true});
 ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,()=>clearTimeout(tipT),{passive:true}));
 document.addEventListener('click',e=>{if(tipHeld){tipHeld=false;e.preventDefault();e.stopPropagation()}},true);
-document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('#teditor [title]'))e.preventDefault()});
+// Belt and braces for Safari: refuse to start a text selection or callout from a button or in charting mode.
+const noSelect=e=>{const el=e.target&&(e.target.nodeType===1?e.target:e.target.parentElement);if(!el||!el.closest)return false;
+  if(el.closest('input,textarea,[contenteditable]'))return false;return !!el.closest('button,.code,.tooth,[data-act],#teditor.cm')};
+document.addEventListener('selectstart',e=>{if(noSelect(e))e.preventDefault()});
+document.addEventListener('contextmenu',e=>{if(noSelect(e))e.preventDefault()});
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b)return;
   const act=b.dataset.act;const v=curV();

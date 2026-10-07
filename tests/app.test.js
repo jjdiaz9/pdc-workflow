@@ -148,6 +148,8 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
    ok(!!(bv.dental.teeth['204'].codes||{}).GH===before,'…and does not toggle the code');
    click(w,'[data-act="code"][data-code="GH"]');ok(!!bv.dental.teeth['204'].codes.GH!==before,'a normal tap still toggles it');
    bv.dental.teeth=JSON.parse(keep);P.go('visit',biscuit.id,'dental');click(w,'.arch [data-t="204"]');}
+  {const sel=el=>{const e=new w.Event('selectstart',{bubbles:true,cancelable:true});el.dispatchEvent(e);return e.defaultPrevented};
+   ok(sel(d.querySelector('#teditor [data-act="code"]'))&&sel(d.querySelector('#teditor .mmhint'))&&!sel(d.querySelector('#teditor input[data-k$=".note"]')),'no text selection from buttons or in charting mode, but the note field still selects');}
   console.log('Persistent deciduous teeth (DT/P)');
   {const bv=P.data.visits.find(x=>x.id===biscuit.id),keep=JSON.stringify(bv.dental.teeth);
    click(w,'[data-act="dview"][data-view="oral"]');click(w,'.arch [data-t="105"]');ok(!d.querySelector('[data-act="code"][data-code="DT/P"]'),'no DT/P on a first premolar (no deciduous predecessor)');
