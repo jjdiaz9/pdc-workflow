@@ -133,6 +133,22 @@ const type=(w,sel,val)=>{const e=w.document.querySelector(sel);if(!e)throw new E
   click(w,'.arch [data-t="304"]');
   click(w,'[data-act="code"][data-code="OM"]');ok(!biscuit.dental.teeth['304'],'removing OM removes its size, location and side');
   click(w,'[data-act="dview"][data-view="rad"]');
+  console.log('Persistent deciduous teeth (DT/P)');
+  {const bv=P.data.visits.find(x=>x.id===biscuit.id),keep=JSON.stringify(bv.dental.teeth);
+   click(w,'[data-act="dview"][data-view="oral"]');click(w,'.arch [data-t="105"]');ok(!d.querySelector('[data-act="code"][data-code="DT/P"]'),'no DT/P on a first premolar (no deciduous predecessor)');
+   click(w,'.arch [data-t="104"]');click(w,'[data-act="code"][data-code="DT/P"]');
+   ok(bv.dental.teeth['104'].codes['DT/P']===true&&/DT\/P\(504\)/.test(d.querySelector('.ftable').textContent),'DT/P on 104 reads as deciduous 504');
+   click(w,'[data-act="dview"][data-view="tx"]');click(w,'[data-act="dtx"][data-code="XS"]');const t104=bv.dental.teeth['104'];
+   ok(t104.dtx==='XS'&&!t104.ext&&P.extractions(bv).includes(504)&&!P.extractions(bv).includes(104),'extracting the deciduous tooth records 504, not 104');
+   ok(/Closed extraction with sectioning \(XS\): 504\./.test(d.getElementById('procSum').textContent),'procedure summary names 504');
+   const dt=bv.discharge.type;bv.discharge.type='auto';const others=Object.keys(bv.dental.teeth).filter(k=>bv.dental.teeth[k].ext);others.forEach(k=>bv.dental.teeth[k].ext=false);
+   ok(P.dischargeType(bv)==='extractions','a deciduous extraction uses the with-extractions discharge sheet');others.forEach(k=>bv.dental.teeth[k].ext=true);bv.discharge.type=dt;
+   click(w,'[data-act="print"][data-sec="dental"]');const cd=new w.DOMParser().parseFromString('<div>'+w.__printed+'</div>','text/html');const fv=[...cd.querySelectorAll('svg.paper text.fv')].map(x=>x.textContent);
+   ok(fv.some(x=>/XS\(504\)/.test(x)&&/DT\/P\(504\)/.test(x)),'printed row for 104 shows DT/P(504) and XS(504)');
+   click(w,'[data-act="dview"][data-view="oral"]');click(w,'[data-act="code"][data-code="DT/P"]');ok(!bv.dental.teeth['104']||!bv.dental.teeth['104'].dtx,'removing DT/P removes its extraction');
+   bv.dental.teeth=JSON.parse(keep);
+   bv.dental.teeth['309']=Object.assign({codes:{}},bv.dental.teeth['309']||{},{tx:{BG:true}});P.ensureShape(bv);ok(bv.dental.teeth['309'].tx['GF/B']&&!bv.dental.teeth['309'].tx.BG,'old BG entries become GF/B (AVDC bone graft)');
+   bv.dental.teeth=JSON.parse(keep);P.go('visit',biscuit.id,'dental');click(w,'.arch [data-t="204"]');}
   console.log('Treatment (procedures per tooth)');
   click(w,'[data-act="dview"][data-view="tx"]');click(w,'.arch [data-t="106"]');
   ok(!d.querySelector('.mmpad')&&!d.querySelector('[data-act="code"][data-code="PD3"]')&&d.querySelector('[data-act="tx"][data-code="XSS"]'),'treatment view shows procedures only');
