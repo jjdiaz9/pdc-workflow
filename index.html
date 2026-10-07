@@ -269,6 +269,9 @@ body.sheet-open{overflow:hidden}
 .psites .code{min-height:44px;min-width:0;padding:0 6px;display:flex;justify-content:space-between;align-items:center;gap:4px}
 .psites .code[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
 .mmnums{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.mmnums .code[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mmkeys .code[aria-pressed="false"]{opacity:.75}
+.mmhint{min-height:2.6em;margin:0}
 .mmnums .code{min-height:44px;min-width:0;padding:0;font-size:16px}
 .mmpad>.code[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
 .ftable{display:grid;gap:0;grid-template-columns:1fr}
@@ -1183,7 +1186,10 @@ function toothEditor(v,p,arches){
   const ch=chartFor(p);if(!ch)return '';
   if(!ui.tooth)return `<div class="panel" style="background:var(--surface-2)"><h3>No tooth selected</h3><p class="note">${dView()==='tx'?'Pick a tooth to choose the procedure done to it.':dView()==='rad'?'Pick a tooth to record its periodontal stage, bone loss, root and resorption findings.':'Pick a tooth to record pocketing, mobility, furcation, fractures or an extraction.'}</p></div>`;
   const n=ui.tooth;const t=v.dental.teeth[n]||{codes:{},note:'',ext:false};const c=t.codes||{};
-  const order=toothOrder(ch),i=order.indexOf(n),mk=ui.mmK||'P';
+  const order=toothOrder(ch),i=order.indexOf(n);
+  // Measurements follow how they are said: number, then type, then (for a pocket) the site, e.g. "3 mm pocket mesial".
+  const pend=ui.mmPend,last=ui.mmLast&&ui.mmLast.tooth===n?ui.mmLast:null,pv=pend===''?'clear':pend!=null?pend+' mm':'';
+  const mmHint=pend!=null?`<b>${pv}</b>: now tap P, GR, RE or AL${pend===''?' to clear it':''}`:last?`<b>P ${last.val===''?'cleared':last.val+' mm'}</b>${last.site?' '+siteTitle(n,last.site).split(':')[0].toLowerCase():''}. Tap a site to place it, or the next number${ui.mmNext&&i<order.length-1?` (goes to ${order[i+1]})`:''}`:'Tap the number, then P, GR, RE or AL, then the site if it matters';
   return `<div class="cm-top">
       <div class="cm-who"><span class="eyebrow">${esc(p.name||'')} · ${esc(toothName(n))}</span><b class="mono">${n}</b></div>
       ${viewTabs()}
@@ -1196,11 +1202,12 @@ function toothEditor(v,p,arches){
       ${TX_GROUPS.map(([g,list])=>`<div class="cm-sec grp"><span class="lbl">${g}</span><div class="codes">${list.map(([k,l])=>`<button class="code" data-act="tx" data-code="${esc(k)}" aria-pressed="${!!(t.tx&&t.tx[k])}" title="${esc(l+(TX_DEF[k]?': '+TX_DEF[k]:''))}">${esc(k)}</button>`).join('')}</div></div>`).join('')}
       ${c['DT/P']?`<div class="cm-sec grp"><span class="lbl">Persistent deciduous tooth ${decNum(n)}: extraction</span><div class="codes">${TX_EXT.filter(([k])=>k!=='CR/A').map(([k,l])=>`<button class="code" data-act="dtx" data-code="${k}" aria-pressed="${t.dtx===k}" title="${esc(l)} of ${decNum(n)}">${k}</button>`).join('')}</div></div>`:''}
       <p class="note cm-sec">${txList(t).map(k=>`<b>${esc(k)}</b> ${esc(TX_NAME[k])}${TX_DEF[k]?': '+esc(TX_DEF[k].toLowerCase()):''}`).join('<br>')||'<b>X</b> closed, not sectioned · <b>XS</b> closed, sectioned · <b>XSS</b> open: flap and alveolectomy · <b>CR/A</b> crown amputation'}</p>`
-    :dView()==='rad'?`<p class="note"><b>Oral exam:</b> ${esc(toothPart(t,n,false))||'nothing charted'}</p></div>`:`</div><div class="mmpad cm-sec"><span class="lbl">Measurements (mm): pick one, then tap the number</span>
-      <div class="mmkeys">${MM_CODES.map(([k,l])=>{const val=k==='P'?(isFinite(deepest(t))?String(deepest(t)):''):c[k];return `<button class="code" data-act="mm-key" data-code="${k}" aria-pressed="${k===mk}" title="${l}">${k}<b>${val!==undefined&&val!==''?esc(val):'–'}</b></button>`}).join('')}</div>
-      ${mk==='P'?`<div class="psites" role="group" aria-label="Pocket site">${['',...P_SITES].map(x=>{const v0=x?(t.pockets||{})[x]:c.P;return `<button class="code" data-act="p-site" data-site="${x}" aria-pressed="${(ui.pSite||'')===x}" title="${x?siteTitle(n,x):'Deepest, site not noted'}">${x?siteLbl(n,x):'Any'}<b>${v0!==undefined&&v0!==''?esc(v0):''}</b></button>`}).join('')}</div>`:''}
-      <div class="mmnums">${MM_VALS.map(x=>`<button class="code" data-act="mm-val" data-val="${x}" aria-pressed="${String((mk==='P'&&ui.pSite?(t.pockets||{})[ui.pSite]:c[mk])??'')===x}">${x}</button>`).join('')}<button class="code" data-act="mm-val" data-val="" aria-label="Clear ${mk}">⌫</button></div>
-      <button class="code" data-act="mm-next" aria-pressed="${!!ui.mmNext}">Go to next tooth after P (Any)</button>
+    :dView()==='rad'?`<p class="note"><b>Oral exam:</b> ${esc(toothPart(t,n,false))||'nothing charted'}</p></div>`:`</div><div class="mmpad cm-sec"><span class="lbl">Measure: mm → type → site</span>
+      <div class="mmnums">${MM_VALS.map(x=>`<button class="code" data-act="mm-val" data-val="${x}" aria-pressed="${pend===x}">${x}</button>`).join('')}<button class="code" data-act="mm-val" data-val="" aria-pressed="${pend===''}" aria-label="Clear a measurement">⌫</button></div>
+      <div class="mmkeys">${MM_CODES.map(([k,l])=>{const val=k==='P'?(isFinite(deepest(t))?String(deepest(t)):''):c[k];return `<button class="code" data-act="mm-key" data-code="${k}" aria-pressed="${pend!=null||!!(last&&k==='P')}" title="${l}">${k}<b>${val!==undefined&&val!==''?esc(val):'–'}</b></button>`}).join('')}</div>
+      <div class="psites" role="group" aria-label="Pocket site">${['',...P_SITES].map(x=>{const v0=x?(t.pockets||{})[x]:c.P;return `<button class="code" data-act="p-site" data-site="${x}" aria-pressed="${!!(last&&last.site===x)}" title="${x?siteTitle(n,x):'Site not noted'}">${x?siteLbl(n,x):'Any'}<b>${v0!==undefined&&v0!==''?esc(v0):''}</b></button>`}).join('')}</div>
+      <p class="note mmhint" role="status">${mmHint}</p>
+      <button class="code" data-act="mm-next" aria-pressed="${!!ui.mmNext}">Next number goes to the next tooth</button>
     </div>`}
     ${(dView()==='tx'?[]:dView()==='rad'?RAD_GROUPS:ORAL_GROUPS).map(([g,codes])=>`<div class="cm-sec grp"><span class="lbl">${g}</span><div class="codes">${codes.filter(k=>k!=='DT/P'||hasDeciduous(n)).map(k=>`<button class="code" data-act="code" data-code="${esc(k)}" aria-pressed="${c[k]===true}"${k==='DT/P'?` title="Persistent deciduous tooth ${decNum(n)}"`:''}>${esc(k)}</button>`).join('')}</div></div>`).join('')}
     ${dView()==='oral'&&c.OM===true?`<div class="cm-sec grp"><span class="lbl">Oral mass location (relative to ${n})</span><div class="codes">${[['','At tooth'],['R','Rostral'],['C','Caudal']].map(([k,l])=>`<button class="code" data-act="om-pos" data-pos="${k}" aria-pressed="${(t.omPos||'')===k}" title="${k==='R'?'Toward the front of the head':k==='C'?'Toward the tail':'At the tooth'}">${l}</button>`).join('')}</div>
@@ -1470,6 +1477,8 @@ let chromeTimer=null;
 document.addEventListener('focusout',()=>{if(pendingRender)setTimeout(flushPendingRender,120)});
 document.addEventListener('focusout',e=>{if(ui.view==='visit'&&e.target.dataset&&e.target.dataset.k){clearTimeout(chromeTimer);chromeTimer=setTimeout(refreshChrome,50)}});
 
+// Remove a tooth's record once nothing is left on it.
+function dropEmpty(v,n){const t=v.dental.teeth[n];if(!t)return;if(t.pockets&&!Object.keys(t.pockets).length)delete t.pockets;if(!toothHas(t)&&!Object.keys(t.codes||{}).length&&!t.pockets)delete v.dental.teeth[n]}
 function ensureTooth(n){const d=curV().dental;if(!d.teeth[n])d.teeth[n]={codes:{},note:'',ext:false};d.teeth[n].codes=d.teeth[n].codes||{};return d.teeth[n]}
 function refreshTooth(n){const btn=$(`.arch [data-t="${n}"]`);if(!btn)return;const tmp=document.createElement('div');tmp.innerHTML=stDental(curV(),curP());const nb=tmp.querySelector(`.arch [data-t="${n}"]`);if(nb){btn.className=nb.className;btn.title=nb.title;btn.querySelector('.mk').textContent=nb.querySelector('.mk').textContent}}
 
@@ -1499,24 +1508,26 @@ document.addEventListener('click',e=>{
     case 'bmap':bodyMapTap(b,e);break;
     case 'mass-del':{const l=v.exam.masses||[],i=l.findIndex(m=>m.id===b.dataset.id);if(i>=0){l.splice(i,1);if(!l.length)delete v.exam.masses;saveNow();render(true)}break}
     case 'exam-wnl':['eent','oral','pln','hl','abd','ms','ug','neuro','rectal','cs'].forEach(k=>{if(!v.exam[k])v.exam[k]='WNL'});saveNow();render(true);break;
-    case 'tooth':{const was=ui.tooth;ui.tooth=+b.dataset.t;render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});break}
+    case 'tooth':{const was=ui.tooth;ui.tooth=+b.dataset.t;if(ui.tooth!==was){ui.mmPend=undefined;ui.mmLast=null}render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});break}
     case 'tooth-close':ui.tooth=null;render(true);break;
     case 'code':{const t=ensureTooth(ui.tooth);const k=b.dataset.code;const on=t.codes[k]===true;EXCL.forEach(g=>{if(g.includes(k))g.forEach(x=>delete t.codes[x])});if(on)delete t.codes[k];else t.codes[k]=true;if(!t.codes.OM){delete t.omPos;delete t.omSide;delete t.omSize}if(!t.codes['DT/P'])delete t.dtx;if(!toothHas(t)&&!t.pockets)delete v.dental.teeth[ui.tooth];saveNow();render(true);break}
     case 'om-pos':{const t=ensureTooth(ui.tooth);if(b.dataset.pos)t.omPos=b.dataset.pos;else delete t.omPos;saveNow();render(true);break}
     case 'om-size':{const t=ensureTooth(ui.tooth);if(num(t.omSize)===num(b.dataset.size))delete t.omSize;else t.omSize=b.dataset.size;saveNow();render(true);break}
     case 'om-side':{const t=ensureTooth(ui.tooth);if(b.dataset.side)t.omSide=b.dataset.side;else delete t.omSide;saveNow();render(true);break}
     case 'dview':ui.dview=b.dataset.view;saveUI();render(true);break;
-    case 'mm-key':ui.mmK=b.dataset.code;render(true);break;
-    case 'p-site':ui.pSite=b.dataset.site;render(true);break;
+    // Measurements: number (mm-val) -> type (mm-key) saves it -> site (p-site) moves a pocket to that site.
+    case 'mm-val':{const last=ui.mmLast&&ui.mmLast.tooth===ui.tooth?ui.mmLast:null;
+      if(ui.mmNext&&last&&ui.mmPend==null){const o=toothOrder(chartFor(curP())),i=o.indexOf(ui.tooth);if(i<o.length-1)ui.tooth=o[i+1]}   // the next tooth after a finished pocket
+      ui.mmLast=null;ui.mmPend=b.dataset.val;render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});break}
+    case 'mm-key':{const k=b.dataset.code,val=ui.mmPend;if(val==null){toast('Tap the number first, then '+k+'.');break}
+      const t=ensureTooth(ui.tooth);if(val==='')delete t.codes[k];else t.codes[k]=val;
+      ui.mmPend=undefined;ui.mmLast=k==='P'?{tooth:ui.tooth,val,site:''}:null;dropEmpty(v,ui.tooth);saveNow();render(true);break}
+    case 'p-site':{const last=ui.mmLast&&ui.mmLast.tooth===ui.tooth?ui.mmLast:null;if(!last){toast('Tap the number and P first, then the site.');break}
+      const t=ensureTooth(ui.tooth),s=b.dataset.site,box=x=>x?(t.pockets=t.pockets||{}):t.codes,key=x=>x||'P';
+      const from=box(last.site);if(last.val===''||String(from[key(last.site)]??'')===last.val)delete from[key(last.site)];   // move this pocket from where it was
+      if(last.val==='')delete box(s)[key(s)];else box(s)[key(s)]=last.val;
+      last.site=s;dropEmpty(v,ui.tooth);saveNow();render(true);break}
     case 'mm-next':ui.mmNext=!ui.mmNext;saveUI();render(true);break;
-    case 'mm-val':{const k=ui.mmK||'P',t=ensureTooth(ui.tooth),val=b.dataset.val;
-      const site=k==='P'&&ui.pSite,box=site?(t.pockets=t.pockets||{}):t.codes,key=site||k;
-      if(val===''||String(box[key]??'')===val)delete box[key];else box[key]=val;
-      if(t.pockets&&!Object.keys(t.pockets).length)delete t.pockets;
-      if(!toothHas(t)&&!Object.keys(t.codes).length&&!t.pockets)delete v.dental.teeth[ui.tooth];
-      saveNow();
-      if(val!==''&&k==='P'&&!site&&ui.mmNext&&t.codes.P===val){const o=toothOrder(chartFor(curP())),i=o.indexOf(ui.tooth);if(i<o.length-1)ui.tooth=o[i+1]}
-      render(true);const tb=$(`.arch [data-t="${ui.tooth}"]`);if(tb&&tb.scrollIntoView)tb.scrollIntoView({block:'nearest',inline:'nearest'});break}
     case 't-ext':{const t=ensureTooth(ui.tooth);t.ext=!t.ext;if(!t.ext&&t.tx){TX_EXT.forEach(([k])=>delete t.tx[k]);if(!Object.keys(t.tx).length)delete t.tx}saveNow();render(true);break}
     case 'dtx':{const t=ensureTooth(ui.tooth);if(t.dtx===b.dataset.code)delete t.dtx;else t.dtx=b.dataset.code;saveNow();render(true);break}
     case 'tx':{const t=ensureTooth(ui.tooth),k=b.dataset.code,isExt=TX_EXT.some(x=>x[0]===k);t.tx=t.tx||{};
